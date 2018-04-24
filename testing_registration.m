@@ -1,6 +1,6 @@
 warning('off', 'all');
-[s1,~] = audioread('/home/ravi/Downloads/speech_data_male1/angry/51.wav');
-[s2,~] = audioread('/home/ravi/Downloads/speech_data_male1/neutral/51.wav');
+[s1,~] = audioread('./angry.wav');
+[s2,~] = audioread('./neutral.wav');
 
 f = 16000;
 r = 1024;
@@ -10,17 +10,48 @@ o = 0.010;
 [spect_ang_org, spect_ang_phase] = get_spectrogram(s1,f,r,w,o);
 [spect_neu_org, spect_neu_phase] = get_spectrogram(s2,f,r,w,o);
 
-spect_ang = imresize(spect_ang_org,[size(spect_ang_org,1),100]);
-spect_neu = imresize(spect_neu_org,[size(spect_neu_org,1),100]);
+spect_ang = imresize(spect_ang_org,[size(spect_ang_org,1),150]);
+spect_neu = imresize(spect_neu_org,[size(spect_neu_org,1),150]);
 
 figure(), imshowpair(spect_neu,spect_ang), title('Unregistered'), colormap('jet')
 [optimizer,metric] = imregconfig('multimodal');
-optimizer.MaximumIterations = 300;
+optimizer.MaximumIterations = 500;
 movingRegisteredDefault = imregister(spect_neu,spect_ang,'affine',optimizer,metric);
 figure(), imshowpair(movingRegisteredDefault,spect_ang), title('A: Default Registration')
 
 transformed_image = imresize(movingRegisteredDefault,size(spect_neu_org));
 recon_speech_sig = get_speech(transformed_image,spect_neu_phase,f,w,o);
+figure(), subplot(211), plot(recon_speech_sig), title('Reconstructed Speech')
+subplot(212), plot(s2), title('Original Speech')
+soundsc(recon_speech_sig, 16000);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
