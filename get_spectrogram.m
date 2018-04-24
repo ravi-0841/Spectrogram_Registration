@@ -1,4 +1,4 @@
-function [spect_mag,spect_phase] = get_spectrogram(signal,fs,window_size,overlap)
+function [spect_mag,spect_phase] = get_spectrogram(signal,fs,freq_res,window_size,overlap)
     sample_size = fs*window_size;
     sample_stride = fs*overlap;
     spect_mag = [];

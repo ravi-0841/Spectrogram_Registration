@@ -4,7 +4,7 @@ function signal = get_speech(spect_mag,spect_phase,f,window,overlap)
     signal = [];
     for i = 1:size(spect_mag,2)
         fft_seg = spect_mag(:,i) .* exp(1j*spect_phase(:,i));
-        signal_segment = ifft(fft_seg,window_len);
+        signal_segment = abs(ifft(fft_seg,window_len));
         if isempty(signal)
             signal = signal_segment;
         else
