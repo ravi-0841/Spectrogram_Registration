@@ -1,5 +1,5 @@
-[s1,~] = audioread('/home/ravi/Desktop/Spectrogram_Registration/speech_data/angry/51.wav');
-[s2,~] = audioread('/home/ravi/Desktop/Spectrogram_Registration/speech_data/neutral/51.wav');
+[s1,~] = audioread('/home/ravi/Downloads/speech_data_male1/angry/50.wav');
+[s2,~] = audioread('/home/ravi/Downloads/speech_data_male1/neutral/50.wav');
 
 f = 16000;
 w = 0.025;
