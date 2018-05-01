@@ -34,8 +34,8 @@ if linear_registration          % Linear Registration
     transformed_mag = imresize(movingRegistered_mag,size(spect_neu_mag));
     transformed_phase = imresize(movingRegistered_phase,size(spect_neu_phase));
 else                            % Non-Linear Registration
-    [disp_field,movingReg] = imregdemons(res_spect_neu_mag,res_spect_ang_mag,[500,400,300],...
-                                            'AccumulatedFieldSmoothing',1.5);
+    [disp_field,movingReg] = imregdemons(res_spect_neu_mag,res_spect_ang_mag,500,...
+                                            'AccumulatedFieldSmoothing',2.5);
     registered_mag = imwarp(res_spect_neu_mag,disp_field);
     registered_phase = imwarp(res_spect_neu_phase,disp_field);
     
@@ -46,7 +46,7 @@ else                            % Non-Linear Registration
     subplot(122), imshowpair(registered_mag,res_spect_ang_mag), title('Spectrogram Registration');
     
     figure(), subplot(121), imshow(spect_neu_mag,[]), colormap('jet'), title('Original Spectrogram');
-    subplot(122), imshow(registered_mag,[]), colormap('jet'), title('Modified Spectrogram');
+    subplot(122), imshow(registered_mag,res_spect_ang_mag), title('Spectrogram Registration');
     
     res_reg_mag = imresize(registered_mag,size(spect_neu_mag));
     res_reg_phase = imresize(registered_phase,size(spect_neu_phase));
@@ -56,7 +56,7 @@ end
 %% Visualize the vector field and apply independent transformations
 if linear_registration==0
     flow = opticalFlow(squeeze(disp_field(:,:,1)), squeeze(disp_field(:,:,2)));
-    figure(), plot(flow, 'DecimationFactor', [8,16]), title('Overall Displacement Field');
+    figure(), plot(flow, 'DecimationFactor', [8,16]), title('Displacement Field');
 
             % Warping the frequency axis only
 mod_disp_field = disp_field;
@@ -64,21 +64,17 @@ mod_disp_field(:,:,1) = zeros(size(squeeze(mod_disp_field(:,:,1))));
 registered_mag = imwarp(res_spect_neu_mag,mod_disp_field);
 registered_phase = imwarp(res_spect_neu_phase,mod_disp_field);
 
-flow = opticalFlow(squeeze(mod_disp_field(:,:,1)),squeeze(mod_disp_field(:,:,2)));
-figure(), plot(flow, 'DecimationFactor',[8,16]), title('Freq Axis Warping field');
-
 figure(), subplot(121), imshowpair(res_spect_neu_phase,res_spect_ang_phase), title('Unregistered');
-subplot(122), imshowpair(registered_phase,res_spect_ang_phase), title('Freq Phase Registration');
+subplot(122), imshowpair(registered_phase,res_spect_ang_phase), title('Frequency Phase Registration');
 
 figure(), subplot(121), imshowpair(res_spect_neu_mag,res_spect_ang_mag), title('Unregistered');
-subplot(122), imshowpair(registered_mag,res_spect_ang_mag), title('Freq Spectrogram Registration');
-
-figure(), subplot(121), imshow(spect_neu_mag,[]), colormap('jet'), title('Original Spectrogram');
-subplot(122), imshow(registered_mag,[]), colormap('jet'), title('Freq Modified Spectrogram');
+subplot(122), imshowpair(registered_mag,res_spect_ang_mag), title('Frequency Spectrogram Registration');
 
 res_reg_mag = imresize(registered_mag,size(spect_neu_mag));
 res_reg_phase = imresize(registered_phase,size(spect_neu_phase));
 recon_speech_freq_warped = get_speech(res_reg_mag,res_reg_phase,f,r,w,o);
+flow = opticalFlow(squeeze(mod_disp_field(:,:,1)),squeeze(mod_disp_field(:,:,2)));
+figure(), plot(flow, 'DecimationFactor',[8,16]), title('Frequency Axis Warping field');
 
             % Warping the time axis only
 mod_disp_field = disp_field;
@@ -86,21 +82,17 @@ mod_disp_field(:,:,2) = zeros(size(squeeze(mod_disp_field(:,:,2))));
 registered_mag = imwarp(res_spect_neu_mag,mod_disp_field);
 registered_phase = imwarp(res_spect_neu_phase,mod_disp_field);
 
-flow = opticalFlow(squeeze(mod_disp_field(:,:,1)),squeeze(mod_disp_field(:,:,2)));
-figure(), plot(flow, 'DecimationFactor',[8,16]), title('Time Axis Warping field');
-
 figure(), subplot(121), imshowpair(res_spect_neu_phase,res_spect_ang_phase), title('Unregistered');
 subplot(122), imshowpair(registered_phase,res_spect_ang_phase), title('Time Phase Registration');
 
 figure(), subplot(121), imshowpair(res_spect_neu_mag,res_spect_ang_mag), title('Unregistered');
 subplot(122), imshowpair(registered_mag,res_spect_ang_mag), title('Time Spectrogram Registration');
 
-figure(), subplot(121), imshow(spect_neu_mag,[]), colormap('jet'), title('Original Spectrogram');
-subplot(122), imshow(registered_mag,[]), colormap('jet'), title('Time Modified Spectrogram');
-
 res_reg_mag = imresize(registered_mag,size(spect_neu_mag));
 res_reg_phase = imresize(registered_phase,size(spect_neu_phase));
 recon_speech_time_warped = get_speech(res_reg_mag,res_reg_phase,f,r,w,o);
+flow = opticalFlow(squeeze(mod_disp_field(:,:,1)),squeeze(mod_disp_field(:,:,2)));
+figure(), plot(flow, 'DecimationFactor',[8,16]), title('Time Axis Warping field');
 end
 
 %% Plot the original and reconstructed Speech
