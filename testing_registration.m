@@ -6,41 +6,50 @@ f = 16000;
 r = 512;
 w = 0.025;
 o = 0.010;
-linear_registration = 1;
+linear_registration = 0;
 
 [spect_ang_mag, spect_ang_phase] = get_spectrogram(s1,f,r,w,o);
 [spect_neu_mag, spect_neu_phase] = get_spectrogram(s2,f,r,w,o);
 
 n_cols = min([size(spect_neu_mag,2), size(spect_ang_mag,2)]);
-spect_ang = imresize(spect_ang_mag,[size(spect_ang_mag,1),n_cols]);
-spect_neu = imresize(spect_neu_mag,[size(spect_neu_mag,1),n_cols]);
+res_spect_ang_mag = imresize(spect_ang_mag,[size(spect_ang_mag,1),n_cols]);
+res_spect_neu_mag = imresize(spect_neu_mag,[size(spect_neu_mag,1),n_cols]);
+
+res_spect_ang_phase = imresize(spect_ang_phase,[size(spect_ang_phase,1),n_cols]);
+res_spect_neu_phase = imresize(spect_neu_phase,[size(spect_neu_phase,1),n_cols]);
 
 % spect_ang = imresize(spect_ang_phase,[size(spect_ang_phase,1),150]);
 % spect_neu = imresize(spect_neu_phase,[size(spect_neu_phase,1),150]);
 
 %% Registration of magnitude spectrograms
 if linear_registration          % Linear transformations
-    figure(), imshowpair(spect_neu,spect_ang), title('Unregistered')
+    figure(), subplot(121), imshowpair(res_spect_neu_mag,res_spect_ang_mag), title('Unregistered');
     [optimizer,metric] = imregconfig('multimodal');
     optimizer.MaximumIterations = 300;
-    transform = imregtform(spect_neu,spect_ang,'translation',optimizer,metric);
-    movingRegistered_mag = imwarp(spect_neu_mag,transform);
-    movingRegistered_phase = imwarp(spect_neu_phase,transform);
-    figure(), imshowpair(movingRegistered_mag,spect_ang), title('After Registration')
+    transform = imregtform(res_spect_neu_mag,res_spect_ang_mag,'translation',optimizer,metric);
+    movingRegistered_mag = imwarp(res_spect_neu_mag,transform);
+    movingRegistered_phase = imwarp(res_spect_neu_phase,transform);
+    subplot(122), imshowpair(movingRegistered_mag,res_spect_ang_mag), title('After Registration');
     transformed_mag = imresize(movingRegistered_mag,size(spect_neu_mag));
-    transformed_phase = imresize(movingRegistered_phase,size(spect_neu_mag));
-else             % Non-Linear Registration       
-    figure(), imshowpair(spect_neu,spect_ang), title('Unregistered');
-    [disp_field,movingReg] = imregdemons(spect_neu_mag,spect_ang_mag,100,...
+    transformed_phase = imresize(movingRegistered_phase,size(spect_neu_phase));
+else             % Non-Linear Registration
+    [disp_field,movingReg] = imregdemons(res_spect_neu_mag,res_spect_ang_mag,500,...
                                             'AccumulatedFieldSmoothing',2);
-    movingRegistered_mag = imwarp(spect_neu_mag,disp_field);
-    movingRegistered_phase = imwarp(spect_neu_phase,disp_field);
-    figure(), imshowpair(movingRegistered_mag,spect_ang), title('After Registration');
+    disp_field(:,:,2) = zeros(size(disp_field(:,:,2)));
+    movingRegistered_mag = imwarp(res_spect_neu_mag,disp_field);
+    movingRegistered_phase = imwarp(res_spect_neu_phase,disp_field);
+    
+    figure(), subplot(121), imshowpair(res_spect_neu_phase,res_spect_ang_phase), title('Unregistered');
+    subplot(122), imshowpair(movingRegistered_phase,res_spect_ang_phase), title('Phase Registration');
+    
+    figure(), subplot(121), imshowpair(res_spect_neu_mag,res_spect_ang_mag), title('Unregistered');
+    subplot(122), imshowpair(movingRegistered_mag,res_spect_ang_mag), title('Spectrogram Registration');
+    
     transformed_mag = imresize(movingRegistered_mag,size(spect_neu_mag));
-    transformed_phase = imresize(movingRegistered_phase,size(spect_neu_mag));
+    transformed_phase = imresize(movingRegistered_phase,size(spect_neu_phase));
 end
 
-recon_speech_sig = get_speech(spect_neu_mag,spect_neu_phase,f,r,w,o);
+recon_speech_sig = get_speech(transformed_mag,transformed_phase,f,r,w,o);
 
 %% Plot the original and reconstructed Speech
 figure(), subplot(311), plot(s2), title('Original Speech')
