@@ -15,4 +15,6 @@ function [spect_mag,spect_phase] = get_spectrogram(signal,fs,freq_res,window_siz
             spect_phase = [spect_phase fft_segment_phase'];
         end
     end
+    spect_mag = spect_mag(1:freq_res/2+1, :);
+    spect_phase = spect_phase(1:freq_res/2+1, :);
 end

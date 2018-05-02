@@ -28,14 +28,24 @@ if linear_registration          % Linear Registration
     [optimizer,metric] = imregconfig('multimodal');
     optimizer.MaximumIterations = 300;
     transform = imregtform(res_spect_neu_mag,res_spect_ang_mag,'translation',optimizer,metric);
-    movingRegistered_mag = imwarp(res_spect_neu_mag,transform);
-    movingRegistered_phase = imwarp(res_spect_neu_phase,transform);
-    subplot(122), imshowpair(movingRegistered_mag,res_spect_ang_mag), title('Linear Registration');
-    transformed_mag = imresize(movingRegistered_mag,size(spect_neu_mag));
-    transformed_phase = imresize(movingRegistered_phase,size(spect_neu_phase));
+    registered_mag = imwarp(res_spect_neu_mag,transform);
+    registered_phase = imwarp(res_spect_neu_phase,transform);
+    subplot(122), imshowpair(registered_mag,res_spect_ang_mag), title('Linear Registration');
+    res_reg_mag = imresize(registered_mag,size(spect_neu_mag));
+    res_reg_phase = imresize(registered_phase,size(spect_neu_phase));
 else                            % Non-Linear Registration
+    [optimizer,metric] = imregconfig('multimodal');
+    optimizer.MaximumIterations = 300;
+    transform = imregtform(res_spect_neu_mag,res_spect_ang_mag,'translation',optimizer,metric);
+    res_spect_neu_mag = imwarp(res_spect_neu_mag,transform);
+    res_spect_neu_phase = imwarp(res_spect_neu_phase,transform);
+    
+    recon_speech = get_speech(res_spect_neu_mag,res_spect_neu_phase,f,r,w,o);
+    soundsc(recon_speech, f);
+    
     [disp_field,movingReg] = imregdemons(res_spect_neu_mag,res_spect_ang_mag,[500,400,300],...
-                                            'AccumulatedFieldSmoothing',1.5);
+                                            'AccumulatedFieldSmoothing',2.5);
+%     disp_field = block_demons(res_spect_neu_mag,res_spect_ang_mag,21,11,2.5);
     abs_disp_field = squeeze(disp_field(:,:,1)).^2 + squeeze(disp_field(:,:,2)).^2;
     
     registered_mag = imwarp(res_spect_neu_mag,disp_field);
@@ -57,11 +67,11 @@ end
 
 %% Visualize the vector field and apply independent transformations
 if linear_registration==0
-    flow = opticalFlow(squeeze(disp_field(:,:,1)), squeeze(disp_field(:,:,2)));
+    flow = opticalFlow(-1*squeeze(disp_field(:,:,1)),-1*squeeze(disp_field(:,:,2)));
     figure(), subplot(121), plot(flow, 'DecimationFactor', [8,16]), title('Overall Displacement Field');
     subplot(122), imshow(abs_disp_field, []), colormap('jet'), title('Absolute Disp Field')
 
-            % Warping the frequency axis only
+            % Warping only the frequency axis
     mod_disp_field = disp_field;
     mod_disp_field(:,:,1) = zeros(size(squeeze(mod_disp_field(:,:,1))));
     abs_warp = squeeze(mod_disp_field(:,:,1)).^2 + squeeze(mod_disp_field(:,:,2)).^2;
@@ -69,7 +79,7 @@ if linear_registration==0
     registered_mag = imwarp(res_spect_neu_mag,mod_disp_field);
     registered_phase = imwarp(res_spect_neu_phase,mod_disp_field);
 
-    flow = opticalFlow(squeeze(mod_disp_field(:,:,1)),squeeze(mod_disp_field(:,:,2)));
+    flow = opticalFlow(-1*squeeze(mod_disp_field(:,:,1)),-1*squeeze(mod_disp_field(:,:,2)));
     figure(), subplot(121), plot(flow, 'DecimationFactor',[8,16]), title('Freq Axis Warping field');
     subplot(122), imshow(abs_warp, []), colormap('jet'), title('Absolute Warping field');
 
@@ -86,7 +96,7 @@ if linear_registration==0
     res_reg_phase = imresize(registered_phase,size(spect_neu_phase));
     recon_speech_freq_warped = get_speech(res_reg_mag,res_reg_phase,f,r,w,o);
 
-            % Warping the time axis only
+            % Warping only the time axis
     mod_disp_field = disp_field;
     mod_disp_field(:,:,2) = zeros(size(squeeze(mod_disp_field(:,:,2))));
     abs_warp = squeeze(mod_disp_field(:,:,1)).^2 + squeeze(mod_disp_field(:,:,2)).^2;
@@ -94,7 +104,7 @@ if linear_registration==0
     registered_mag = imwarp(res_spect_neu_mag,mod_disp_field);
     registered_phase = imwarp(res_spect_neu_phase,mod_disp_field);
 
-    flow = opticalFlow(squeeze(mod_disp_field(:,:,1)),squeeze(mod_disp_field(:,:,2)));
+    flow = opticalFlow(-1*squeeze(mod_disp_field(:,:,1)),-1*squeeze(mod_disp_field(:,:,2)));
     figure(), subplot(121), plot(flow, 'DecimationFactor',[8,16]), title('Time Axis Warping field');
     subplot(122), imshow(abs_warp, []), colormap('jet'), title('Absolute Warping field');
 
@@ -133,7 +143,7 @@ subplot(414), plot(recon_speech_time_warped), title('Time warped Reconstructed S
 % soundsc(filtered_speech, f);
 
 
-
+% close all
 
 
 
