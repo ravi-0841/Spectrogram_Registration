@@ -5,11 +5,11 @@ warning('off', 'all');
 f = 16000;
 r = 512;
 w = 0.025;
-o = 0.010;
+s = 0.015;
 linear_registration = 0;
 
-[spect_ang_mag, spect_ang_phase] = get_spectrogram(s_ang,f,r,w,o);
-[spect_neu_mag, spect_neu_phase] = get_spectrogram(s_neu,f,r,w,o);
+[spect_ang_mag, spect_ang_phase] = get_spectrogram(s_ang,f,r,w,s);
+[spect_neu_mag, spect_neu_phase] = get_spectrogram(s_neu,f,r,w,s);
 
 n_cols = min([size(spect_neu_mag,2), size(spect_ang_mag,2)]);
 res_spect_ang_mag = imresize(spect_ang_mag,[size(spect_ang_mag,1),n_cols]);
@@ -19,7 +19,7 @@ res_spect_ang_phase = imresize(spect_ang_phase,[size(spect_ang_phase,1),n_cols])
 res_spect_neu_phase = imresize(spect_neu_phase,[size(spect_neu_phase,1),n_cols]);
 
 %% Reconstruction Check
-s_neu_recon = get_speech(spect_neu_mag,spect_neu_phase,f,r,w,o);
+s_neu_recon = get_speech(spect_neu_mag,spect_neu_phase,f,r,w,s);
 figure(), plot(s_neu, 'r'), hold on, plot(s_neu_recon, 'g'), title('Reconstruction');
 
 %% Registration of magnitude spectrograms
@@ -40,7 +40,7 @@ else                            % Non-Linear Registration
     res_spect_neu_mag = imwarp(res_spect_neu_mag,transform);
     res_spect_neu_phase = imwarp(res_spect_neu_phase,transform);
     
-    recon_speech = get_speech(res_spect_neu_mag,res_spect_neu_phase,f,r,w,o);
+    recon_speech = get_speech(res_spect_neu_mag,res_spect_neu_phase,f,r,w,s);
     soundsc(recon_speech, f);
     
     [disp_field,movingReg] = imregdemons(res_spect_neu_mag,res_spect_ang_mag,[500,400,300],...
@@ -62,7 +62,7 @@ else                            % Non-Linear Registration
     
     res_reg_mag = imresize(registered_mag,size(spect_neu_mag));
     res_reg_phase = imresize(registered_phase,size(spect_neu_phase));
-    recon_speech = get_speech(res_reg_mag,res_reg_phase,f,r,w,o);
+    recon_speech = get_speech(res_reg_mag,res_reg_phase,f,r,w,s);
 end
 
 %% Visualize the vector field and apply independent transformations
@@ -94,7 +94,7 @@ if linear_registration==0
 
     res_reg_mag = imresize(registered_mag,size(spect_neu_mag));
     res_reg_phase = imresize(registered_phase,size(spect_neu_phase));
-    recon_speech_freq_warped = get_speech(res_reg_mag,res_reg_phase,f,r,w,o);
+    recon_speech_freq_warped = get_speech(res_reg_mag,res_reg_phase,f,r,w,s);
 
             % Warping only the time axis
     mod_disp_field = disp_field;
@@ -119,7 +119,7 @@ if linear_registration==0
 
     res_reg_mag = imresize(registered_mag,size(spect_neu_mag));
     res_reg_phase = imresize(registered_phase,size(spect_neu_phase));
-    recon_speech_time_warped = get_speech(res_reg_mag,res_reg_phase,f,r,w,o);
+    recon_speech_time_warped = get_speech(res_reg_mag,res_reg_phase,f,r,w,s);
 end
 
 %% Plot the original and reconstructed Speech

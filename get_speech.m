@@ -1,13 +1,18 @@
-function signal = get_speech(spect_mag,spect_phase,f,freq_res,window,overlap)
+function signal = get_speech(spect_mag,spect_phase,f,freq_res,window,stride)
     window_len = f*window;
-    overlap_len = f*overlap;
+    overlap_len = f*(window-stride);
     signal = [];
     spect_mag = [spect_mag; flipud(spect_mag(2:end-1,:))];
     spect_phase = [spect_phase; flipud(-1*spect_phase(2:end-1,:))];
+    
+%     inverse_hann = 1./hann(window_len);
+%     inverse_hann = [0;inverse_hann(2:end-1);0];
+    
     for i = 1:size(spect_mag,2)
         fft_seg = spect_mag(:,i) .* exp(1j*spect_phase(:,i));
         signal_segment = real(ifft(fft_seg,freq_res));
         signal_segment = signal_segment(1:window_len);
+        
         if isempty(signal)
             signal = signal_segment;
         else
@@ -16,6 +21,12 @@ function signal = get_speech(spect_mag,spect_phase,f,freq_res,window,overlap)
             
             signal(end-overlap_len+1:end) = overlap_part;
             signal = [signal;non_overlap_part];
+
+%             overlap_part = (signal(end-overlap_len+1:end) + signal_segment(1:overlap_len));
+%             non_overlap_part = signal_segment(overlap_len+1:end);
+%             
+%             signal(end-overlap_len+1:end) = overlap_part;
+%             signal = [signal;non_overlap_part];
         end
     end
 end
