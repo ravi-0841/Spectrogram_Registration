@@ -8,8 +8,8 @@ w = 0.025;
 s = 0.015;
 linear_registration = 0;
 
-[spect_ang_mag, spect_ang_phase] = get_spectrogram(s_ang,f,r,w,s);
-[spect_neu_mag, spect_neu_phase] = get_spectrogram(s_neu,f,r,w,s);
+[spect_ang_mag, spect_ang_phase] = get_spectrogram(s_ang,f,r,w,s,0);
+[spect_neu_mag, spect_neu_phase] = get_spectrogram(s_neu,f,r,w,s,0);
 
 n_cols = min([size(spect_neu_mag,2), size(spect_ang_mag,2)]);
 res_spect_ang_mag = imresize(spect_ang_mag,[size(spect_ang_mag,1),n_cols]);

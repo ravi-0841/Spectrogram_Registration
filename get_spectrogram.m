@@ -1,4 +1,4 @@
-function [spect_mag,spect_phase] = get_spectrogram(signal,fs,freq_res,window,stride)
+function [spect_mag,spect_phase] = get_spectrogram(signal,fs,freq_res,window,stride,nmz)
     signal = reshape(signal, [length(signal),1]);
     sample_size = fs*window;
     sample_stride = fs*stride;
@@ -26,4 +26,8 @@ function [spect_mag,spect_phase] = get_spectrogram(signal,fs,freq_res,window,str
     end
     spect_mag = spect_mag(1:freq_res/2+1, :);
     spect_phase = spect_phase(1:freq_res/2+1, :);
+    
+    if nmz==1
+        spect_mag = normc(spect_mag);
+    end
 end
