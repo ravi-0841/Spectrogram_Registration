@@ -68,7 +68,7 @@ clear all
 addpath(genpath('./dtw'));
 addpath(genpath('./mfcc'));
 
-[d1,sr] = audioread('angry.wav');
+[d1,sr] = audioread('happy.wav');
 [d2,sr] = audioread('neutral.wav');
 
 d1 = -1 + 2*((d1 - min(d1)) / (max(d1) - min(d1)));
