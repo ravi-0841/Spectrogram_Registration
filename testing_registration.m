@@ -19,18 +19,13 @@ spect_ang_phase = angle(spect_ang);
 spect_neu_mag = abs(spect_neu);
 spect_neu_phase = angle(spect_neu);
 
-% [spect_ang_mag, spect_ang_phase] = get_spectrogram(s_ang,f,r,w,s,0);
-% [spect_neu_mag, spect_neu_phase] = get_spectrogram(s_neu,f,r,w,s,0);
+spect_neu_mag = mat2gray(spect_neu_mag);
+spect_ang_mag = mat2gray(spect_ang_mag);
 
-% n_cols = min([size(spect_neu_mag,2), size(spect_ang_mag,2)]);
-% res_spect_ang_mag = imresize(spect_ang_mag,[size(spect_ang_mag,1),n_cols]);
-% res_spect_neu_mag = imresize(spect_neu_mag,[size(spect_neu_mag,1),n_cols]);
-% 
-% res_spect_ang_phase = imresize(spect_ang_phase,[size(spect_ang_phase,1),n_cols]);
-% res_spect_neu_phase = imresize(spect_neu_phase,[size(spect_neu_phase,1),n_cols]);
+% figure(), subplot(121), imshow(spect_neu_mag, []), title('Neutral'), subplot(122), imshow(spect_ang_mag, []), title('Angry'), colormap('jet')
 
 %% Reconstruction Check
-% s_neu_recon = get_speech(spect_neu_mag,spect_neu_phase,f,r,w,s,1);
+s_neu_recon = get_speech(spect_neu_mag,spect_neu_phase,f,r,w,s,1);
 % figure(), plot(s_neu, 'r'), hold on, plot(s_neu_recon, 'g'), title('Reconstruction');
 
 %% Registration of magnitude spectrograms
@@ -108,7 +103,7 @@ if linear_registration==0
 
 %     res_reg_mag = imresize(registered_mag,size(spect_neu_mag));
 %     res_reg_phase = imresize(registered_phase,size(spect_neu_phase));
-    recon_speech_freq_warped = get_speech(registered_mag,registered_phase,f,r,w,s);
+    recon_speech_freq_warped = get_speech(registered_mag,registered_phase,f,r,w,s,1);
 
 %% Warping only the time axis
     mod_disp_field = disp_field;

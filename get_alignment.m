@@ -24,8 +24,8 @@ function [d1_recon, d2_recon] = get_alignment(d1,d2,sr)
 
 %     figure(), subplot(121), imshow(d1_mag, []), title('D1 Original'), subplot(122), imshow(d1_mag_tilda, []), title('D1 Warped'), colormap('jet');
 %     figure(), subplot(121), imshow(d2_mag, []), title('D2 Original'), subplot(122), imshow(d2_mag_tilda, []), title('D2 Warped'), colormap('jet');
-    d1_recon = get_speech(d1_mag_tilda,d1_phase_tilda,sr,512,0.025,0.015);
-    d2_recon = get_speech(d2_mag_tilda,d2_phase_tilda,sr,512,0.025,0.015);
+    d1_recon = get_speech(d1_mag_tilda,d1_phase_tilda,sr,512,0.025,0.015,1);
+    d2_recon = get_speech(d2_mag_tilda,d2_phase_tilda,sr,512,0.025,0.015,1);
 %     sound(d1_recon, sr);
 %     pause(2)
 %     sound(d2_recon, sr);
