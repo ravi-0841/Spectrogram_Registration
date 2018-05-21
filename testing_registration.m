@@ -1,6 +1,6 @@
 warning('off', 'all');
 [s_ang,~] = audioread('./angry.wav');
-[s_neu,~] = audioread('./neutral.wav');
+[s_neu,~] = audioread('./neutral_silence.wav');
 
 f = 16000;
 r = 512;
@@ -8,7 +8,7 @@ w = 0.025;
 s = 0.015;
 linear_registration = 0;
 
-% [s_neu, s_ang] = get_alignment(s_neu, s_ang, f);
+[s_neu, s_ang] = get_alignment(s_neu,s_ang,f,w,w-s,r);
 
 spect_ang = spectrogram(s_ang,w*f,int64((w-s)*f),r);
 spect_neu = spectrogram(s_neu,w*f,int64((w-s)*f),r);
