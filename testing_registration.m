@@ -1,6 +1,6 @@
 warning('off', 'all');
 [s_ang,~] = audioread('./angry.wav');
-[s_neu,~] = audioread('./neutral_silence.wav');
+[s_neu,~] = audioread('./neutral.wav');
 
 f = 16000;
 r = 512;
@@ -8,7 +8,7 @@ w = 0.025;
 s = 0.015;
 linear_registration = 0;
 
-[s_neu, s_ang] = get_alignment(s_neu,s_ang,f,w,w-s,r);
+[s_neu, s_ang] = get_alignment(s_neu,s_ang,f,w,w-s,r,3);
 
 spect_ang = spectrogram(s_ang,w*f,int64((w-s)*f),r);
 spect_neu = spectrogram(s_neu,w*f,int64((w-s)*f),r);
@@ -22,11 +22,12 @@ spect_neu_phase = angle(spect_neu);
 spect_neu_mag = mat2gray(spect_neu_mag);
 spect_ang_mag = mat2gray(spect_ang_mag);
 
-% figure(), subplot(121), imshow(spect_neu_mag, []), title('Neutral'), subplot(122), imshow(spect_ang_mag, []), title('Angry'), colormap('jet')
+figure(), subplot(121), imshow(spect_neu_mag, []), title('Neutral'), subplot(122), imshow(spect_ang_mag, []), title('Angry'), colormap('jet')
 
 %% Reconstruction Check
-s_neu_recon = get_speech(spect_neu_mag,spect_neu_phase,f,r,w,s,1);
-% figure(), plot(s_neu, 'r'), hold on, plot(s_neu_recon, 'g'), title('Reconstruction');
+s_ang_recon = get_speech(spect_ang_mag,spect_ang_phase,f,r,w,s,1);
+s_ang_recon = -1 + 2*(s_ang_recon - min(s_ang_recon))/(max(s_ang_recon) - min(s_ang_recon));
+figure(), plot(s_ang, 'r'), hold on, plot(s_ang_recon, 'g'), title('Reconstruction');
 
 %% Registration of magnitude spectrograms
 if linear_registration          % Linear Registration
