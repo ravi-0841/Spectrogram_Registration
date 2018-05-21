@@ -10,8 +10,8 @@ linear_registration = 0;
 
 % [s_neu, s_ang] = get_alignment(s_neu, s_ang, f);
 
-spect_ang = spectrogram(s_ang,w*f,int64((w-s)*f),r);
-spect_neu = spectrogram(s_neu,w*f,int64((w-s)*f),r);
+spect_ang = spectrogram(s_ang,w*f,(w-s)*f,r);
+spect_neu = spectrogram(s_neu,w*f,(w-s)*f,r);
 
 spect_ang_mag = abs(spect_ang);
 spect_ang_phase = angle(spect_ang);
@@ -30,7 +30,7 @@ spect_neu_phase = angle(spect_neu);
 % res_spect_neu_phase = imresize(spect_neu_phase,[size(spect_neu_phase,1),n_cols]);
 
 %% Reconstruction Check
-% s_neu_recon = get_speech(spect_neu_mag,spect_neu_phase,f,r,w,s,1);
+% s_neu_recon = get_speech(spect_neu_mag,spect_neu_phase,f,r,w,s);
 % figure(), plot(s_neu, 'r'), hold on, plot(s_neu_recon, 'g'), title('Reconstruction');
 
 %% Registration of magnitude spectrograms
@@ -68,15 +68,15 @@ else                            % Non-Linear Registration
 %     figure(), subplot(121), imshowpair(res_spect_neu_phase,res_spect_ang_phase), title('Unregistered');
 %     subplot(122), imshowpair(registered_phase,res_spect_ang_phase), title('Phase Registration');
     
-    figure(), subplot(121), imshowpair(spect_neu_mag,spect_ang_mag), title('Unregistered');
-    subplot(122), imshowpair(registered_mag,spect_ang_mag), title('Spectrogram Registration');
+    figure(), subplot(121), imshowpair(flipud(spect_neu_mag),flipud(spect_ang_mag)), title('Unregistered');
+    subplot(122), imshowpair(flipud(registered_mag),flipud(spect_ang_mag)), title('Spectrogram Registration');
     
-    figure(), subplot(121), imshow(spect_neu_mag,[]), colormap('jet'), title('Original Spectrogram');
-    subplot(122), imshow(registered_mag,[]), colormap('jet'), title('Modified Spectrogram');
+    figure(), subplot(121), imshow(flipud(spect_neu_mag),[]), colormap('jet'), title('Original Spectrogram');
+    subplot(122), imshow(flipud(registered_mag),[]), colormap('jet'), title('Modified Spectrogram');
     
 %     res_reg_mag = imresize(registered_mag,size(spect_neu_mag));
 %     res_reg_phase = imresize(registered_phase,size(spect_neu_phase));
-    recon_speech = get_speech(registered_mag,registered_phase,f,r,w,s,1);
+    recon_speech = get_speech(registered_mag,registered_phase,f,r,w,s);
 end
 
 %% Visualize the vector field and apply independent transformations
@@ -133,7 +133,7 @@ if linear_registration==0
 
 %     res_reg_mag = imresize(registered_mag,size(spect_neu_mag));
 %     res_reg_phase = imresize(registered_phase,size(spect_neu_phase));
-    recon_speech_time_warped = get_speech(registered_mag,spect_ang_phase,f,r,w,s,1);
+    recon_speech_time_warped = get_speech(registered_mag,spect_ang_phase,f,r,w,s);
 end
 
 %% Plot the original and reconstructed Speech

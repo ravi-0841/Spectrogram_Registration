@@ -15,6 +15,6 @@ spect_neu = spectrogram(s_neu,w,o,r);
 
 figure(), subplot(121), imshow(flipud(abs(spect_neu)), []), subplot(122), imshow(flipud(abs(spect_ang)), []), colormap('jet')
 
-recon_ang_speech = get_speech(abs(spect_ang),angle(spect_ang),f,r,w/f,s/f);
+recon_ang_speech = get_speech(abs(spect_neu),angle(spect_neu),f,r,w/f,s/f,1);
 soundsc(recon_ang_speech,f);
-figure(), subplot(211), plot(s_ang), subplot(212), plot(recon_ang_speech)
+figure(), subplot(211), plot(s_neu), subplot(212), plot(recon_ang_speech)
