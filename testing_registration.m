@@ -8,7 +8,8 @@ w = 0.025;
 s = 0.015;
 linear_registration = 0;
 
-[s_neu, s_ang] = get_alignment(s_neu,s_ang,f,w,w-s,r,3);
+figure(1), plot(s_ang, 'r')
+[s_neu, s_ang] = get_alignment(s_neu,s_ang,f,w,w-s,r,1);
 
 spect_ang = spectrogram(s_ang,w*f,int64((w-s)*f),r);
 spect_neu = spectrogram(s_neu,w*f,int64((w-s)*f),r);
@@ -27,7 +28,7 @@ figure(), subplot(121), imshow(spect_neu_mag, []), title('Neutral'), subplot(122
 %% Reconstruction Check
 s_ang_recon = get_speech(spect_ang_mag,spect_ang_phase,f,r,w,s,1);
 s_ang_recon = -1 + 2*(s_ang_recon - min(s_ang_recon))/(max(s_ang_recon) - min(s_ang_recon));
-figure(), plot(s_ang, 'r'), hold on, plot(s_ang_recon, 'g'), title('Reconstruction');
+figure(1), hold on, plot(s_ang_recon, 'g'), title('Reconstruction');
 
 %% Registration of magnitude spectrograms
 if linear_registration          % Linear Registration
