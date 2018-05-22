@@ -47,7 +47,7 @@ idx_12 = zeros(1, size(D2,2));
 for i = 1:length(idx_12) 
     idx_12(i) = p(find(q >= i,1)); 
 end
-% Phase-vocoder interpolate D2's STFT
+% Phase-vocoder interpolate D1's STFT
 D1x = pvsample(D1, idx_12-1, 128);
 % Invert it back to time domain
 d1x = istft(D1x, 512, 400, 240);
@@ -98,8 +98,8 @@ for i = 1:length(idx_12)
 end
 
 % Direct Reconstruction using stft interpolation
-[d1_mag_tilda, d1_phase_tilda] = interpolate_stft_from_dtw(d1_mag,d1_phase,idx_12);
-[d2_mag_tilda, d2_phase_tilda] = interpolate_stft_from_dtw(d2_mag,d2_phase,idx_21);
+[d1_mag_tilda, d1_phase_tilda] = interpolate_stft_from_dtw(d1_mag,d1_phase,p); %idx_12
+[d2_mag_tilda, d2_phase_tilda] = interpolate_stft_from_dtw(d2_mag,d2_phase,q); %idx_21
 
 % figure(), subplot(121), imshow(d1_mag, []), title('D1 Original'), subplot(122), imshow(d1_mag_tilda, []), title('D1 Warped'), colormap('jet');
 % figure(), subplot(121), imshow(d2_mag, []), title('D2 Original'), subplot(122), imshow(d2_mag_tilda, []), title('D2 Warped'), colormap('jet');

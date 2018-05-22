@@ -32,4 +32,7 @@ function [i_mag, i_phase] = interpolate_stft_from_dtw(mag,phase,p)
             counter = counter + 1;
         end
     end
+    figure()
+    subplot(211), plot(i_phase(10,:)), title('Phase')
+    subplot(212), plot(i_mag(10,:)), title('Magnitude')
 end
