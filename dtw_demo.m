@@ -96,14 +96,17 @@ figure(), imshow(M, [])
 [p,q,C] = dtw(1-M,'slopeThird');
 hold on; plot(q,p,'r'); hold off
 
-d1_mag_tilda = d1_mag(:,p);
-d1_phase_tilda = d1_phase(:,p);
+% d1_mag_tilda = d1_mag(:,p);
+% d1_phase_tilda = d1_phase(:,p);
+% 
+% d2_mag_tilda = d2_mag(:,q);
+% d2_phase_tilda = d2_phase(:,q);
 
-d2_mag_tilda = d2_mag(:,q);
-d2_phase_tilda = d2_phase(:,q);
+[d1_mag_tilda, d1_phase_tilda] = interpolate_stft_from_dtw(d1_mag,d1_phase,p);
+[d2_mag_tilda, d2_phase_tilda] = interpolate_stft_from_dtw(d2_mag,d2_phase,q);
 
-% figure(), subplot(121), imshow(d1_mag, []), title('D1 Original'), subplot(122), imshow(d1_mag_tilda, []), title('D1 Warped'), colormap('jet');
-% figure(), subplot(121), imshow(d2_mag, []), title('D2 Original'), subplot(122), imshow(d2_mag_tilda, []), title('D2 Warped'), colormap('jet');
+figure(), subplot(121), imshow(d1_mag, []), title('D1 Original'), subplot(122), imshow(d1_mag_tilda, []), title('D1 Warped'), colormap('jet');
+figure(), subplot(121), imshow(d2_mag, []), title('D2 Original'), subplot(122), imshow(d2_mag_tilda, []), title('D2 Warped'), colormap('jet');
 d1_recon = get_speech(d1_mag_tilda,d1_phase_tilda,f,512,0.025,0.015,1);
 d2_recon = get_speech(d2_mag_tilda,d2_phase_tilda,f,512,0.025,0.015,1);
 sound(d1_recon, f);
