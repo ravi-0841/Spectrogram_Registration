@@ -1,7 +1,7 @@
 clear all
 
 w = 0.025;
-o = 0.015;
+o = 0.010;
 r = 512;
 
 [d1,f] = audioread('angry.wav');
@@ -21,8 +21,8 @@ d1_phase = angle(D1);
 d2_mag = abs(D2);
 d2_phase = angle(D2);
 
-[d1_feat,~,~] = mfcc(d1,f,25,10,0.97,'hamming',[130, 4000],20,26,22);
-[d2_feat,~,~] = mfcc(d2,f,25,10,0.97,'hamming',[130, 4000],20,26,22);
+[d1_feat,~,~] = mfcc(d1,f,25,15,0.97,'hamming',[130, 4000],20,26,22);
+[d2_feat,~,~] = mfcc(d2,f,25,15,0.97,'hamming',[130, 4000],20,26,22);
 
 SM = pair_sim(d1_feat,d2_feat,'cosine');
 subplot(121)
@@ -33,18 +33,14 @@ colormap(1-gray)
 hold on; plot(q,p,'r'); hold off
 subplot(122)
 imagesc(C)
-hold on; plot(q,p,'r'); hold off
+hold on; plot(q,p,'r'); hold off;
 
-% Bottom right corner of C gives cost of minimum-cost alignment of the two
-C(size(C,1),size(C,2))
-
-% Calculate the frames in D2 that are indicated to match each frame
-% in D1, so we can resynthesize a warped, aligned version
+% Calculate the frames in D2 that are indicated to match each frame in D1
 D2i1 = zeros(1, size(D1,2));
 for i = 1:length(D2i1) 
     D2i1(i) = q(find(p >= i,1)); 
 end
-% Phase-vocoder interpolate D2's STFT under the time warp
+% Phase-vocoder interpolate D2's STFT
 D2x = pvsample(D2, D2i1-1, 128);
 % Invert it back to time domain
 d2x = istft(D2x, 512, 512, 128);
@@ -56,7 +52,7 @@ D1i1 = zeros(1, size(D2,2));
 for i = 1:length(D1i1) 
     D1i1(i) = p(find(q >= i,1)); 
 end
-% Phase-vocoder interpolate D2's STFT under the time warp
+% Phase-vocoder interpolate D2's STFT
 D1x = pvsample(D1, D1i1-1, 128);
 % Invert it back to time domain
 d1x = istft(D1x, 512, 512, 128);

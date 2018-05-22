@@ -7,7 +7,6 @@ function signal = get_speech(spect_mag,spect_phase,f,freq_res,window,stride,use_
     
     if use_hamm
         inverse_hamm = 1./hamming(window_len);
-%         inverse_hann = [0;inverse_hann(2:end-1);0];
     end
     
     for i = 1:size(spect_mag,2)
