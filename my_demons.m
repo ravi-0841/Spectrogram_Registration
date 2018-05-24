@@ -1,5 +1,6 @@
-function [disp_field,moved_image] = my_demons(fixed_img, moving_img, alpha, sigma_diff, epsilon)
+function [disp_field,moved_img] = my_demons(fixed_img, moving_img, alpha, sigma_diff, epsilon)
 
+    disp(['Initial SSD ' num2str(sum(sum((fixed_img - moving_img).^2)))]);
     max_iter = 5000;
     vec_field_x = zeros(size(moving_img));
     vec_field_y = zeros(size(moving_img));
@@ -41,15 +42,18 @@ function [disp_field,moved_image] = my_demons(fixed_img, moving_img, alpha, sigm
         current_moved = imwarp(moving_img, disp_field);
         iterator = iterator + 1;
         new_mi = mutual_info(fixed_img, current_moved);
-        
     end
     
     disp(['Final mutual info: ' num2str(old_mi - new_mi)]);
-    moved_image = current_moved;
+    moved_img = current_moved;
+    disp(['Initial SSD ' num2str(sum(sum((fixed_img - moved_img).^2)))]);
     
-    subplot(221), imshow(fixed_img, []), title('Fixed')
-    subplot(222), imshow(moving_img, []), title('Moving')
-    flow = opticalFlow(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)));
-    subplot(223), plot(flow, 'DecimationFactor',[10,5]);
-    subplot(224), imshow(moved_image, [])
+%     subplot(221), imshow(fixed_img, []), title('Fixed')
+%     subplot(222), imshow(moving_img, []), title('Moving')
+%     flow = opticalFlow(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)));
+%     subplot(223), plot(flow, 'DecimationFactor',[10,5]);
+%     subplot(224), imshow(moved_image, [])
+
+    subplot(121), imshowpair(fixed_img, moving_img), title('unregistered')
+    subplot(122), imshowpair(fixed_img, moved_img), title('registered')
 end
