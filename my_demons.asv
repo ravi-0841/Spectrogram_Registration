@@ -11,9 +11,9 @@ function [disp_field,moved_image] = my_demons(fixed_img, moving_img, alpha, sigm
     iterator = 1;
 
     new_mi = mutual_info(fixed_img, moving_img);
-    old_mi = new_mi - 100;
+    old_mi = Inf;
 
-    while iterator<max_iter && abs(new_mi - old_mi)>epsilon
+    while iterator < max_iter && (old_mi - new_mi)>epsilon
         old_mi = new_mi;
         
         if mod(iterator,1000)==0
@@ -38,9 +38,7 @@ function [disp_field,moved_image] = my_demons(fixed_img, moving_img, alpha, sigm
         
         disp_field = cat(3, vec_field_x, vec_field_y);
         current_moved = imwarp(moving_img, disp_field);
-        iterator = iterator + 1;
         new_mi = mutual_info(fixed_img, current_moved);
-        disp(['Current mutual info: ' num2str(old_mi - new_mi)]);
     end
     moved_image = current_moved;
     
