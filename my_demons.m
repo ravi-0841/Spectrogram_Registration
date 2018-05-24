@@ -17,7 +17,8 @@ function [disp_field,moved_image] = my_demons(fixed_img, moving_img, alpha, sigm
         old_mi = new_mi;
         
         if mod(iterator,1000)==0
-            disp(['Iteration number: ' num2str(iterator) '\n' 'Mutual Info' num2str(new_mi)]);
+            disp(['Iteration number: ' num2str(iterator) '   and    ' 'Mutual Info' num2str(new_mi)]);
+            disp(['Current mutual info: ' num2str(old_mi - new_mi)]);
         end
         
         [G_mov_x, G_mov_y] = imgradientxy(current_moved, 'central');
@@ -40,8 +41,10 @@ function [disp_field,moved_image] = my_demons(fixed_img, moving_img, alpha, sigm
         current_moved = imwarp(moving_img, disp_field);
         iterator = iterator + 1;
         new_mi = mutual_info(fixed_img, current_moved);
-        disp(['Current mutual info: ' num2str(old_mi - new_mi)]);
+        
     end
+    
+    disp(['Final mutual info: ' num2str(old_mi - new_mi)]);
     moved_image = current_moved;
     
     subplot(221), imshow(fixed_img, []), title('Fixed')

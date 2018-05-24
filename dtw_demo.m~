@@ -104,25 +104,19 @@ end
 d1_recon = get_speech(d1_mag_tilda,d1_phase_tilda,f,512,0.025,0.015,1);
 d2_recon = get_speech(d2_mag_tilda,d2_phase_tilda,f,512,0.025,0.015,1);
 
-% d1_recon = -1 + (d1_recon - min(min(d1_recon))) ./ (max(max(d1_recon)) - min(min(d1_recon)));
-% d2_recon = -1 + (d2_recon - min(min(d2_recon))) ./ (max(max(d2_recon)) - min(min(d2_recon)));
-
-% Fn = f/2;
-% Wp = 3000/Fn;                                           % Passband Frequency (Normalised)
-% Ws = 4999/Fn;                                           % Stopband Frequency (Normalised)
-% Rp =   1;                                               % Passband Ripple (dB)
-% Rs = 150;                                               % Stopband Ripple (dB)
-% [n,Ws] = cheb2ord(Wp,Ws,Rp,Rs);                         % Filter Order
-% [z,p,k] = cheby2(n,Rs,Ws,'low');                        % Filter Design
-% [soslp,glp] = zp2sos(z,p,k);                            % Convert To Second-Order-Section For Stability
+Fn = f/2;
+Wp = 7000/Fn;                                           % Passband Frequency (Normalised)
+Ws = 7999/Fn;                                           % Stopband Frequency (Normalised)
+Rp =   1;                                               % Passband Ripple (dB)
+Rs = 150;                                               % Stopband Ripple (dB)
+[n,Ws] = cheb2ord(Wp,Ws,Rp,Rs);                         % Filter Order
+[z,p,k] = cheby2(n,Rs,Ws,'low');                        % Filter Design
+[soslp,glp] = zp2sos(z,p,k);                            % Convert To Second-Order-Section For Stability
 % figure(3)
-% freqz(soslp, 2^16, f)                                   % Filter Bode Plot
-% filtered_sound = filtfilt(soslp, glp, d1_recon);
+% freqz(soslp, 2^16, f)                                  % Filter Bode Plot
+filtered_sound = filtfilt(soslp, glp, d2_recon);
+soundsc(filtered_sound, f)
 
-[b,a] = butter(10, 4000/(f/2));
-d1_filtered_sound = filtfilt(b,a,d1_recon);
-d2_filtered_sound = filtfilt(b,a,d2_recon);
-
-sound(d1_filtered_sound, f);
-pause(2)
-sound(d2_filtered_sound, f);
+% soundsc(mat2gray(d1_recon), f);
+% pause(2)
+% soundsc(mat2gray(d2_recon), f);
