@@ -1,0 +1,16 @@
+function vec_field = demons_registration(fixed, moving, alpha, max_iter, loss_criterion)
+    vec_field_x = zeros(size(moving));
+    vec_field_y = zeros(size(moving));
+    
+    [G_fix_x, G_fix_y] = imgradientxy(fixed,'central');
+    [G_fix_mag, G_fix_dir] = imgradient();
+    
+    current_moved = moving;
+    
+    for i = 1:max_iter
+        [G_mov_x, G_mov_y] = imgradientxy(current_moved, 'central');
+        [G_mov_mag, G_mov_dir] = imgradient(G_mov_x, G_mov_y);
+        vec_field_x = ((current_moved - fixed).*G_mov_x) ./ ...
+                (alpha.^2 * (current_moved - fixed).^2 + G_m)
+    end
+end
