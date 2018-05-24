@@ -1,4 +1,4 @@
-function [disp_field,moved_image] = demons_registration(fixed_img, moving_img, alpha, sigma_diff, max_iter)
+function [disp_field,moved_image] = my_demons(fixed_img, moving_img, alpha, sigma_diff, max_iter)
     vec_field_x = zeros(size(moving_img));
     vec_field_y = zeros(size(moving_img));
     
@@ -8,7 +8,10 @@ function [disp_field,moved_image] = demons_registration(fixed_img, moving_img, a
     current_moved = moving_img;
     
     for i = 1:max_iter
-%         disp(['Iteration number: ' num2str(i)]);
+        if mod(i,100)==0
+            disp(['Iteration number: ' num2str(i)]);
+        end
+        
         [G_mov_x, G_mov_y] = imgradientxy(current_moved, 'central');
         [G_mov_mag, ~] = imgradient(G_mov_x, G_mov_y);
         
