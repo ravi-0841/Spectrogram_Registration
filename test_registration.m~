@@ -3,18 +3,17 @@ warning('off', 'all');
 [s_neu,~] = audioread('./wav/neutral.wav');
 
 f = 16000;
-r = 512;
+r = 1024;
 w = 0.025;
-s = 0.010;
+s = 0.015;
 linear_registration = 0;
 
-[s_neu, s_ang] = get_alignment(s_neu,s_ang,f,w,w-s,r,3);
+% [s_neu, s_ang] = get_alignment(s_neu,s_ang,f,w,w-s,r,3);
+
+spect_ang = imresize(spect_ang, [r, min([size(s)])])
 
 spect_ang = spectrogram(s_ang,w*f,int64((w-s)*f),r);
 spect_neu = spectrogram(s_neu,w*f,int64((w-s)*f),r);
-
-% spect_ang = imresize(spect_ang, [r/2 + 1, min([size(spect_ang,2), size(spect_neu,2)])]);
-% spect_neu = imresize(spect_neu, [r/2 + 1, min([size(spect_ang,2), size(spect_neu,2)])]);
 
 spect_ang_mag = abs(spect_ang);
 spect_ang_phase = angle(spect_ang);
@@ -22,8 +21,8 @@ spect_ang_phase = angle(spect_ang);
 spect_neu_mag = abs(spect_neu);
 spect_neu_phase = angle(spect_neu);
 
-spect_neu_mag = mat2gray(log(1 + spect_neu_mag));
-spect_ang_mag = mat2gray(log(1 + spect_ang_mag));
+spect_neu_mag = mat2gray(spect_neu_mag);
+spect_ang_mag = mat2gray(spect_ang_mag);
 
 figure(), subplot(121), imshow(spect_neu_mag, []), title('Neutral'), subplot(122), imshow(spect_ang_mag, []), title('Angry'), colormap('jet')
 
