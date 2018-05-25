@@ -33,6 +33,7 @@ mi_matrix = zeros(length(sigma_diff_grid), length(sigma_fluid_grid));
 
 for sd = 1:length(sigma_diff_grid)
     for sf = 1:length(sigma_fluid_grid)
+        disp(['Sigma Fluid: ' num2str(sigma_fluid_grid(sf)) ' and ' 'Sigma Diff: ' num2str(sigma_diff_grid(sd))]);
         [~,~,ssd_matrix(sd,sf),mi_matrix(sd,sf)] = my_demons(spect_ang_mag, spect_neu_mag, ...
                                     0.4, sigma_fluid_grid(sf), sigma_diff_grid(sd), 0.000001);
     end
