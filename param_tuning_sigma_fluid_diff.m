@@ -25,8 +25,8 @@ spect_neu_mag = mat2gray(spect_neu_mag);
 spect_ang_mag = mat2gray(spect_ang_mag);
 
 
-sigma_diff_grid = 0.1:0.1:3;
-sigma_fluid_grid = 0.1:0.1:3;
+sigma_diff_grid = 0.5:0.1:2;
+sigma_fluid_grid = 0.5:0.1:2;
 
 ssd_matrix = zeros(length(sigma_diff_grid), length(sigma_fluid_grid));
 mi_matrix = zeros(length(sigma_diff_grid), length(sigma_fluid_grid));
