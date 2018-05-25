@@ -1,0 +1,16 @@
+%% SSD based registration Parameter Tuning
+
+
+
+sigma_diff_grid = 0.1:0.1:3;
+sigma_fluid_grid = 0.1:0.1:3;
+
+ssd_matrix = zeros(length(sigma_diff_grid), length(sigma_fluid_grid));
+mi_matrix = zeros(length(sigma_diff_grid), length(sigma_fluid_grid));
+
+for sd = 1:length(sigma_diff_grid)
+    for sf = 1:length(sigma_fluid_grid)
+        [~,~,ssd_matrix(sd,sf),mi_matrix(sd,sf)] = my_demons(spect_ang_mag, spect_neu_mag, ...
+                                    0.4, sigma_fluid_grid(sf), sigma_diff_grid(sd), 0.000001);
+    end
+end
