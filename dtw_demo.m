@@ -81,10 +81,10 @@ d2_phase = angle(d2_spect);
 [d2_feat,~,~] = mfcc(d2,f,25,15,0.97,'hamming',[130, 4000],20,26,22);
 
 M = pair_sim(d1_feat, d2_feat, 'cosine');
-[p,q,C] = dtw(1-M,'slopeThird');
+[p,q,C] = dtw(1-M,'unconstrained');
 
-% figure(), imagesc(1-M), colormap(jet), colorbar;
-% hold on; plot(q,p,'w'); hold off
+figure(), imagesc(1-M), colormap(jet), colorbar;
+hold on; plot(q,p,'w'); hold off
 
 idx_21 = zeros(1, size(d1_mag,2));
 for i = 1:length(idx_21) 
@@ -100,8 +100,8 @@ end
 [d1_mag_tilda, d1_phase_tilda] = interpolate_stft_from_dtw(d1_mag,d1_phase,p); %idx_12
 [d2_mag_tilda, d2_phase_tilda] = interpolate_stft_from_dtw(d2_mag,d2_phase,q); %idx_21
 
-% figure(), subplot(121), imshow(d1_mag, []), title('D1 Original'), subplot(122), imshow(d1_mag_tilda, []), title('D1 Warped'), colormap('jet');
-% figure(), subplot(121), imshow(d2_mag, []), title('D2 Original'), subplot(122), imshow(d2_mag_tilda, []), title('D2 Warped'), colormap('jet');
+figure(), subplot(121), imshow(d1_mag, []), title('D1 Original'), subplot(122), imshow(d1_mag_tilda, []), title('D1 Warped'), colormap('jet');
+figure(), subplot(121), imshow(d2_mag, []), title('D2 Original'), subplot(122), imshow(d2_mag_tilda, []), title('D2 Warped'), colormap('jet');
 d1_recon = get_speech(d1_mag_tilda,d1_phase_tilda,f,r,w,s,1);
 d2_recon = get_speech(d2_mag_tilda,d2_phase_tilda,f,r,w,s,1);
 
