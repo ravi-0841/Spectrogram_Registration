@@ -60,10 +60,10 @@ w = 0.025;
 o = 0.010;
 s = w-o;
 f = 16000;
-r = 8192;
+r = 512;
 
-[d1,~] = audioread('angry.wav');
-[d2,~] = audioread('neutral.wav');
+[d1,~] = audioread('./wav/angry.wav');
+[d2,~] = audioread('./wav/happy.wav');
 
 d1 = -1 + 2*((d1 - min(d1)) / (max(d1) - min(d1)));
 d2 = -1 + 2*((d2 - min(d2)) / (max(d2) - min(d2)));

@@ -25,7 +25,7 @@ function [i_mag, i_phase] = interpolate_stft_from_dtw(mag,phase,p)
                 disp([start_val, end_val]);
                 i_mag(:,counter) = mag(:,start_val) + r*delta_mag;
                 i_phase(:,counter) = phase(:,start_val) + r*delta_phase;
-%                 z = mvnrnd(phase(:,end_val), eye(257,257));
+%                 z = mvnrnd(phase(:,start_val), eye(size(phase,1)));
 %                 i_phase(:,counter) = z';
                 counter = counter + 1;
             end
