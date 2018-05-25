@@ -22,7 +22,7 @@ D2 = specgram(d2,512,f,400,160);
 [d1_feat,~,~] = mfcc(d1,f,25,15,0.97,'hamming',[130, 4000],20,26,22);
 [d2_feat,~,~] = mfcc(d2,f,25,15,0.97,'hamming',[130, 4000],20,26,22);
 
-SM = pair_sim(d1_feat,d2_feat,'cosine');
+SM = pair_sim(abs(D1),abs(D2),'cosine');
 imagesc(1-SM), colormap(jet), colorbar;
 
 [p,q,~] = dtw(1-SM, 'slopeThird');
@@ -123,6 +123,6 @@ d2_recon = get_speech(d2_mag_tilda,d2_phase_tilda,f,512,0.025,0.015,1);
 d1_filtered_sound = filtfilt(b,a,d1_recon);
 d2_filtered_sound = filtfilt(b,a,d2_recon);
 
-sound(d1_filtered_sound, f);
+soundsc(d1_filtered_sound, f);
 pause(2)
-sound(d2_filtered_sound, f);
+soundsc(d2_filtered_sound, f);

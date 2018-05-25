@@ -34,6 +34,9 @@ function [disp_field,moved_img] = my_demons(fixed_img, moving_img, alpha, sigma_
                 (alpha.^2 * (current_moved - fixed_img).^2 + G_fix_mag.^2) ... 
                 + ((current_moved - fixed_img).*G_mov_y) ./ ...
                 (alpha.^2 * (current_moved - fixed_img).^2 + G_mov_mag.^2);
+            
+        vec_field_x(isnan(vec_field_x)) = 0;
+        vec_field_y(isnan(vec_field_y)) = 0;
         
         vec_field_x = imgaussfilt(vec_field_x, sigma_diff);
         vec_field_y = imgaussfilt(vec_field_y, sigma_diff);
