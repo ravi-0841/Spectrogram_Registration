@@ -17,12 +17,12 @@ S=sqrt((0.5-0.5*cos(2*pi*(0:(N-1))'/(N)))/Q*2);
 
 %% Set DTW Parameters
 r = 512;
-w = 0.025;
+w = 0.030;
 s = 0.010;
 top = 3;
 
 %% Get the wav file in
-infile1='angry.wav'; % please provide a test file
+infile1='happy.wav'; % please provide a test file
 [x_ang,fs]=audioread(infile1);
 
 infile2='neutral.wav'; % please provide a test file
@@ -64,29 +64,32 @@ weights_asym_full=create_weights(W_asym_full,S,wshift,L);
 
 X0_ang = abs(X_ang);
 X0_neu = abs(X_neu);
-[~, warped_mag] = my_demons(log(1 + X0_ang),log(1 + X0_neu),0.4,0.7,1.5,0.000001);
+
+[disp_field, ~] = my_demons(log(1 + X0_ang),log(1 + X0_neu),0.4,0.7,1.5,0.000001);
+% disp_field(:,:,1) = zeros(size(squeeze(disp_field(:,:,1))));
+warped_mag = imwarp(log(1 + abs(X_neu)),disp_field);
+warped_phase = imwarp(angle(X_neu),disp_field);
 
 %% Perform a few iterations of Online LWS (aka. TF-RTISI-LA)
 if do_online_lws
     tic;
     look_ahead        = 3;
-    online_iterations = 10;
+    online_iterations = 100;
     online_alpha      = 1;
     online_beta       = 0.1;
     online_gamma      = 1;
     online_thresholds = online_alpha*exp(-online_beta*(0:(online_iterations-1)).^online_gamma);
     
-    X1=online_lws(warped_mag,weights,weights_asym_init,weights_asym_full,online_thresholds,look_ahead);
+    X1=online_lws(warped_mag.*exp(1j*angle(warped_phase)),weights,weights_asym_init,weights_asym_full,online_thresholds,look_ahead);
     time_online_lws = toc;
     
     tmp = stft(istft(X1,wshift,S),N,wshift,W)-X1;
-    C1 = 10*log10(Xpow_neu / sum(abs(tmp_neu(:)).^2));
+    C1 = 10*log10(Xpow_neu / sum(abs(tmp(:)).^2));
     fprintf(1,'+Online LWS     : %5.2f dB (time: %.2f s)\n',C1,time_online_lws);
     if output_wav
         x1=istft(X1,wshift,S);
         audiowrite('out_online_lws.wav',x1,fs);
     end
-
 else
     X1 = X0_neu;
 end
@@ -94,7 +97,7 @@ end
 %% run batch LWS
 if do_batch_lws
     tic;
-    iterations = 100;
+    iterations = 1000;
     alpha      = 100;
     beta       = 0.1;
     gamma      = 1;
@@ -104,7 +107,7 @@ if do_batch_lws
     time_bach_lws = toc;
     
     tmp = stft(istft(Y,wshift,S),N,wshift,W)-Y;
-    Cfinal = 10*log10(Xpow_neu / sum(abs(tmp_neu(:)).^2));
+    Cfinal = 10*log10(Xpow_neu / sum(abs(tmp(:)).^2));
     fprintf(1,'+Batch LWS      : %5.2f dB (time: %.2f s)\n',Cfinal,time_bach_lws);
     if output_wav
         y=istft(Y,wshift,S);
