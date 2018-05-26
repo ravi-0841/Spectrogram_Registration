@@ -15,20 +15,12 @@ Q=N/wshift;
 W=sqrt((0.5-0.5*cos(2*pi*(0:(N-1))'/(N)))/Q*2);
 S=sqrt((0.5-0.5*cos(2*pi*(0:(N-1))'/(N)))/Q*2);
 
-%% Set DTW Parameters
-r = 512;
-w = 0.025;
-s = 0.010;
-top = 3;
-
 %% Get the wav file in
 infile1='angry.wav'; % please provide a test file
 [x_ang,fs]=audioread(infile1);
 
 infile2='neutral.wav'; % please provide a test file
 [x_neu,fs]=audioread(infile2);
-
-[x_neu, x_ang] = get_alignment(x_neu,x_ang,fs,w,w-s,r,top);
 
 if size(x_ang,2)>1, fprintf('This code only handles single channel files\n'); return; end
 if size(x_neu,2)>1, fprintf('This code only handles single channel files\n'); return; end
@@ -59,12 +51,14 @@ weights=create_weights(W,S,wshift,L);
 weights_asym_init=create_weights(W_asym_init,S,wshift,L);
 weights_asym_full=create_weights(W_asym_full,S,wshift,L);
 
-%% Perform Demons Registration
+%% Perform "no future" initialization
 % At this point, this does not seem to help much w.r.t. doing nothing
 
-X0_ang = abs(X_ang);
-X0_neu = abs(X_neu);
-[~, warped_mag] = my_demons(log(1 + X0_ang),log(1 + X0_neu),0.4,0.7,1.5,0.000001);
+    X0_ang = abs(X_ang);
+    X0_neu = abs(X_neu);
+end
+
+[~, warped_mag] = my_demons(X0_ang,X0_neu,0.4,0.7,1.5,0.000001);
 
 %% Perform a few iterations of Online LWS (aka. TF-RTISI-LA)
 if do_online_lws
@@ -80,7 +74,7 @@ if do_online_lws
     time_online_lws = toc;
     
     tmp = stft(istft(X1,wshift,S),N,wshift,W)-X1;
-    C1 = 10*log10(Xpow_neu / sum(abs(tmp_neu(:)).^2));
+    C1 = 10*log10(Xpow / sum(abs(tmp(:)).^2));
     fprintf(1,'+Online LWS     : %5.2f dB (time: %.2f s)\n',C1,time_online_lws);
     if output_wav
         x1=istft(X1,wshift,S);
@@ -88,7 +82,7 @@ if do_online_lws
     end
 
 else
-    X1 = X0_neu;
+    X1 = X0_ang;
 end
 
 %% run batch LWS
@@ -104,7 +98,7 @@ if do_batch_lws
     time_bach_lws = toc;
     
     tmp = stft(istft(Y,wshift,S),N,wshift,W)-Y;
-    Cfinal = 10*log10(Xpow_neu / sum(abs(tmp_neu(:)).^2));
+    Cfinal = 10*log10(Xpow / sum(abs(tmp(:)).^2));
     fprintf(1,'+Batch LWS      : %5.2f dB (time: %.2f s)\n',Cfinal,time_bach_lws);
     if output_wav
         y=istft(Y,wshift,S);
