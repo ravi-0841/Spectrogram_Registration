@@ -1,4 +1,4 @@
-function x = istft(d, ftsize, w, h)
+function x = dtw_istft(d, ftsize, w, h)
 % X = istft(D, F, W, H)                   Inverse short-time Fourier transform.
 %	Performs overlap-add resynthesis from the short-time Fourier transform 
 %	data in D.  Each column of D is taken as the result of an F-point 

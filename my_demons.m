@@ -1,4 +1,4 @@
-function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving_img, alpha, sigma_fluid, sigma_diff, epsilon)
+function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving_img, alpha, sigma_fluid, sigma_diff, step_scale, epsilon)
 
     disp(['Initial SSD ' num2str(sum(sum((fixed_img - moving_img).^2)))]);
     disp(['Initial MI ' num2str(mutual_info(fixed_img, moving_img))]);
@@ -15,12 +15,16 @@ function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving
 
     new_mi = mutual_info(fixed_img, moving_img);
     old_mi = new_mi - 100;
+    
+    step_size = 1;
 
     while iterator<max_iter && abs(new_mi - old_mi)>epsilon
         old_mi = new_mi;
         
-        if mod(iterator,2000)==0
-            disp(['Iteration number: ' num2str(iterator) '   and    ' 'Mutual Info: ' num2str(new_mi)]);
+        if mod(iterator,1000)==0
+            ssd = sum(sum((fixed_img - current_moved).^2));
+            disp(['Iteration number: ' num2str(iterator) ', SSD: ' num2str(ssd) ' and Mutual Info: ' num2str(new_mi)]);
+            step_size = step_size*step_scale;
         end
         
         [G_mov_x, G_mov_y] = imgradientxy(current_moved, 'central');
@@ -42,8 +46,8 @@ function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving
         update_field_x = imgaussfilt(update_field_x, sigma_fluid);
         update_field_y = imgaussfilt(update_field_y, sigma_fluid);
         
-        vec_field_x = vec_field_x + update_field_x;
-        vec_field_y = vec_field_y + update_field_y;
+        vec_field_x = vec_field_x + step_size*update_field_x;
+        vec_field_y = vec_field_y + step_size*update_field_y;
         
         vec_field_x = imgaussfilt(vec_field_x, sigma_diff);
         vec_field_y = imgaussfilt(vec_field_y, sigma_diff);

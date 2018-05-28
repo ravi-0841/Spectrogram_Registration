@@ -5,7 +5,7 @@ o = 0.010;
 r = 512;
 
 [d1,f] = audioread('./wav/angry.wav');
-[d2,f] = audioread('./wav/neutral.wav');
+[d2,f] = audioread('./wav/happy.wav');
 
 d1 = -1 + 2*((d1 - min(d1)) / (max(d1) - min(d1)));
 d2 = -1 + 2*((d2 - min(d2)) / (max(d2) - min(d2)));
@@ -36,7 +36,7 @@ for i = 1:length(idx_21)
 end
 % interpolate D2's STFT
 D2x = pvsample(D2, idx_21-1, 128);
-d2x = istft(D2x, 512, 400, 240);
+d2x = dtw_istft(D2x, 512, 400, 240);
 sound(d2x,f)
 
 pause(2)
@@ -47,7 +47,7 @@ for i = 1:length(idx_12)
 end
 % interpolate D1's STFT
 D1x = pvsample(D1, idx_12-1, 128);
-d1x = istft(D1x, 512, 400, 240);
+d1x = dtw_istft(D1x, 512, 400, 240);
 sound(d1x,f)
 
 %%
@@ -81,7 +81,7 @@ d2_phase = angle(d2_spect);
 [d2_feat,~,~] = mfcc(d2,f,25,15,0.97,'hamming',[130, 4000],20,26,22);
 
 M = pair_sim(d1_feat, d2_feat, 'cosine');
-[p,q,C] = dtw(1-M,'unconstrained');
+[p,q,C] = dtw(1-M,'slopeThird');
 
 figure(), imagesc(1-M), colormap(jet), colorbar;
 hold on; plot(q,p,'w'); hold off

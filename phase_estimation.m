@@ -12,20 +12,23 @@ Q=N/wshift;
 % Note: the code assumes the windows are symmetric, i.e., W(n) = W(N+1-n)
 %W=sqrt((0.5-0.5*cos(2*pi*(1:2:2*N-1)'/(2*N)))/Q*2);
 %S=sqrt((0.5-0.5*cos(2*pi*(1:2:2*N-1)'/(2*N)))/Q*2);
-W=sqrt((0.5-0.5*cos(2*pi*(0:(N-1))'/(N)))/Q*2);
-S=sqrt((0.5-0.5*cos(2*pi*(0:(N-1))'/(N)))/Q*2);
 
+% W=sqrt((0.5-0.5*cos(2*pi*(0:(N-1))'/(N)))/Q*2);
+% S=sqrt((0.5-0.5*cos(2*pi*(0:(N-1))'/(N)))/Q*2);
+
+W = hann(N);
+S = hann(N);
 %% Set DTW Parameters
 r = 512;
-w = 0.030;
+w = 0.025;
 s = 0.010;
 top = 3;
 
 %% Get the wav file in
-infile1='happy.wav'; % please provide a test file
+infile1='neutral.wav'; % please provide a test file
 [x_ang,fs]=audioread(infile1);
 
-infile2='neutral.wav'; % please provide a test file
+infile2='angry.wav'; % please provide a test file
 [x_neu,fs]=audioread(infile2);
 
 [x_neu, x_ang] = get_alignment(x_neu,x_ang,fs,w,w-s,r,top);
@@ -65,7 +68,7 @@ weights_asym_full=create_weights(W_asym_full,S,wshift,L);
 X0_ang = abs(X_ang);
 X0_neu = abs(X_neu);
 
-[disp_field, ~] = my_demons(log(1 + X0_ang),log(1 + X0_neu),0.4,0.7,1.5,0.000001);
+[disp_field, ~] = my_demons(log(1 + X0_ang),log(1 + X0_neu),0.4,0.7,1.5,1,0.000001);
 % disp_field(:,:,1) = zeros(size(squeeze(disp_field(:,:,1))));
 warped_mag = imwarp(log(1 + abs(X_neu)),disp_field);
 warped_phase = imwarp(angle(X_neu),disp_field);

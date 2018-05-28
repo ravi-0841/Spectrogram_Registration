@@ -1,4 +1,4 @@
-function D = stft(x, f, w, h, sr)
+function D = dtw_stft(x, f, w, h, sr)
 % D = stft(X, F, W, H, SR)                       Short-time Fourier transform.
 %	Returns some frames of short-term Fourier transform of x.  Each 
 %	column of the result is one F-point fft (default 256); each
