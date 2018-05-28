@@ -25,10 +25,10 @@ s = 0.010;
 top = 3;
 
 %% Get the wav file in
-infile1='neutral.wav'; % please provide a test file
+infile1='angry.wav'; % please provide a test file
 [x_ang,fs]=audioread(infile1);
 
-infile2='angry.wav'; % please provide a test file
+infile2='neutral.wav'; % please provide a test file
 [x_neu,fs]=audioread(infile2);
 
 [x_neu, x_ang] = get_alignment(x_neu,x_ang,fs,w,w-s,r,top);
@@ -68,7 +68,7 @@ weights_asym_full=create_weights(W_asym_full,S,wshift,L);
 X0_ang = abs(X_ang);
 X0_neu = abs(X_neu);
 
-[disp_field, ~] = my_demons(log(1 + X0_ang),log(1 + X0_neu),0.4,0.7,1.5,1,0.000001);
+[disp_field, ~] = my_demons(log(1 + X0_ang),log(1 + X0_neu),0.4,0.7,1.5,1,5000);
 % disp_field(:,:,1) = zeros(size(squeeze(disp_field(:,:,1))));
 warped_mag = imwarp(log(1 + abs(X_neu)),disp_field);
 warped_phase = imwarp(angle(X_neu),disp_field);

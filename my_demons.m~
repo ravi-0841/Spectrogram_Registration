@@ -3,7 +3,7 @@ function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving
     disp(['Initial SSD ' num2str(sum(sum((fixed_img - moving_img).^2)))]);
     disp(['Initial MI ' num2str(mutual_info(fixed_img, moving_img))]);
     
-    max_iter = 2000;
+    max_iter = 10000;
     vec_field_x = zeros(size(moving_img));
     vec_field_y = zeros(size(moving_img));
     
@@ -17,14 +17,13 @@ function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving
     old_mi = new_mi - 100;
     
     step_size = 1;
-    old_disp_field = cat(3, zeros(size(fixed_img)), zeros(size(fixed_img)));
-    disp_field = cat(3, zeros(size(fixed_img)), zeros(size(fixed_img)));
-    disp_field_diff = Inf;
+    old_disp_field = zeros(cat(3), zeros(size(fixed_img)), zeros(size(fixed_img)));
+    disp_field_diff = 100;
 
     while iterator<max_iter && disp_field_diff>epsilon
         old_mi = new_mi;
         
-        if mod(iterator,500)==0
+        if mod(iterator,1000)==0
             ssd = sum(sum((fixed_img - current_moved).^2));
             disp(['Iteration number: ' num2str(iterator) ', SSD: ' num2str(ssd) ' and Mutual Info: ' num2str(new_mi)]);
             step_size = step_size*step_scale;
@@ -59,11 +58,9 @@ function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving
         current_moved = imwarp(moving_img, disp_field);
         iterator = iterator + 1;
         new_mi = mutual_info(fixed_img, current_moved);
-        
-        disp_field_diff = sum(sum(sum(abs(old_disp_field - disp_field))));
-        old_disp_field = disp_field;
-        imshow(current_moved, []), colormap(jet)
-        pause(0.01);
+        disp_field_diff
+%         imshow(current_moved, []), colormap(jet)
+%         pause(0.01);
     end
     moved_img = current_moved;
     
