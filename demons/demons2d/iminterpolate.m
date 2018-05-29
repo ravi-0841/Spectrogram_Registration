@@ -9,4 +9,6 @@ function I = iminterpolate(I,sx,sy)
     % Interpolate updated image
     I = interpn(x,y,I,x_prime,y_prime,'linear',0); % moving image intensities at updated points
     
+%     I = imwarp(I, cat(3,sx,sy));
+    
 end

@@ -2,14 +2,14 @@
 function [Mp,sx,sy,vx,vy] = register(F,M,opt)
 
     if nargin<3;  opt = struct();  end;
-    if ~isfield(opt,'sigma_fluid');      opt.sigma_fluid     = 1.0;              end;
+    if ~isfield(opt,'sigma_fluid');      opt.sigma_fluid     = 0.8;              end;
     if ~isfield(opt,'sigma_diffusion');  opt.sigma_diffusion = 1.0;              end;
     if ~isfield(opt,'sigma_i');          opt.sigma_i         = 1.0;              end;
     if ~isfield(opt,'sigma_x');          opt.sigma_x         = 1.0;              end;
     if ~isfield(opt,'niter');            opt.niter           = 250;              end;
     if ~isfield(opt,'vx');               opt.vx              = zeros(size(M));   end;
     if ~isfield(opt,'vy');               opt.vy              = zeros(size(M));   end;
-    if ~isfield(opt,'stop_criterium');   opt.stop_criterium  = 0.01;             end;
+    if ~isfield(opt,'stop_criterium');   opt.stop_criterium  = 0.0001;         end;
     if ~isfield(opt,'imagepad');         opt.imagepad        = 1.2;              end;
     if ~isfield(opt,'do_display');       opt.do_display      = 1;                end;
     if ~isfield(opt,'do_plotenergy');    opt.do_plotenergy   = 1;                end;
@@ -38,11 +38,14 @@ function [Mp,sx,sy,vx,vy] = register(F,M,opt)
         step  = opt.sigma_x;
         
         % Update velocities (demons) - additive
-        vx = vx + step*ux;
-        vy = vy + step*uy;
+%         vx = vx + step*ux;
+%         vy = vy + step*uy;
+    
+        % Do exponentiation for mapping
+        [ux,uy] = expfield(ux,uy);
 
         % Update velocities (demons) - composition
-        %[vx,vy] = compose(vx,vy,step*ux,step*uy);
+        [vx,vy] = compose(vx,vy,step*ux,step*uy);
         
         % Regularize velocities
         vx = imgaussian(vx,opt.sigma_diffusion);
@@ -72,8 +75,9 @@ function [Mp,sx,sy,vx,vy] = register(F,M,opt)
             drawnow;
             
             % Display registration
-            Mp     = iminterpolate(M,sx,sy);
-            diff   = (F-Mp).^2;
+            Mp     = iminterpolate(M,vx,vy);
+%             diff   = (F-Mp).^2;
+            diff = imfuse(F,Mp,'falsecolor','Scaling','joint','ColorChannels',[1 2 0]);
             showimage(F,'Fixed', M,'Moving', Mp,'Warped', diff,'Diff', 'lim',lim,'nbrows',2); drawnow;
 
             % Plot energy

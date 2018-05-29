@@ -21,25 +21,16 @@ function demons(F,M)
 figure(1); clf; colormap gray; set(gcf,'renderer','painter')
 
 %% Parameters
-niter           = 500;
-sigma_fluid     = 2.0; % regularize update      field
-sigma_diffusion = 2.0; % regularize deformation field
+niter           = 300;
+sigma_fluid     = 1.0; % regularize update      field
+sigma_diffusion = 1.0; % regularize deformation field
 sigma_i         = 1.0; % weight on similarity term
 sigma_x         = 1.0; % weight on spatial uncertainties (maximal step)
-nlevel          = 3;   % multiresolution
+nlevel          = 1;   % multiresolution
 do_display      = 1;   % display iterations
 
-%% Load fixed image
-% F = double(imread('data/lenag2.png'));          % fixed   image
-%F = double(imread('statue-rio.png'));           % fixed   image
-F = imresize(F,0.5);
-F = 255*(F-min(F(:)))/range(F(:));              % normalize intensities
-
-%% Load moving image
-% M = double(imread('data/lenag1.png'));          % moving  image
-%M = double(imread('statue-rio-deformed.png'));  % moving  image
-M = imresize(M,0.5);
-M = 255*(M-min(M(:)))/range(M(:));              % normalize intensities
+F = uint8(255*(mat2gray(F)));
+M = uint8(255*(mat2gray(M)));       % normalize intensities
 
 % Translate
 %shift = 3; tmp = zeros(size(M)); tmp((1+shift):end,:) = M(1:(end-shift),:); M = tmp;
@@ -75,7 +66,9 @@ else
             'sigma_i',sigma_i,...
             'sigma_x',sigma_x,...
             'vx',vxl, 'vy',vyl,...
-            'do_display',do_display, 'do_plotenergy',1);
+            'do_display',do_display,...
+            'do_plotenergy',1,...
+            'stop_criterium',0.000001);
         [Mp,sxl,syl,vxl,vyl] = register(Fl,Ml,opt);
 
         % upsample

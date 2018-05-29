@@ -2,10 +2,10 @@
 function [ux,uy] = findupdate(F,M,vx,vy,sigma_i,sigma_x)
 
     % Get Transformation
-    [sx,sy] = expfield(vx,vy);
+%     [sx,sy] = expfield(vx,vy);
 
     % Interpolate updated image
-    M_prime = iminterpolate(M,sx,sy); % intensities at updated points
+    M_prime = iminterpolate(M,vx,vy); % intensities at updated points
     
     % image difference
     diff = F - M_prime;
