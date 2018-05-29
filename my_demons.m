@@ -1,4 +1,12 @@
-function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving_img, alpha, sigma_fluid, sigma_diff, step_scale, epsilon)
+function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving_img, opts)
+
+    if nargin<3;                        opts                 = struct();     end
+    if ~isfield(opts,'alpha');          opts.alpha           = 0.4;          end
+    if ~isfield(opts,'sigma_fluid');    opts.sigma_fluid     = 1.0;          end
+    if ~isfield(opts,'sigma_diff');     opts.sigma_diff      = 1.0;          end
+    if ~isfield(opts,'step');           opts.step            = 1.0;          end
+    if ~isfield(opts,'epsilon');        opts.epsilon         = 0.0001;       end
+    
 
     disp(['Initial SSD ' num2str(sum(sum((fixed_img - moving_img).^2)))]);
     disp(['Initial MI ' num2str(mutual_info(fixed_img, moving_img))]);
@@ -21,42 +29,43 @@ function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving
     disp_field = cat(3, zeros(size(fixed_img)), zeros(size(fixed_img)));
     disp_field_diff = Inf;
 
-    while iterator<max_iter && disp_field_diff>epsilon
+    while iterator<max_iter && disp_field_diff>opts.epsilon
         old_mi = new_mi;
         
         if mod(iterator,500)==0
             ssd = sum(sum((fixed_img - current_moved).^2));
             disp(['Iteration number: ' num2str(iterator) ', SSD: ' num2str(ssd) ' and Mutual Info: ' num2str(new_mi)]);
-            step_size = step_size*step_scale;
+            step_size = step_size*opts.step;
         end
         
         [G_mov_x, G_mov_y] = imgradientxy(current_moved, 'central');
         [G_mov_mag, ~] = imgradient(G_mov_x, G_mov_y);
         
         update_field_x = -1 * (((current_moved - fixed_img).*G_fix_x) ./ ...
-                (alpha.^2 * (current_moved - fixed_img).^2 + G_fix_mag.^2) ... 
+                ((opts.alpha).^2 * (current_moved - fixed_img).^2 + G_fix_mag.^2) ... 
                 + ((current_moved - fixed_img).*G_mov_x) ./ ...
-                (alpha.^2 * (current_moved - fixed_img).^2 + G_mov_mag.^2));
+                ((opts.alpha).^2 * (current_moved - fixed_img).^2 + G_mov_mag.^2));
         
         update_field_y = -1 * (((current_moved - fixed_img).*G_fix_y) ./ ...
-                (alpha.^2 * (current_moved - fixed_img).^2 + G_fix_mag.^2) ... 
+                ((opts.alpha).^2 * (current_moved - fixed_img).^2 + G_fix_mag.^2) ... 
                 + ((current_moved - fixed_img).*G_mov_y) ./ ...
-                (alpha.^2 * (current_moved - fixed_img).^2 + G_mov_mag.^2));
+                ((opts.alpha).^2 * (current_moved - fixed_img).^2 + G_mov_mag.^2));
             
         update_field_x(isnan(update_field_x)) = 0;
         update_field_y(isnan(update_field_y)) = 0;
         
-        update_field_x = imgaussfilt(update_field_x, sigma_fluid);
-        update_field_y = imgaussfilt(update_field_y, sigma_fluid);
+        update_field_x = imgaussfilt(update_field_x, opts.sigma_fluid);
+        update_field_y = imgaussfilt(update_field_y, opts.sigma_fluid);
         
         vec_field_x = vec_field_x + step_size*update_field_x;
         vec_field_y = vec_field_y + step_size*update_field_y;
         
-        vec_field_x = imgaussfilt(vec_field_x, sigma_diff);
-        vec_field_y = imgaussfilt(vec_field_y, sigma_diff);
+        vec_field_x = imgaussfilt(vec_field_x, opts.sigma_diff);
+        vec_field_y = imgaussfilt(vec_field_y, opts.sigma_diff);
         
         disp_field = cat(3, vec_field_x, vec_field_y);
         current_moved = imwarp(moving_img, disp_field);
+%         current_moved = iminterpolate(moving_img,vec_field_x,vec_field_y);
         iterator = iterator + 1;
         new_mi = mutual_info(fixed_img, current_moved);
         

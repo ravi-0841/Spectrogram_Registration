@@ -1,20 +1,21 @@
 function diffeomorphic_demons(F, M, opts)
     
     if nargin<3;                         opts                 = struct();       end
-    if ~isfield(opts,'sigma_fluid');     opts.sigma_fluid     = 0.8;            end
+    if ~isfield(opts,'sigma_fluid');     opts.sigma_fluid     = 0.7;            end
     if ~isfield(opts,'sigma_diffusion'); opts.sigma_diffusion = 1.0;            end
     if ~isfield(opts,'sigma_x');         opts.sigma_x         = 1.0;            end
-    if ~isfield(opts,'compositive');     opts.compositive     = 0;              end
-    if ~isfield(opts,'max_iter');        opts.niter           = 200;            end
-    if ~isfield(opts,'step');            opts.step            = 1;              end
-    if ~isfield(opts,'stop_criterion');  opts.stop_criterium  = 0.0001;         end
-    if ~isfield(opts,'pyramid_levels');  opts.pyramid_level   = 3;              end
+    if ~isfield(opts,'sigma_i');         opts.sigma_i         = 1.0;            end
+    if ~isfield(opts,'compositive');     opts.compositive     = 1;              end
+    if ~isfield(opts,'max_iter');        opts.max_iter        = 500;            end
+    if ~isfield(opts,'step');            opts.step            = 1.0;            end
+    if ~isfield(opts,'stop_criterion');  opts.stop_criterion  = 0.01;           end
+    if ~isfield(opts,'pyramid_levels');  opts.pyramid_levels  = 2;              end
     
     vx = zeros(size(M));
     vy = zeros(size(M));
     
-    M = uint8(255*mat2gray(M));
-    F = uint8(255*mat2gray(F));
+    M = mat2gray(M);
+    F = mat2gray(F);
     
     for k = opts.pyramid_levels:-1:1
         scale_factor = 2^(-1*(k-1));
