@@ -11,7 +11,4 @@ function [ux,uy] = update_vec_field(F,M,init_vx,init_vy,opts)
     
     ux = gx .* scale;
     uy = gy .* scale;
-    
-    ux(F==0)       = 0; uy(F==0)       = 0;
-    ux(M_prime==0) = 0; uy(M_prime==0) = 0;
 end

@@ -32,7 +32,7 @@ function [vx,vy] = register_images(F, M, vx, vy, opts)
         ssd = [ssd sum(sum((F - M_tilda).^2))];
         mi = [mi mutual_info(F,M_tilda)];
         subplot(122), hold on;
-        graph = plot(mi, 'r');
+        graph = plot(ssd, 'r');
         set(graph,'LineWidth',2);
         hold off;
         pause(0.001);
