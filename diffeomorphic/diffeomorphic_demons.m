@@ -4,7 +4,9 @@ function diffeomorphic_demons(F, M, opts)
     if ~isfield(opts,'sigma_fluid');     opts.sigma_fluid     = 0.8;            end
     if ~isfield(opts,'sigma_diffusion'); opts.sigma_diffusion = 1.0;            end
     if ~isfield(opts,'sigma_x');         opts.sigma_x         = 1.0;            end
+    if ~isfield(opts,'compositive');     opts.compositive     = 0;              end
     if ~isfield(opts,'max_iter');        opts.niter           = 200;            end
+    if ~isfield(opts,'step');            opts.step            = 1;              end
     if ~isfield(opts,'stop_criterion');  opts.stop_criterium  = 0.0001;         end
     if ~isfield(opts,'pyramid_levels');  opts.pyramid_level   = 3;              end
     

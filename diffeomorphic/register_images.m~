@@ -1,0 +1,11 @@
+function register_images(F, M, vx, vy, opts)
+    
+    ssd = sum(sum((F - M).^2));
+    stop_flag = 0;
+    
+    while stop_flag~=1
+       [ux,uy] = update_vec_field(F,M,vx,vy,opts);
+       []
+       if opts
+    end
+end
