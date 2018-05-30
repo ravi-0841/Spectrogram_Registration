@@ -1,5 +1,8 @@
 function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving_img, opts)
 
+    fixed_img = mat2gray(fixed_img);
+    moving_img = mat2gray(moving_img);
+    
     if nargin<3;                        opts                 = struct();     end
     if ~isfield(opts,'alpha');          opts.alpha           = 0.4;          end
     if ~isfield(opts,'sigma_fluid');    opts.sigma_fluid     = 1.0;          end
@@ -71,8 +74,8 @@ function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving
         
         disp_field_diff = sum(sum(sum(abs(old_disp_field - disp_field))));
         old_disp_field = disp_field;
-        imshow(current_moved, []), colormap(jet)
-        pause(0.01);
+%         imshow(current_moved, []), colormap(jet)
+%         pause(0.01);
     end
     moved_img = current_moved;
     
@@ -93,7 +96,7 @@ function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving
 %     subplot(121), imshowpair(moving_img, fixed_img), title('unregistered')
 %     subplot(122), imshowpair(moved_img, fixed_img), title('registered')
 
-    figure()
+    figure();
     subplot(131), imshow(fixed_img, []), title('Fixed'), subplot(132), imshow(moving_img, []), title('Moving'), ...
         subplot(133), imshow(moved_img, []), title('Moved'), colormap(jet);
 end

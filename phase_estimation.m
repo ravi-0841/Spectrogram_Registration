@@ -25,7 +25,7 @@ s = 0.010;
 top = 3;
 
 %% Get the wav file in
-infile1='angry.wav'; % please provide a test file
+infile1='happy.wav'; % please provide a test file
 [x_ang,fs]=audioread(infile1);
 
 infile2='neutral.wav'; % please provide a test file
@@ -68,7 +68,13 @@ weights_asym_full=create_weights(W_asym_full,S,wshift,L);
 X0_ang = abs(X_ang);
 X0_neu = abs(X_neu);
 
-[disp_field, ~] = my_demons(log(1 + X0_ang),log(1 + X0_neu),0.4,0.7,1.5,1,5000);
+opts = struct();
+opts.alpha = 0.4;
+opts.sigma_fluid = 0.7;
+opts.sigma_diff = 1.5;
+opts.step = 1.0;
+
+[disp_field, ~] = my_demons(log(1 + X0_ang),log(1 + X0_neu),opts);
 % disp_field(:,:,1) = zeros(size(squeeze(disp_field(:,:,1))));
 warped_mag = imwarp(log(1 + abs(X_neu)),disp_field);
 warped_phase = imwarp(angle(X_neu),disp_field);
@@ -91,7 +97,7 @@ if do_online_lws
     fprintf(1,'+Online LWS     : %5.2f dB (time: %.2f s)\n',C1,time_online_lws);
     if output_wav
         x1=istft(X1,wshift,S);
-        audiowrite('out_online_lws.wav',x1,fs);
+%         audiowrite('out_online_lws.wav',x1,fs);
     end
 else
     X1 = X0_neu;
