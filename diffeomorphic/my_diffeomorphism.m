@@ -80,7 +80,6 @@ function disp_field = my_diffeomorphism(F, M, opts)
         
         disp_field = cat(3, vec_field_x, vec_field_y);
         M_tilda = imwarp(M, disp_field);
-%         current_moved = iminterpolate(M,vec_field_x,vec_field_y);
         ssd = [ssd, sum(sum((F - M_tilda).^2))];
         iterator = iterator + 1;
         new_mi = mutual_info(F, M_tilda);
@@ -110,5 +109,5 @@ function disp_field = my_diffeomorphism(F, M, opts)
     close all;
     figure();
     subplot(131), imshow(F, []), title('Fixed'), subplot(132), imshow(M, []), title('Moving'), ...
-        subplot(133), imshow(moved_img, []), title('Moved'), colormap(jet);
+        subplot(133), imshowpair(moved_img, F), title('Moved'), colormap(jet);
 end

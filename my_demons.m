@@ -107,7 +107,7 @@ function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving
 %     subplot(224), imshow(moved_img, [])
 
     close all;
-%     figure();
-%     subplot(131), imshow(fixed_img, []), title('Fixed'), subplot(132), imshow(moving_img, []), title('Moving'), ...
-%         subplot(133), imshow(moved_img, []), title('Moved'), colormap(jet);
+    figure();
+    subplot(131), imshow(fixed_img, []), title('Fixed'), subplot(132), imshow(moving_img, []), title('Moving'), ...
+        subplot(133), imshowpair(moved_img, fixed_img), title('Moved'), colormap(jet);
 end
