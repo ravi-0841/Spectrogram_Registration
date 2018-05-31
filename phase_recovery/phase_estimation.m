@@ -1,7 +1,10 @@
 %% Pipeline
+clear all
+clc
 do_no_future_lws = 1;
 do_online_lws    = 1;
 do_batch_lws     = 1;
+do_diffeomorphic = 0;
 
 %% Wav output flag
 output_wav = 1;
@@ -74,13 +77,15 @@ opts.sigma_fluid = 0.7;
 opts.sigma_diff = 1.5;
 opts.step = 1.0;
 
-vx,vy] = diffeomorphic_demons(log(1 + X0_ang),log(1 + X0_neu),opts);
-warped_mag = 
-
-% disp_field = my_demons(log(1 + X0_ang),log(1 + X0_neu),opts);
-% warped_mag = imwarp(log(1 + abs(X_neu)),disp_field);
-% warped_phase = imwarp(angle(X_neu),disp_field);
-
+if do_diffeomorphic
+    [vx,vy] = diffeomorphic_demons(log(1 + X0_ang),log(1 + X0_neu),opts);
+    warped_mag = iminterpolate(log(1 + abs(X_neu)),vx,vy);
+    warped_phase = iminterpolate(log(1 + angle(X_neu)),vx,vy);
+else
+    disp_field = my_demons(log(1 + X0_ang),log(1 + X0_neu),opts);
+    warped_mag = imwarp(log(1 + abs(X_neu)),disp_field);
+    warped_phase = imwarp(angle(X_neu),disp_field);
+end
 est_signal = get_signal_iteratively(warped_mag.*exp(1j*warped_phase), N, wshift, 1000);
 
 %% Perform a few iterations of Online LWS (aka. TF-RTISI-LA)

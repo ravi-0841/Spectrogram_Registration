@@ -80,7 +80,7 @@ function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving
         
         disp_field_diff = sum(sum(sum(abs(old_disp_field - disp_field))));
         old_disp_field = disp_field;
-        figure(1);
+        
         subplot(121), imshowpair(fixed_img,current_moved);
         subplot(122), plot(ssd);
         pause(0.001);
