@@ -1,4 +1,4 @@
-function disp_field = my_diffeomorphism(F, M, opts)
+function disp_field = my_diffeomorphism(F, M, vx, vy, opts)
     F = mat2gray(F);
     M = mat2gray(M);
     
@@ -15,13 +15,16 @@ function disp_field = my_diffeomorphism(F, M, opts)
     disp(['Initial SSD ' num2str(sum(sum((F - M).^2)))]);
     disp(['Initial MI ' num2str(mutual_info(F, M))]);
     
-    vec_field_x = zeros(size(M));
-    vec_field_y = zeros(size(M));
+%     vec_field_x = zeros(size(M));
+%     vec_field_y = zeros(size(M));
+    
+    vec_field_x = vx;
+    vec_field_y = vy;
+    M_tilda = imwarp(M, cat(3,vec_field_x,vec_field_y));
     
     [G_fix_x, G_fix_y] = imgradientxy(F,'central');
     [G_fix_mag, ~] = imgradient(G_fix_x, G_fix_y);
     
-    M_tilda = M;
     iterator = 1;
 
     new_mi = mutual_info(F, M);

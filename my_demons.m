@@ -1,4 +1,4 @@
-function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving_img, opts)
+function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving_img, vx, vy, opts)
 
     fixed_img = mat2gray(fixed_img);
     moving_img = mat2gray(moving_img);
@@ -16,13 +16,16 @@ function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving
     disp(['Initial SSD ' num2str(sum(sum((fixed_img - moving_img).^2)))]);
     disp(['Initial MI ' num2str(mutual_info(fixed_img, moving_img))]);
     
-    vec_field_x = zeros(size(moving_img));
-    vec_field_y = zeros(size(moving_img));
+%     vec_field_x = zeros(size(moving_img));
+%     vec_field_y = zeros(size(moving_img));
+
+    vec_field_x = vx;
+    vec_field_y = vy;
+    current_moved = imwarp(moving_img, cat(3,vec_field_x,vec_field_y));
     
     [G_fix_x, G_fix_y] = imgradientxy(fixed_img,'central');
     [G_fix_mag, ~] = imgradient(G_fix_x, G_fix_y);
     
-    current_moved = moving_img;
     iterator = 1;
 
     new_mi = mutual_info(fixed_img, moving_img);

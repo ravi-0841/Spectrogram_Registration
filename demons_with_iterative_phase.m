@@ -53,29 +53,40 @@ opts.alpha = 0.4;
 opts.sigma_fluid = 0.7;
 opts.sigma_diff = 1.5;
 opts.step = 1.0;
-opts.compositive = 1;
 opts.max_iter = 500;
+opts.pyramid_levels  = 2;
+opts.compositive = 0;
+opts.diffeomorphism = 1;
 
-do_diffeomorphic = 1;
+disp_field = my_multires_demons(log(1 + X0_tar),log(1 + X0_src),opts);
+warped_mag = imwarp(log(1 + abs(X_src)),disp_field);
+warped_phase = imwarp(log(1 + angle(X_src)),disp_field);
+est_signal_diffeo = get_signal_iteratively(warped_mag.*exp(1j*warped_phase), N, wshift, 1000);
+figure()
+lim = [1 1; size(warped_mag,1) size(warped_mag,2)];
+subplot(131), imshow(warped_mag,[]), colormap(jet), subplot(132), ...
+    showgrid(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),4,lim),...
+    subplot(133), showvector(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),5);
 
-if do_diffeomorphic
-    disp_field = my_diffeomorphism(log(1 + X0_tar),log(1 + X0_src),opts);
-    warped_mag = imwarp(log(1 + abs(X_src)),disp_field);
-    warped_phase = imwarp(log(1 + angle(X_src)),disp_field);
-    est_signal_diffeo = get_signal_iteratively(warped_mag.*exp(1j*warped_phase), N, wshift, 1000);
-    figure()
-    lim = [1 1; size(warped_mag,1) size(warped_mag,2)];
-    subplot(131), imshow(warped_mag,[]), colormap(jet), subplot(132), ...
-        showgrid(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),4,lim),...
-        subplot(133), showvector(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),5);
-else
-    disp_field = my_demons(log(1 + X0_tar),log(1 + X0_src),opts);
-    warped_mag = imwarp(log(1 + abs(X_src)),disp_field);
-    warped_phase = imwarp(angle(X_src),disp_field);
-    est_signal_demon = get_signal_iteratively(warped_mag.*exp(1j*warped_phase), N, wshift, 1000);
-    figure()
-    lim = [1 1; size(warped_mag,1) size(warped_mag,2)];
-    subplot(131), imshow(warped_mag,[]), colormap(jet), subplot(132), ...
-        showgrid(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),4,lim), subplot(133), ...
-        showvector(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),5);
-end
+
+% if do_diffeomorphic
+%     disp_field = my_diffeomorphism(log(1 + X0_tar),log(1 + X0_src),opts);
+%     warped_mag = imwarp(log(1 + abs(X_src)),disp_field);
+%     warped_phase = imwarp(log(1 + angle(X_src)),disp_field);
+%     est_signal_diffeo = get_signal_iteratively(warped_mag.*exp(1j*warped_phase), N, wshift, 1000);
+%     figure()
+%     lim = [1 1; size(warped_mag,1) size(warped_mag,2)];
+%     subplot(131), imshow(warped_mag,[]), colormap(jet), subplot(132), ...
+%         showgrid(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),4,lim),...
+%         subplot(133), showvector(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),5);
+% else
+%     disp_field = my_demons(log(1 + X0_tar),log(1 + X0_src),opts);
+%     warped_mag = imwarp(log(1 + abs(X_src)),disp_field);
+%     warped_phase = imwarp(angle(X_src),disp_field);
+%     est_signal_demon = get_signal_iteratively(warped_mag.*exp(1j*warped_phase), N, wshift, 1000);
+%     figure()
+%     lim = [1 1; size(warped_mag,1) size(warped_mag,2)];
+%     subplot(131), imshow(warped_mag,[]), colormap(jet), subplot(132), ...
+%         showgrid(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),4,lim), subplot(133), ...
+%         showvector(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),5);
+% end

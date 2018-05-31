@@ -15,13 +15,13 @@ s = 0.010;
 top = 3;
 
 %% Get the wav file in
-source = 'angry.wav'; % please provide a test file  or Target
-[x_src,fs] = audioread(source);
-
-target = 'neutral.wav'; % please provide a test file  or Source
+target = 'angry.wav'; % please provide a test file  or Target
 [x_tar,fs] = audioread(target);
 
-[x_tar, x_src] = get_alignment(x_tar,x_src,fs,w,w-s,r,top);
+source = 'neutral.wav'; % please provide a test file  or Source
+[x_src,fs] = audioread(source);
+
+[x_src, x_tar] = get_alignment(x_src,x_tar,fs,w,w-s,r,top);
 
 if size(x_src,2)>1, fprintf('This code only handles single channel files\n'); return; end
 if size(x_tar,2)>1, fprintf('This code only handles single channel files\n'); return; end
@@ -29,53 +29,64 @@ if size(x_tar,2)>1, fprintf('This code only handles single channel files\n'); re
 fprintf(1,'Processing file: %s (length: %.2f s)\n',source,length(x_src)/fs);
 fprintf(1,'Processing file: %s (length: %.2f s)\n',target,length(x_tar)/fs);
 
-X_ang = stft(x_src,N,wshift,W);
-Xpow_ang = sum(abs(X_ang(:)).^2);
+X_tar = stft(x_tar,N,wshift,W);
+Xpow_tar = sum(abs(X_tar(:)).^2);
 
-tmp_ang = stft(istft(abs(X_ang),wshift,S),N,wshift,W)-X_ang; % difference between temporary signal (zero phase) spectrogram and actual signal spectrogram 
-C = 10*log10(Xpow_ang / sum(abs(tmp_ang(:)).^2));
+tmp_tar = stft(istft(abs(X_tar),wshift,S),N,wshift,W)-X_tar; % difference between temporary signal (zero phase) spectrogram and actual signal spectrogram 
+C = 10*log10(Xpow_tar / sum(abs(tmp_tar(:)).^2));
 fprintf(1,'Abs(X)          : %5.2f dB\n',C);
 
-X_neu = stft(x_tar,N,wshift,W);
-Xpow_neu = sum(abs(X_neu(:)).^2);
+X_src = stft(x_src,N,wshift,W);
+Xpow_src = sum(abs(X_src(:)).^2);
 
-tmp_neu = stft(istft(abs(X_neu),wshift,S),N,wshift,W)-X_neu; % difference between temporary signal (zero phase) spectrogram and actual signal spectrogram 
-C = 10*log10(Xpow_neu / sum(abs(tmp_neu(:)).^2));
+tmp_src = stft(istft(abs(X_src),wshift,S),N,wshift,W)-X_src; % difference between temporary signal (zero phase) spectrogram and actual signal spectrogram 
+C = 10*log10(Xpow_src / sum(abs(tmp_src(:)).^2));
 fprintf(1,'Abs(X)          : %5.2f dB\n',C);
 
 %% Perform Demons Registration
 
-X0_ang = abs(X_ang);
-X0_neu = abs(X_neu);
+X0_tar = abs(X_tar);
+X0_src = abs(X_src);
 
 opts = struct();
 opts.alpha = 0.4;
 opts.sigma_fluid = 0.7;
 opts.sigma_diff = 1.5;
 opts.step = 1.0;
-opts.compositive = 1;
 opts.max_iter = 500;
+opts.pyramid_levels  = 2;
+opts.compositive = 1;
+opts.diffeomorphism = 1;
 
-do_diffeomorphic = 1;
+disp_field = my_multires_demons(log(1 + X0_tar),log(1 + X0_src),opts);
+warped_mag = imwarp(log(1 + abs(X_src)),disp_field);
+warped_phase = imwarp(log(1 + angle(X_src)),disp_field);
+est_signal_diffeo = get_signal_iteratively(warped_mag.*exp(1j*warped_phase), N, wshift, 1000);
+figure()
+lim = [1 1; size(warped_mag,1) size(warped_mag,2)];
+subplot(131), imshow(warped_mag,[]), colormap(jet), subplot(132), ...
+    showgrid(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),4,lim),...
+    subplot(133), showvector(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),5);
 
-if do_diffeomorphic
-    disp_field = my_diffeomorphism(log(1 + X0_ang),log(1 + X0_neu),opts);
-    warped_mag = imwarp(log(1 + abs(X_neu)),disp_field);
-    warped_phase = imwarp(log(1 + angle(X_neu)),disp_field);
-    est_signal_diffeo = get_signal_iteratively(warped_mag.*exp(1j*warped_phase), N, wshift, 1000);
-    figure()
-    lim = [1 1; size(warped_mag,1) size(warped_mag,2)];
-    subplot(131), imshow(warped_mag,[]), colormap(jet), subplot(132), ...
-        showgrid(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),4,lim),...
-        subplot(133), showvector(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),5);
-else
-    disp_field = my_demons(log(1 + X0_ang),log(1 + X0_neu),opts);
-    warped_mag = imwarp(log(1 + abs(X_neu)),disp_field);
-    warped_phase = imwarp(angle(X_neu),disp_field);
-    est_signal_demon = get_signal_iteratively(warped_mag.*exp(1j*warped_phase), N, wshift, 1000);
-    figure()
-    lim = [1 1; size(warped_mag,1) size(warped_mag,2)];
-    subplot(131), imshow(warped_mag,[]), colormap(jet), subplot(132), ...
-        showgrid(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),4,lim), subplot(133), ...
-        showvector(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),5);
-end
+
+% if do_diffeomorphic
+%     disp_field = my_diffeomorphism(log(1 + X0_tar),log(1 + X0_src),opts);
+%     warped_mag = imwarp(log(1 + abs(X_src)),disp_field);
+%     warped_phase = imwarp(log(1 + angle(X_src)),disp_field);
+%     est_signal_diffeo = get_signal_iteratively(warped_mag.*exp(1j*warped_phase), N, wshift, 1000);
+%     figure()
+%     lim = [1 1; size(warped_mag,1) size(warped_mag,2)];
+%     subplot(131), imshow(warped_mag,[]), colormap(jet), subplot(132), ...
+%         showgrid(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),4,lim),...
+%         subplot(133), showvector(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),5);
+% else
+%     disp_field = my_demons(log(1 + X0_tar),log(1 + X0_src),opts);
+%     warped_mag = imwarp(log(1 + abs(X_src)),disp_field);
+%     warped_phase = imwarp(angle(X_src),disp_field);
+%     est_signal_demon = get_signal_iteratively(warped_mag.*exp(1j*warped_phase), N, wshift, 1000);
+%     figure()
+%     lim = [1 1; size(warped_mag,1) size(warped_mag,2)];
+%     subplot(131), imshow(warped_mag,[]), colormap(jet), subplot(132), ...
+%         showgrid(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),4,lim), subplot(133), ...
+%         showvector(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),5);
+% end
