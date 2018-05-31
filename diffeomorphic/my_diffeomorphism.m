@@ -35,17 +35,13 @@ function disp_field = my_diffeomorphism(F, M, vx, vy, opts)
     disp_field = cat(3, zeros(size(F)), zeros(size(F)));
     disp_field_diff = Inf;
     ssd = [];
-    
-    figure(1)
-    subplot(121), title('Difference');
-    subplot(122), title('SSD');
 
     while iterator<opts.max_iter && disp_field_diff>opts.epsilon
         old_mi = new_mi;
         
-        if mod(iterator,500)==0
-            ssd = [sum(sum((F - M_tilda).^2))];
-            disp(['Iteration number: ' num2str(iterator) ', SSD: ' num2str(ssd) ' and Mutual Info: ' num2str(new_mi)]);
+        if mod(iterator,100)==0
+            ssd = [ssd sum(sum((F - M_tilda).^2))];
+            disp(['Iteration number: ' num2str(iterator) ', SSD: ' num2str(ssd(end)) ' and Mutual Info: ' num2str(new_mi)]);
             step_size = step_size*opts.step;
         end
         
@@ -91,7 +87,7 @@ function disp_field = my_diffeomorphism(F, M, vx, vy, opts)
         old_disp_field = disp_field;
         
         subplot(121), imshowpair(F,M_tilda);
-        subplot(122), plot(ssd);
+        subplot(122), plot(ssd,'r');
         pause(0.001);
     end
     moved_img = M_tilda;
@@ -109,8 +105,8 @@ function disp_field = my_diffeomorphism(F, M, vx, vy, opts)
 %     subplot(223), plot(flow, 'DecimationFactor',[10,5]);
 %     subplot(224), imshow(moved_img, [])
 
-    close all;
-    figure();
-    subplot(131), imshow(F, []), title('Fixed'), subplot(132), imshow(M, []), title('Moving'), ...
-        subplot(133), imshowpair(moved_img, F), title('Moved'), colormap(jet);
+%     close all;
+%     figure();
+%     subplot(131), imshow(F, []), title('Fixed'), subplot(132), imshow(M, []), title('Moving'), ...
+%         subplot(133), imshowpair(moved_img, F), title('Moved'), colormap(jet);
 end

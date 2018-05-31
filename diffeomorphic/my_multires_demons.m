@@ -18,6 +18,10 @@ function disp_field = my_multires_demons(F, M, opts)
     M = mat2gray(M);
     F = mat2gray(F);
     
+    figure(1)
+    subplot(121), title('Difference');
+    subplot(122), title('SSD');
+    
     for k = opts.pyramid_levels:-1:1
         scale_factor = 2^(-1*(k-1));
         
@@ -38,5 +42,6 @@ function disp_field = my_multires_demons(F, M, opts)
         
         vx = imresize(vx/scale_factor, size(M));
         vy = imresize(vy/scale_factor, size(M));
+        subplot(122), hold on;
     end
 end

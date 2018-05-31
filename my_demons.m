@@ -36,17 +36,13 @@ function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving
     disp_field = cat(3, zeros(size(fixed_img)), zeros(size(fixed_img)));
     disp_field_diff = Inf;
     ssd = [];
-    
-    figure(1)
-    subplot(121), title('Difference');
-    subplot(122), title('SSD');
 
     while iterator<opts.max_iter && disp_field_diff>opts.epsilon
         old_mi = new_mi;
         
-        if mod(iterator,500)==0
-            ssd = [sum(sum((fixed_img - current_moved).^2))];
-            disp(['Iteration number: ' num2str(iterator) ', SSD: ' num2str(ssd) ' and Mutual Info: ' num2str(new_mi)]);
+        if mod(iterator,100)==0
+            ssd = [ssd sum(sum((fixed_img - current_moved).^2))];
+            disp(['Iteration number: ' num2str(iterator) ', SSD: ' num2str(ssd(end)) ' and Mutual Info: ' num2str(new_mi)]);
             step_size = step_size*opts.step;
         end
         
@@ -82,7 +78,6 @@ function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving
         
         disp_field = cat(3, vec_field_x, vec_field_y);
         current_moved = imwarp(moving_img, disp_field);
-%         current_moved = iminterpolate(moving_img,vec_field_x,vec_field_y);
         ssd = [ssd, sum(sum((fixed_img - current_moved).^2))];
         iterator = iterator + 1;
         new_mi = mutual_info(fixed_img, current_moved);
@@ -91,7 +86,7 @@ function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving
         old_disp_field = disp_field;
         
         subplot(121), imshowpair(fixed_img,current_moved);
-        subplot(122), plot(ssd);
+        subplot(122), plot(ssd, 'r');
         pause(0.001);
     end
     moved_img = current_moved;
@@ -109,8 +104,8 @@ function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving
 %     subplot(223), plot(flow, 'DecimationFactor',[10,5]);
 %     subplot(224), imshow(moved_img, [])
 
-    close all;
-    figure();
-    subplot(131), imshow(fixed_img, []), title('Fixed'), subplot(132), imshow(moving_img, []), title('Moving'), ...
-        subplot(133), imshowpair(moved_img, fixed_img), title('Moved'), colormap(jet);
+%     close all;
+%     figure();
+%     subplot(131), imshow(fixed_img, []), title('Fixed'), subplot(132), imshow(moving_img, []), title('Moving'), ...
+%         subplot(133), imshowpair(moved_img, fixed_img), title('Moved'), colormap(jet);
 end
