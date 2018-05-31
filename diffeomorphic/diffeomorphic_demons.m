@@ -1,8 +1,8 @@
-function diffeomorphic_demons(F, M, opts)
+function [vx,vy] = diffeomorphic_demons(F, M, opts)
     
     if nargin<3;                         opts                 = struct();       end
     if ~isfield(opts,'sigma_fluid');     opts.sigma_fluid     = 0.7;            end
-    if ~isfield(opts,'sigma_diffusion'); opts.sigma_diffusion = 1.0;            end
+    if ~isfield(opts,'sigma_diff');      opts.sigma_diff      = 1.0;            end
     if ~isfield(opts,'sigma_x');         opts.sigma_x         = 1.0;            end
     if ~isfield(opts,'sigma_i');         opts.sigma_i         = 1.0;            end
     if ~isfield(opts,'compositive');     opts.compositive     = 1;              end

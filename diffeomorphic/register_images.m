@@ -22,8 +22,8 @@ function [vx,vy] = register_images(F, M, vx, vy, opts)
             vy = vy + opts.step*uy;
         end
         
-        vx = imgaussfilt(vx,opts.sigma_diffusion);
-        vy = imgaussfilt(vy,opts.sigma_diffusion);
+        vx = imgaussfilt(vx,opts.sigma_diff);
+        vy = imgaussfilt(vy,opts.sigma_diff);
        
         M_tilda = iminterpolate(M,vx,vy);
 %         M_tilda = imwarp(M, cat(3, vx, vy));

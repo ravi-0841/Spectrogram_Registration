@@ -8,13 +8,13 @@ function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving
     if ~isfield(opts,'sigma_fluid');    opts.sigma_fluid     = 1.0;          end
     if ~isfield(opts,'sigma_diff');     opts.sigma_diff      = 1.0;          end
     if ~isfield(opts,'step');           opts.step            = 1.0;          end
-    if ~isfield(opts,'epsilon');        opts.epsilon         = 10;           end
+    if ~isfield(opts,'epsilon');        opts.epsilon         = 0.0001;       end
     
 
     disp(['Initial SSD ' num2str(sum(sum((fixed_img - moving_img).^2)))]);
     disp(['Initial MI ' num2str(mutual_info(fixed_img, moving_img))]);
     
-    max_iter = 1000;
+    max_iter = 2000;
     vec_field_x = zeros(size(moving_img));
     vec_field_y = zeros(size(moving_img));
     
@@ -33,7 +33,7 @@ function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving
     disp_field_diff = Inf;
     ssd = [];
     
-    figure(1)
+    figure()
     subplot(121), title('Difference');
     subplot(122), title('SSD');
 
@@ -41,7 +41,7 @@ function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving
         old_mi = new_mi;
         
         if mod(iterator,500)==0
-            ssd = [sum(sum((fixed_img - current_moved).^2))];
+            ssd = sum(sum((fixed_img - current_moved).^2));
             disp(['Iteration number: ' num2str(iterator) ', SSD: ' num2str(ssd) ' and Mutual Info: ' num2str(new_mi)]);
             step_size = step_size*opts.step;
         end
@@ -74,16 +74,15 @@ function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving
         disp_field = cat(3, vec_field_x, vec_field_y);
         current_moved = imwarp(moving_img, disp_field);
 %         current_moved = iminterpolate(moving_img,vec_field_x,vec_field_y);
-        ssd = [ssd, sum(sum((fixed_img - current_moved).^2))];
+        ssd = [ssd, 
         iterator = iterator + 1;
         new_mi = mutual_info(fixed_img, current_moved);
         
         disp_field_diff = sum(sum(sum(abs(old_disp_field - disp_field))));
         old_disp_field = disp_field;
-        figure(1);
         subplot(121), imshowpair(fixed_img,current_moved);
-        subplot(122), plot(ssd);
-        pause(0.001);
+        subplot(122), 
+%         pause(0.01);
     end
     moved_img = current_moved;
     
