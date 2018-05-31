@@ -9,7 +9,7 @@ function [vx, vy] = exponential_mapping(vx, vy)
     vy = vy * 2^-n;
 
     for i=1:n
-        [vx,vy] = compose(vx,vy, vx,vy);
+        [vx,vy] = compose_vec_fields(vx,vy, vx,vy);
     end
 
 end

@@ -1,4 +1,4 @@
-function [vx,vy] = diffeomorphic_demons(F, M, opts)
+function [vx,vy] = my_diffeomorphic_demons(F, M, opts)
     
     if nargin<3;                         opts                 = struct();       end
     if ~isfield(opts,'sigma_fluid');     opts.sigma_fluid     = 0.7;            end

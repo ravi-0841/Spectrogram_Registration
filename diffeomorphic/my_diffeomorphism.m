@@ -1,7 +1,6 @@
-function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving_img, opts)
-
-    fixed_img = mat2gray(fixed_img);
-    moving_img = mat2gray(moving_img);
+function disp_field = my_diffeomorphism(F, M, opts)
+    F = mat2gray(F);
+    M = mat2gray(M);
     
     if nargin<3;                        opts                 = struct();     end
     if ~isfield(opts,'alpha');          opts.alpha           = 0.4;          end
@@ -13,24 +12,24 @@ function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving
     if ~isfield(opts,'max_iter');       opts.max_iter        = 1000;         end
     
 
-    disp(['Initial SSD ' num2str(sum(sum((fixed_img - moving_img).^2)))]);
-    disp(['Initial MI ' num2str(mutual_info(fixed_img, moving_img))]);
+    disp(['Initial SSD ' num2str(sum(sum((F - M).^2)))]);
+    disp(['Initial MI ' num2str(mutual_info(F, M))]);
     
-    vec_field_x = zeros(size(moving_img));
-    vec_field_y = zeros(size(moving_img));
+    vec_field_x = zeros(size(M));
+    vec_field_y = zeros(size(M));
     
-    [G_fix_x, G_fix_y] = imgradientxy(fixed_img,'central');
+    [G_fix_x, G_fix_y] = imgradientxy(F,'central');
     [G_fix_mag, ~] = imgradient(G_fix_x, G_fix_y);
     
-    current_moved = moving_img;
+    M_tilda = M;
     iterator = 1;
 
-    new_mi = mutual_info(fixed_img, moving_img);
+    new_mi = mutual_info(F, M);
     old_mi = new_mi - 100;
     
     step_size = 1;
-    old_disp_field = cat(3, zeros(size(fixed_img)), zeros(size(fixed_img)));
-    disp_field = cat(3, zeros(size(fixed_img)), zeros(size(fixed_img)));
+    old_disp_field = cat(3, zeros(size(F)), zeros(size(F)));
+    disp_field = cat(3, zeros(size(F)), zeros(size(F)));
     disp_field_diff = Inf;
     ssd = [];
     
@@ -42,23 +41,23 @@ function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving
         old_mi = new_mi;
         
         if mod(iterator,500)==0
-            ssd = [sum(sum((fixed_img - current_moved).^2))];
+            ssd = [sum(sum((F - M_tilda).^2))];
             disp(['Iteration number: ' num2str(iterator) ', SSD: ' num2str(ssd) ' and Mutual Info: ' num2str(new_mi)]);
             step_size = step_size*opts.step;
         end
         
-        [G_mov_x, G_mov_y] = imgradientxy(current_moved, 'central');
+        [G_mov_x, G_mov_y] = imgradientxy(M_tilda, 'central');
         [G_mov_mag, ~] = imgradient(G_mov_x, G_mov_y);
         
-        update_field_x = -1 * (((current_moved - fixed_img).*G_fix_x) ./ ...
-                ((opts.alpha).^2 * (current_moved - fixed_img).^2 + G_fix_mag.^2) ... 
-                + ((current_moved - fixed_img).*G_mov_x) ./ ...
-                ((opts.alpha).^2 * (current_moved - fixed_img).^2 + G_mov_mag.^2));
+        update_field_x = -1 * (((M_tilda - F).*G_fix_x) ./ ...
+                ((opts.alpha).^2 * (M_tilda - F).^2 + G_fix_mag.^2) ... 
+                + ((M_tilda - F).*G_mov_x) ./ ...
+                ((opts.alpha).^2 * (M_tilda - F).^2 + G_mov_mag.^2));
         
-        update_field_y = -1 * (((current_moved - fixed_img).*G_fix_y) ./ ...
-                ((opts.alpha).^2 * (current_moved - fixed_img).^2 + G_fix_mag.^2) ... 
-                + ((current_moved - fixed_img).*G_mov_y) ./ ...
-                ((opts.alpha).^2 * (current_moved - fixed_img).^2 + G_mov_mag.^2));
+        update_field_y = -1 * (((M_tilda - F).*G_fix_y) ./ ...
+                ((opts.alpha).^2 * (M_tilda - F).^2 + G_fix_mag.^2) ... 
+                + ((M_tilda - F).*G_mov_y) ./ ...
+                ((opts.alpha).^2 * (M_tilda - F).^2 + G_mov_mag.^2));
             
         update_field_x(isnan(update_field_x)) = 0;
         update_field_y(isnan(update_field_y)) = 0;
@@ -66,6 +65,8 @@ function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving
         update_field_x = imgaussfilt(update_field_x, opts.sigma_fluid);
         update_field_y = imgaussfilt(update_field_y, opts.sigma_fluid);
         
+        [update_field_x,update_field_y] = exponential_mapping(update_field_x,...
+                                                            update_field_y);
         if ~opts.compositive
             vec_field_x = vec_field_x + step_size*update_field_x;
             vec_field_y = vec_field_y + step_size*update_field_y;
@@ -78,36 +79,36 @@ function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving
         vec_field_y = imgaussfilt(vec_field_y, opts.sigma_diff);
         
         disp_field = cat(3, vec_field_x, vec_field_y);
-        current_moved = imwarp(moving_img, disp_field);
-%         current_moved = iminterpolate(moving_img,vec_field_x,vec_field_y);
-        ssd = [ssd, sum(sum((fixed_img - current_moved).^2))];
+        M_tilda = imwarp(M, disp_field);
+%         current_moved = iminterpolate(M,vec_field_x,vec_field_y);
+        ssd = [ssd, sum(sum((F - M_tilda).^2))];
         iterator = iterator + 1;
-        new_mi = mutual_info(fixed_img, current_moved);
+        new_mi = mutual_info(F, M_tilda);
         
         disp_field_diff = sum(sum(sum(abs(old_disp_field - disp_field))));
         old_disp_field = disp_field;
         
-        subplot(121), imshowpair(fixed_img,current_moved);
+        subplot(121), imshowpair(F,M_tilda);
         subplot(122), plot(ssd);
         pause(0.001);
     end
-    moved_img = current_moved;
+    moved_img = M_tilda;
     
-    final_MI = mutual_info(fixed_img, moved_img);
-    final_SSD = sum(sum((fixed_img - moved_img).^2));
+    final_MI = mutual_info(F, moved_img);
+    final_SSD = sum(sum((F - moved_img).^2));
     
     disp(['Final SSD ' num2str(final_SSD)]);
     disp(['Final mutual info: ' num2str(final_MI)]);
     
 %     figure();
-%     subplot(221), imshow(fixed_img, []), title('Fixed')
-%     subplot(222), imshow(moving_img, []), title('Moving')
+%     subplot(221), imshow(F, []), title('Fixed')
+%     subplot(222), imshow(M, []), title('Moving')
 %     flow = opticalFlow(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)));
 %     subplot(223), plot(flow, 'DecimationFactor',[10,5]);
 %     subplot(224), imshow(moved_img, [])
 
     close all;
-%     figure();
-%     subplot(131), imshow(fixed_img, []), title('Fixed'), subplot(132), imshow(moving_img, []), title('Moving'), ...
-%         subplot(133), imshow(moved_img, []), title('Moved'), colormap(jet);
+    figure();
+    subplot(131), imshow(F, []), title('Fixed'), subplot(132), imshow(M, []), title('Moving'), ...
+        subplot(133), imshow(moved_img, []), title('Moved'), colormap(jet);
 end

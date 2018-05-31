@@ -43,4 +43,5 @@ function [vx,vy] = register_images(F, M, vx, vy, opts)
        
         n_iter = n_iter + 1;
     end
+    close all;
 end
