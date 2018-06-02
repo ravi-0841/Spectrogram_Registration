@@ -5,6 +5,8 @@ N=512;
 wshift=128;
 Q=N/wshift;
 
+% W = sqrt((0.5-0.5*cos(2*pi*(0:(N-1))'/(N)))/Q*2);
+% S = sqrt((0.5-0.5*cos(2*pi*(0:(N-1))'/(N)))/Q*2);
 W = hann(N);
 S = hann(N);
 
@@ -64,6 +66,6 @@ warped_phase = imwarp(angle(X_src),disp_field);
 est_signal_diffeo = get_signal_iteratively(warped_mag.*exp(1j*warped_phase), N, wshift, W, 1000);
 figure()
 lim = [1 1; size(warped_mag,1) size(warped_mag,2)];
-subplot(131), imshow(warped_mag,[]), colormap(jet), subplot(132), ...
+subplot(131), imshow(log(1+warped_mag),[]), colormap(jet), subplot(132), ...
     showgrid(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),4,lim),...
     subplot(133), showvector(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),5);
