@@ -102,8 +102,8 @@ if do_online_lws
     time_online_lws = toc;
     
     tmp = stft(istft(X1,wshift,S),N,wshift,W)-X1;
-    C1 = 10*log10(Xpow_neu / sum(abs(tmp(:)).^2));
-    fprintf(1,'+Online LWS     : %5.2f dB (time: %.2f s)\n',C1,time_online_lws);
+%     C1 = 10*log10(Xpow_neu / sum(abs(tmp(:)).^2));
+%     fprintf(1,'+Online LWS     : %5.2f dB (time: %.2f s)\n',C1,time_online_lws);
     if output_wav
         x1=istft(X1,wshift,S);
 %         audiowrite('out_online_lws.wav',x1,fs);
@@ -125,11 +125,11 @@ if do_batch_lws
     time_bach_lws = toc;
     
     tmp = stft(istft(Y,wshift,S),N,wshift,W)-Y;
-    Cfinal = 10*log10(Xpow_neu / sum(abs(tmp(:)).^2));
-    fprintf(1,'+Batch LWS      : %5.2f dB (time: %.2f s)\n',Cfinal,time_bach_lws);
+%     Cfinal = 10*log10(Xpow_neu / sum(abs(tmp(:)).^2));
+%     fprintf(1,'+Batch LWS      : %5.2f dB (time: %.2f s)\n',Cfinal,time_bach_lws);
     if output_wav
         y=istft(Y,wshift,S);
-        audiowrite('out_batch_lws.wav',y,fs);
+%         audiowrite('out_batch_lws.wav',y,fs);
     end
 
 else
