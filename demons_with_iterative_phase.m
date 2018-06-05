@@ -57,7 +57,7 @@ opts.max_iter = 600;
 opts.pyramid_levels  = 2;
 opts.compositive = 0;
 opts.diffeomorphism = 1;
-opts.plot = 0;
+opts.plot = 1;
 
 disp_field = my_multires_demons(log(1 + X0_tar),log(1 + X0_src),opts);
 warped_mag = imwarp(abs(X_src),disp_field);
