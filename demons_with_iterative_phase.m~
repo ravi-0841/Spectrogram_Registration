@@ -62,18 +62,15 @@ opts.plot = 0;
 disp_field = my_multires_demons(log(1 + X0_tar),log(1 + X0_src),opts);
 warped_mag = imwarp(abs(X_src),disp_field);
 warped_phase = imwarp(angle(X_src),disp_field);
-recon_signal_fast = get_signal(warped_mag.*exp(1j*warped_phase),W,S,2000);
-recon_signal_iter = get_signal_iteratively(warped_mag.*exp(1j*warped_phase),N,wshift,W,2000);
+recon_signal_fast = get_signal(warped_mag.*exp(1j*warped_phase), W, S, wshift);
+recon_signal2 = get_signal_iteratively(warped_mag.*exp(1j*warped_phase), N, wshift, W, 1000);
 
-X_fast = stft(recon_signal_fast,N,wshift,W);
-X_iter = stft(recon_signal_iter,N,wshift,W);
-
-figure(), subplot(131), imshow(angle(X_tar), []), title('Original'), ...
+subplot(131), imshow(angle(X_tar), []), title('Original'), ...
     subplot(132), imshow(angle(X_iter), []), title('Iterative'), ...
     subplot(133), imshow(angle(X_fast), []), title('Fast'), colormap(jet);
 
-% figure()
-% lim = [1 1; size(warped_mag,1) size(warped_mag,2)];
-% subplot(131), imshow(log(1+warped_mag),[]), colormap(jet), subplot(132), ...
-%     showgrid(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),4,lim),...
-%     subplot(133), showvector(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),5);
+figure()
+lim = [1 1; size(warped_mag,1) size(warped_mag,2)];
+subplot(131), imshow(log(1+warped_mag),[]), colormap(jet), subplot(132), ...
+    showgrid(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),4,lim),...
+    subplot(133), showvector(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),5);

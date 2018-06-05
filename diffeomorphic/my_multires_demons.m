@@ -11,6 +11,7 @@ function disp_field = my_multires_demons(F, M, opts)
     if ~isfield(opts,'stop_criterion');  opts.stop_criterion  = 0.01;           end
     if ~isfield(opts,'pyramid_levels');  opts.pyramid_levels  = 1;              end
     if ~isfield(opts,'diffeomorphism');  opts.diffeomorphism  = 0;              end
+    if ~isfield(opts,'plot');            opts.plot            = 0;              end
     
     vx = zeros(size(M));
     vy = zeros(size(M));
@@ -18,9 +19,11 @@ function disp_field = my_multires_demons(F, M, opts)
     M = mat2gray(M);
     F = mat2gray(F);
     
-    figure(1)
-    subplot(121), title('Difference');
-    subplot(122), title('SSD');
+    if opts.plot
+        figure(1)
+        subplot(121), title('Difference');
+        subplot(122), title('SSD');
+    end
     
     for k = opts.pyramid_levels:-1:1
         scale_factor = 2^(-1*(k-1));
@@ -42,6 +45,7 @@ function disp_field = my_multires_demons(F, M, opts)
         
         vx = imresize(vx/scale_factor, size(M));
         vy = imresize(vy/scale_factor, size(M));
-        subplot(122), hold on;
+        
+        if opts.plot;   subplot(122), hold on; end
     end
 end

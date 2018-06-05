@@ -31,7 +31,7 @@ top = 3;
 tar='happy.wav'; % please provide a test file
 [x_tar,fs]=audioread(tar);
 
-src='angry.wav'; % please provide a test file
+src='neutral.wav'; % please provide a test file
 [x_src,fs]=audioread(src);
 
 [x_src, x_tar] = get_alignment(x_src,x_tar,fs,w,w-s,r,top);
@@ -83,8 +83,8 @@ opts.diffeomorphism = 1;
 
 disp_field = my_multires_demons(log(1 + X0_tar),log(1 + X0_src),opts);
 warped_mag = imwarp(abs(X_src),disp_field);
-% warped_phase = imwarp(angle(X_src),disp_field);
-warped_phase = rand(size(warped_mag));
+warped_phase = imwarp(angle(X_src),disp_field);
+% warped_phase = rand(size(warped_mag));
 est_signal = get_signal_iteratively(warped_mag.*exp(1j*warped_phase), N, wshift, W, 1000);
 
 %% Perform a few iterations of Online LWS (aka. TF-RTISI-LA)

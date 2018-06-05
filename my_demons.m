@@ -11,6 +11,7 @@ function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving
     if ~isfield(opts,'epsilon');        opts.epsilon         = 10;           end
     if ~isfield(opts,'compositive');    opts.compositive     = 0;            end
     if ~isfield(opts,'max_iter');       opts.max_iter        = 1000;         end
+    if ~isfield(opts,'plot');           opts.plot            = 0;            end
     
 
     disp(['Initial SSD ' num2str(sum(sum((fixed_img - moving_img).^2)))]);
@@ -28,21 +29,19 @@ function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving
     
     iterator = 1;
 
-    new_mi = mutual_info(fixed_img, moving_img);
-    old_mi = new_mi - 100;
+    mi = mutual_info(fixed_img, moving_img);
     
     step_size = 1;
     old_disp_field = cat(3, zeros(size(fixed_img)), zeros(size(fixed_img)));
     disp_field = cat(3, zeros(size(fixed_img)), zeros(size(fixed_img)));
     disp_field_diff = Inf;
     ssd = [];
-
+    
     while iterator<opts.max_iter && disp_field_diff>opts.epsilon
-        old_mi = new_mi;
         
         if mod(iterator,100)==0
             ssd = [ssd sum(sum((fixed_img - current_moved).^2))];
-            disp(['Iteration number: ' num2str(iterator) ', SSD: ' num2str(ssd(end)) ' and Mutual Info: ' num2str(new_mi)]);
+            disp(['Iteration number: ' num2str(iterator) ', SSD: ' num2str(ssd(end)) ' and Mutual Info: ' num2str(mi)]);
             step_size = step_size*opts.step;
         end
         
@@ -80,14 +79,16 @@ function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving
         current_moved = imwarp(moving_img, disp_field);
         ssd = [ssd, sum(sum((fixed_img - current_moved).^2))];
         iterator = iterator + 1;
-        new_mi = mutual_info(fixed_img, current_moved);
+        mi = mutual_info(fixed_img, current_moved);
         
         disp_field_diff = sum(sum(sum(abs(old_disp_field - disp_field))));
         old_disp_field = disp_field;
         
-        subplot(121), imshowpair(fixed_img,current_moved);
-        subplot(122), plot(ssd, 'r');
-        pause(0.001);
+        if opts.plot
+            subplot(121), imshowpair(fixed_img,current_moved);
+            subplot(122), plot(ssd, 'r');
+            pause(0.001);
+        end
     end
     moved_img = current_moved;
     
