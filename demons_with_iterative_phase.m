@@ -57,7 +57,7 @@ opts.max_iter = 600;
 opts.pyramid_levels  = 2;
 opts.compositive = 0;
 opts.diffeomorphism = 1;
-opts.plot = 1;
+opts.plot = 0;
 
 disp_field = my_multires_demons(log(1 + X0_tar),log(1 + X0_src),opts);
 warped_mag = imwarp(abs(X_src),disp_field);
@@ -68,9 +68,9 @@ recon_signal_iter = get_signal_iteratively(warped_mag.*exp(1j*warped_phase),N,ws
 X_fast = stft(recon_signal_fast,N,wshift,W);
 X_iter = stft(recon_signal_iter,N,wshift,W);
 
-figure(), subplot(131), imshow(angle(X_tar), []), title('Original'), ...
-    subplot(132), imshow(angle(X_iter), []), title('Iterative'), ...
-    subplot(133), imshow(angle(X_fast), []), title('Fast'), colormap(jet);
+figure(), subplot(131), imshow(do_phase_unwrapping(angle(X_tar)), []), title('Original'), ...
+    subplot(132), imshow(do_phase_unwrapping(angle(X_iter)), []), title('Iterative'), ...
+    subplot(133), imshow(do_phase_unwrapping(angle(X_fast)), []), title('Fast'), colormap(jet);
 
 % figure()
 % lim = [1 1; size(warped_mag,1) size(warped_mag,2)];
