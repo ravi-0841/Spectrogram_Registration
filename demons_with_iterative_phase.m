@@ -1,8 +1,8 @@
 clear all
 clc
 
-N=512;
-wshift=128;
+N = 512;
+wshift = 128;
 Q=N/wshift;
 
 W = hann(N);
@@ -57,7 +57,7 @@ opts.max_iter = 600;
 opts.pyramid_levels  = 1;
 opts.compositive = 0;
 opts.diffeomorphism = 1;
-opts.plot = 0;
+opts.plot = 1;
 
 iterations = 1000;
 
