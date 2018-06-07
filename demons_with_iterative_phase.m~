@@ -1,8 +1,8 @@
 clear all
-clc
+% clc
 
-N = 512;
-wshift = 128;
+N=512;
+wshift=128;
 Q=N/wshift;
 
 W = hann(N);
@@ -18,7 +18,7 @@ top = 3;
 target = 'happy.wav'; % please provide a test file  or Target
 [x_tar,fs] = audioread(target);
 
-source = 'neutral.wav'; % please provide a test file  or Source
+source = 'angry.wav'; % please provide a test file  or Source
 [x_src,fs] = audioread(source);
 
 [x_src, x_tar] = get_alignment(x_src,x_tar,fs,w,w-s,r,top);
@@ -54,10 +54,10 @@ opts.sigma_fluid = 0.7;
 opts.sigma_diff = 1.5;
 opts.step = 1.0;
 opts.max_iter = 600;
-opts.pyramid_levels  = 1;
+opts.pyramid_levels  = 2;
 opts.compositive = 0;
 opts.diffeomorphism = 1;
-opts.plot = 1;
+opts.plot = 0;
 
 iterations = 1000;
 
@@ -74,15 +74,15 @@ orig_phase = do_phase_unwrapping(angle(X_tar));
 fast_phase = do_phase_unwrapping(angle(X_fast));
 iter_phase = do_phase_unwrapping(angle(X_iter));
 
-% figure(), subplot(131), imshow(orig_phase, []), title('Original'), ...
-%     subplot(132), imshowpair(orig_phase, iter_phase), title('Iterative'), ...
-%     subplot(133), imshowpair(orig_phase, fast_phase), title('Fast'), colormap(jet);
+figure(), subplot(131), imshow(orig_phase, []), title('Original'), ...
+    subplot(132), imshowpair(orig_phase, iter_phase), title('Iterative'), ...
+    subplot(133), imshowpair(orig_phase, fast_phase), title('Fast'), colormap(jet);
 
 disp(['SSD orgVSfast: ' num2str(sum(sum((orig_phase - fast_phase).^2))) ...
     '    SSD orgVSiter: ' num2str(sum(sum((orig_phase - iter_phase).^2)))]);
 
-figure()
-lim = [1 1; size(warped_mag,1) size(warped_mag,2)];
-subplot(131), imshowpair(log(1+warped_mag),log(1+X0_tar)), colormap(jet), subplot(132), ...
-    showgrid(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),4,lim),...
-    subplot(133), showvector(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),5);
+% figure()
+% lim = [1 1; size(warped_mag,1) size(warped_mag,2)];
+% subplot(131), imshowpair(log(1+warped_mag),[]), colormap(jet), subplot(132), ...
+%     showgrid(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),4,lim),...
+%     subplot(133), showvector(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),5);
