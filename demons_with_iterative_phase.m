@@ -15,7 +15,7 @@ s = 0.010;
 top = 3;
 
 %% Get the wav file in
-target = 'happy.wav'; % please provide a test file  or Target
+target = 'angry.wav'; % please provide a test file  or Target
 [x_tar,fs] = audioread(target);
 
 source = 'neutral.wav'; % please provide a test file  or Source
@@ -50,21 +50,21 @@ X0_src = abs(X_src);
 
 opts = struct();
 opts.alpha = 0.4;
-opts.sigma_fluid = 0.7;
-opts.sigma_diff = 1.5;
+opts.sigma_fluid = 1.5; %0.7
+opts.sigma_diff = 2.5;  %1.5
 opts.step = 1.0;
 opts.max_iter = 600;
-opts.pyramid_levels  = 1;
+opts.pyramid_levels  = 2;
 opts.compositive = 0;
 opts.diffeomorphism = 1;
 opts.plot = 1;
 
 iterations = 1000;
 
-disp_field = my_multires_demons(log(1 + X0_tar),log(1 + X0_src),opts);
+disp_field = my_multires_demons(log(1+X0_tar),log(1+X0_src),opts);
 warped_mag = imwarp(abs(X_src),disp_field);
 warped_phase = imwarp(angle(X_src),disp_field);
-recon_signal_fast = get_signal(warped_mag.*exp(1j*warped_phase),W,S,iterations);
+recon_signal_fast = get_signal(warped_mag.*exp(1j*warped_phase),W,S,iterations,wshift);
 recon_signal_iter = get_signal_iteratively(warped_mag.*exp(1j*warped_phase),N,wshift,W,iterations);
 
 X_fast = stft(recon_signal_fast,N,wshift,W);
