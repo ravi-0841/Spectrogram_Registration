@@ -1,6 +1,6 @@
 function disp_field = my_diffeomorphism(F, M, vx, vy, opts)
-    F = mat2gray(F);
-    M = mat2gray(M);
+%     F = mat2gray(F);
+%     M = mat2gray(M);
     
     if nargin<3;                        opts                 = struct();     end
     if ~isfield(opts,'alpha');          opts.alpha           = 0.4;          end
