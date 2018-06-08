@@ -1,7 +1,7 @@
 function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving_img, vx, vy, opts)
 
-    fixed_img = mat2gray(fixed_img);
-    moving_img = mat2gray(moving_img);
+%     fixed_img = mat2gray(fixed_img);
+%     moving_img = mat2gray(moving_img);
     
     if nargin<3;                        opts                 = struct();     end
     if ~isfield(opts,'alpha');          opts.alpha           = 0.4;          end
