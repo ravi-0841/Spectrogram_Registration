@@ -4,8 +4,8 @@ w = 0.025;
 o = 0.010;
 r = 512;
 
-[d1,f] = audioread('./wav/angry.wav');
-[d2,f] = audioread('./wav/happy.wav');
+[d1,f] = audioread('./wav/angry2.wav');
+[d2,f] = audioread('./wav/neutral2.wav');
 
 d1 = -1 + 2*((d1 - min(d1)) / (max(d1) - min(d1)));
 d2 = -1 + 2*((d2 - min(d2)) / (max(d2) - min(d2)));
@@ -62,8 +62,8 @@ s = w-o;
 f = 16000;
 r = 512;
 
-[d1,~] = audioread('./wav/angry.wav');
-[d2,~] = audioread('./wav/happy.wav');
+[d1,~] = audioread('./wav/angry2.wav');
+[d2,~] = audioread('./wav/neutral2.wav');
 
 d1 = -1 + 2*((d1 - min(d1)) / (max(d1) - min(d1)));
 d2 = -1 + 2*((d2 - min(d2)) / (max(d2) - min(d2)));
