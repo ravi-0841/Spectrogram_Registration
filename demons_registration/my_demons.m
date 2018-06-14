@@ -4,6 +4,7 @@ function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving
 %     moving_img = mat2gray(moving_img);
     
     if nargin<3;                        opts                 = struct();     end
+    if ~isfield(opts,'only_freq');      opts.only_freq       = 0;            end
     if ~isfield(opts,'alpha');          opts.alpha           = 0.4;          end
     if ~isfield(opts,'sigma_fluid');    opts.sigma_fluid     = 1.0;          end
     if ~isfield(opts,'sigma_diff');     opts.sigma_diff      = 1.0;          end
@@ -17,11 +18,13 @@ function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving
     disp(['Initial SSD ' num2str(sum(sum((fixed_img - moving_img).^2)))]);
     disp(['Initial MI ' num2str(mutual_info(fixed_img, moving_img))]);
     
-%     vec_field_x = zeros(size(moving_img));
-%     vec_field_y = zeros(size(moving_img));
-
-    vec_field_x = vx;
-    vec_field_y = vy;
+    if isempty(vx) || isempty(vy)
+        vec_field_x = zeros(size(M));
+        vec_field_y = zeros(size(M));
+    else
+        vec_field_x = vx;
+        vec_field_y = vy;
+    end
     current_moved = imwarp(moving_img, cat(3,vec_field_x,vec_field_y));
     
     [G_fix_x, G_fix_y] = imgradientxy(fixed_img,'central');
@@ -74,6 +77,8 @@ function [disp_field,moved_img,final_SSD,final_MI] = my_demons(fixed_img, moving
         
         vec_field_x = imgaussfilt(vec_field_x, opts.sigma_diff);
         vec_field_y = imgaussfilt(vec_field_y, opts.sigma_diff);
+        
+        if opts.only_freq; vec_field_x = zeros(size(vec_field_y)); end
         
         disp_field = cat(3, vec_field_x, vec_field_y);
         current_moved = imwarp(moving_img, disp_field);

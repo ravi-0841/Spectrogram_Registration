@@ -15,10 +15,10 @@ s = 0.010;
 top = 3;
 
 %% Get the wav files in
-target = 'angry2.wav'; % please provide a test file  or Target
+target = 'angry1.wav'; % please provide a test file  or Target
 [x_tar,fs] = audioread(target);
 
-source = 'happy2.wav'; % please provide a test file  or Source
+source = 'neutral1.wav'; % please provide a test file  or Source
 [x_src,fs] = audioread(source);
 
 [x_src, x_tar] = get_alignment(x_src,x_tar,fs,w,w-s,r,top);
@@ -50,13 +50,14 @@ X0_src = abs(X_src);
 
 opts = struct();
 opts.alpha = 0.4;
+opts.only_freq = 0;
 opts.sigma_fluid = 1.5; %0.7
 opts.sigma_diff = 2.5;  %1.5
 opts.step = 1.0;
 opts.max_iter = 600;
 opts.pyramid_levels  = 2;
 opts.compositive = 0;
-opts.diffeomorphism = 1;
+opts.diffeomorphism = 0;
 opts.plot = 1;
 
 iterations = 1000;
@@ -74,15 +75,11 @@ orig_phase = do_phase_unwrapping(angle(X_tar));
 fast_phase = do_phase_unwrapping(angle(X_fast));
 iter_phase = do_phase_unwrapping(angle(X_iter));
 
-% figure(), subplot(131), imshow(orig_phase, []), title('Original'), ...
-%     subplot(132), imshowpair(orig_phase, iter_phase), title('Iterative'), ...
-%     subplot(133), imshowpair(orig_phase, fast_phase), title('Fast'), colormap(jet);
-
 disp(['SSD orgVSfast: ' num2str(sum(sum((orig_phase - fast_phase).^2))) ...
     '    SSD orgVSiter: ' num2str(sum(sum((orig_phase - iter_phase).^2)))]);
 
 figure()
 lim = [1 1; size(warped_mag,1) size(warped_mag,2)];
-subplot(131), imshowpair(log(1+warped_mag),log(1+X0_tar)), colormap(jet), subplot(132), ...
+subplot(131), imshowpair(log(1+X0_tar), log(1+warped_mag)), subplot(132), ...
     showgrid(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),4,lim),...
     subplot(133), showvector(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),5);

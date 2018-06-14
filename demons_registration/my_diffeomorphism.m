@@ -1,8 +1,7 @@
 function disp_field = my_diffeomorphism(F, M, vx, vy, opts)
-%     F = mat2gray(F);
-%     M = mat2gray(M);
     
     if nargin<3;                        opts                 = struct();     end
+    if ~isfield(opts,'only_freq');      opts.only_freq       = 0;            end
     if ~isfield(opts,'alpha');          opts.alpha           = 0.4;          end
     if ~isfield(opts,'sigma_fluid');    opts.sigma_fluid     = 1.0;          end
     if ~isfield(opts,'sigma_diff');     opts.sigma_diff      = 1.0;          end
@@ -16,11 +15,14 @@ function disp_field = my_diffeomorphism(F, M, vx, vy, opts)
     disp(['Initial SSD ' num2str(sum(sum((F - M).^2)))]);
     disp(['Initial MI ' num2str(mutual_info(F, M))]);
     
-%     vec_field_x = zeros(size(M));
-%     vec_field_y = zeros(size(M));
+    if isempty(vx) || isempty(vy)
+        vec_field_x = zeros(size(M));
+        vec_field_y = zeros(size(M));
+    else
+        vec_field_x = vx;
+        vec_field_y = vy;
+    end
     
-    vec_field_x = vx;
-    vec_field_y = vy;
     M_tilda = imwarp(M, cat(3,vec_field_x,vec_field_y));
     
     [G_fix_x, G_fix_y] = imgradientxy(F,'central');
@@ -75,6 +77,8 @@ function disp_field = my_diffeomorphism(F, M, vx, vy, opts)
         
         vec_field_x = imgaussfilt(vec_field_x, opts.sigma_diff);
         vec_field_y = imgaussfilt(vec_field_y, opts.sigma_diff);
+        
+        if opts.only_freq; vec_field_x = zeros(size(vec_field_y)); end
         
         disp_field = cat(3, vec_field_x, vec_field_y);
         M_tilda = imwarp(M, disp_field);
