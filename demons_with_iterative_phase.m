@@ -14,11 +14,11 @@ w = 0.025;
 s = 0.010;
 top = 3;
 
-%% Get the wav file in
-target = 'angry.wav'; % please provide a test file  or Target
+%% Get the wav files in
+target = 'angry2.wav'; % please provide a test file  or Target
 [x_tar,fs] = audioread(target);
 
-source = 'neutral.wav'; % please provide a test file  or Source
+source = 'happy2.wav'; % please provide a test file  or Source
 [x_src,fs] = audioread(source);
 
 [x_src, x_tar] = get_alignment(x_src,x_tar,fs,w,w-s,r,top);
