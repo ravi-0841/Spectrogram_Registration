@@ -36,7 +36,7 @@ function disp_field = my_multires_demons(F, M, opts)
         vy = imresize(vy*scale_factor,scale_factor);
         
         if opts.diffeomorphism
-            disp_field = my_diffeomorphism(F_tilda, M_tilda, vx, vy, opts);
+            disp_field = my_constrained_diffeomorphism(F_tilda, M_tilda, vx, vy, opts);
         else
             disp_field = my_demons(F_tilda, M_tilda, vx, vy, opts);
         end

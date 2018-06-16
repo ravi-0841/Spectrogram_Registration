@@ -1,8 +1,8 @@
 % clear all
 clc
 
-N = 512;
-wshift = 128;
+N = 1024;
+wshift = 64;
 Q=N/wshift;
 
 W = hann(N);
@@ -51,11 +51,11 @@ X0_src = abs(X_src);
 opts = struct();
 opts.alpha = 0.4;
 opts.only_freq = 0;
-opts.sigma_fluid = 1.5; %0.7
-opts.sigma_diff = 2.5;  %1.5
+opts.sigma_fluid = 3.0; %1.5
+opts.sigma_diff = 3.0;  %2.5
 opts.step = 1.0;
 opts.max_iter = 600;
-opts.pyramid_levels  = 1;
+opts.pyramid_levels  = 2;
 opts.compositive = 0;
 opts.diffeomorphism = 1;
 opts.plot = 1;
@@ -85,38 +85,38 @@ subplot(131), imshowpair(log(1+X0_tar), log(1+warped_mag)), subplot(132), ...
     subplot(133), showvector(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),5);
 
 %% window wise registration along frequency axis
-X0_tar = abs(X_tar);
-X0_src = abs(X_src);
-
-opts = struct();
-opts.alpha = 0.4;
-opts.only_freq = 0;
-opts.sigma_fluid = 1.5; %0.7
-opts.sigma_diff = 2.5;  %1.5
-opts.step = 1.0;
-opts.max_iter = 600;
-opts.pyramid_levels  = 1;
-opts.compositive = 0;
-opts.diffeomorphism = 1;
-opts.plot = 0;
-
-iterations = 1000;
-
-window_size = 7;
-overlap = 3;
-stride = window_size - overlap;
-warped_spect = zeros(size(X0_tar));
-for i = 1:stride:size(X0_tar,2)-window_size+1
-    src_sub = X0_src(:, i:i+window_size-1);
-    tar_sub = X0_tar(:, i:i+window_size-1);
-    disp_field = my_multires_demons(log(1+tar_sub),log(1+src_sub),opts);
-    warped_sub = imwarp(src_sub, disp_field);
-    warped_spect(:, i:i+stride-1) = warped_sub(:,1:stride);
-    if i == 1
-        warped_spect(:, i:i+window_size-1) = warped_sub;
-    else
-        warped_spect(:, i+stride:i+window_size-1) = (warped_spect(:, ...
-            i+stride:i+window_size-1) + warped_sub(:,stride+1:window_size))/2;
-    end
-end
-recon_signal_fast = get_signal(warped_spect,W,S,iterations,wshift);
+% X0_tar = abs(X_tar);
+% X0_src = abs(X_src);
+% 
+% opts = struct();
+% opts.alpha = 0.4;
+% opts.only_freq = 0;
+% opts.sigma_fluid = 1.5; %0.7
+% opts.sigma_diff = 2.5;  %1.5
+% opts.step = 1.0;
+% opts.max_iter = 600;
+% opts.pyramid_levels  = 1;
+% opts.compositive = 0;
+% opts.diffeomorphism = 1;
+% opts.plot = 0;
+% 
+% iterations = 1000;
+% 
+% window_size = 7;
+% overlap = 3;
+% stride = window_size - overlap;
+% warped_spect = zeros(size(X0_tar));
+% for i = 1:stride:size(X0_tar,2)-window_size+1
+%     src_sub = X0_src(:, i:i+window_size-1);
+%     tar_sub = X0_tar(:, i:i+window_size-1);
+%     disp_field = my_multires_demons(log(1+tar_sub),log(1+src_sub),opts);
+%     warped_sub = imwarp(src_sub, disp_field);
+%     warped_spect(:, i:i+stride-1) = warped_sub(:,1:stride);
+%     if i == 1
+%         warped_spect(:, i:i+window_size-1) = warped_sub;
+%     else
+%         warped_spect(:, i+stride:i+window_size-1) = (warped_spect(:, ...
+%             i+stride:i+window_size-1) + warped_sub(:,stride+1:window_size))/2;
+%     end
+% end
+% recon_signal_fast = get_signal(warped_spect,W,S,iterations,wshift);
