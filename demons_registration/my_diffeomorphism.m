@@ -1,4 +1,4 @@
-function disp_field = my_diffeomorphism(F, M, vx, vy, opts)
+function disp_field = my_diffeomorphism(F, M, N, vx, vy, opts)
     
     if nargin<3;                        opts                 = struct();     end
     if ~isfield(opts,'only_freq');      opts.only_freq       = 0;            end

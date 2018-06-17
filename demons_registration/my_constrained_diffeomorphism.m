@@ -1,4 +1,4 @@
-function disp_field = my_constrained_diffeomorphism(F, M, vx, vy, opts)
+function disp_field = my_constrained_diffeomorphism(F, M, N, vx, vy, opts)
     
     if nargin<3;                        opts                 = struct();     end
     if ~isfield(opts,'only_freq');      opts.only_freq       = 0;            end
@@ -12,7 +12,7 @@ function disp_field = my_constrained_diffeomorphism(F, M, vx, vy, opts)
     if ~isfield(opts,'plot');           opts.plot            = 0;            end
     
     y = 0:size(F,1)-1;
-    z = 1 ./ sqrt(1 + (y./(2500*514/16000)).^12);
+    z = 1 ./ sqrt(1 + (y./(2500*(N+2)/16000)).^12);
     cost_adjustment_mat = z' * ones(1,size(F,2));
     
     

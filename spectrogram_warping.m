@@ -15,10 +15,10 @@ s = 0.010;
 top = 3;
 
 %% Get the wav files in
-target = 'angry1.wav'; % please provide a test file  or Target
+target = 'angry2.wav'; % please provide a test file  or Target
 [x_tar,fs] = audioread(target);
 
-source = 'neutral1.wav'; % please provide a test file  or Source
+source = 'happy2.wav'; % please provide a test file  or Source
 [x_src,fs] = audioread(source);
 
 [x_src, x_tar] = get_alignment(x_src,x_tar,fs,w,w-s,r,top);
@@ -71,11 +71,11 @@ I_moving = deconvlucy(I_moving, PSF, 10);
 figure(), subplot(121), imshow(I_fixed,[]), subplot(122), imshow(I_moving,[]), colormap(jet);
 
 %% Demons Registration
-disp_field = my_multires_demons(I_fixed,I_moving,opts);
+disp_field = my_multires_demons(I_fixed,I_moving,N,opts);
 warped_mag = imwarp(abs(X_src),disp_field);
 warped_phase = imwarp(angle(X_src),disp_field);
 
-%% Signal Reconstruction using RTISI-LA
+%% Signal Reconstruction using RTISI-LA and plotting
 iterations = 1000;
 recon_signal_fast = get_signal(warped_mag.*exp(1j*warped_phase),W,S,iterations,wshift);
 recon_signal_iter = get_signal_iteratively(warped_mag.*exp(1j*warped_phase),N,wshift,W,iterations);
