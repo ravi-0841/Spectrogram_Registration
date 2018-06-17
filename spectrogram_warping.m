@@ -1,7 +1,7 @@
 % clear all
 clc
 
-N = 512;
+N = 1024;
 wshift = 128;
 Q=N/wshift;
 
@@ -15,10 +15,10 @@ s = 0.010;
 top = 3;
 
 %% Get the wav files in
-target = 'angry2.wav'; % please provide a test file  or Target
+target = 'angry4.wav'; % please provide a test file  or Target
 [x_tar,fs] = audioread(target);
 
-source = 'happy2.wav'; % please provide a test file  or Source
+source = 'neutral4.wav'; % please provide a test file  or Source
 [x_src,fs] = audioread(source);
 
 [x_src, x_tar] = get_alignment(x_src,x_tar,fs,w,w-s,r,top);
@@ -55,13 +55,13 @@ opts.sigma_fluid = 1.5; %1.5
 opts.sigma_diff = 2.5;  %2.5
 opts.step = 1.0;
 opts.max_iter = 600;
-opts.pyramid_levels  = 1;
+opts.pyramid_levels  = 2;
 opts.compositive = 0;
 opts.diffeomorphism = 1;
 opts.plot = 1;
 
 %% Deconvolution to get discrete objects
-PSF = fspecial('gaussian', [3 1], 5.0);
+PSF = fspecial('gaussian', [4 1], 5.0);
 I_fixed  = log(1+X0_tar);
 I_moving = log(1+X0_src);
 
@@ -95,6 +95,32 @@ lim = [1 1; size(warped_mag,1) size(warped_mag,2)];
 subplot(131), imshowpair(log(1+X0_tar), log(1+warped_mag)), subplot(132), ...
     showgrid(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),4,lim),...
     subplot(133), showvector(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),5);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 %% window wise registration along frequency axis
 % X0_tar = abs(X_tar);
