@@ -15,10 +15,10 @@ s = 0.010;
 top = 3;
 
 %% Get the wav files in
-target = 'angry2.wav'; % please provide a test file  or Target
+target = 'angry1.wav'; % please provide a test file  or Target
 [x_tar,fs] = audioread(target);
 
-source = 'neutral2.wav'; % please provide a test file  or Source
+source = 'neutral1.wav'; % please provide a test file  or Source
 [x_src,fs] = audioread(source);
 
 [x_src, x_tar] = get_alignment(x_src,x_tar,fs,w,w-s,r,top);
@@ -43,7 +43,7 @@ tmp_src = stft(istft(abs(X_src),wshift,S),N,wshift,W)-X_src; % difference betwee
 C = 10*log10(Xpow_src / sum(abs(tmp_src(:)).^2));
 fprintf(1,'Abs(X)          : %5.2f dB\n',C);
 
-%% Perform Demons Registration
+%% Preprocessing the spectrogram
 
 X0_tar = abs(X_tar);
 X0_src = abs(X_src);
@@ -51,27 +51,32 @@ X0_src = abs(X_src);
 opts = struct();
 opts.alpha = 0.4;
 opts.only_freq = 0;
-opts.sigma_fluid = 3.0; %1.5
-opts.sigma_diff = 3.0;  %2.5
+opts.sigma_fluid = 1.5; %1.5
+opts.sigma_diff = 2.5;  %2.5
 opts.step = 1.0;
 opts.max_iter = 600;
-opts.pyramid_levels  = 2;
+opts.pyramid_levels  = 1;
 opts.compositive = 0;
 opts.diffeomorphism = 1;
 opts.plot = 1;
 
-iterations = 1000;
-
-PSF = fspecial('gaussian', [3 1], 3.0);
+%% Deconvolution to get discrete objects
+PSF = fspecial('gaussian', [3 1], 5.0);
 I_fixed  = log(1+X0_tar);
 I_moving = log(1+X0_src);
 
 I_fixed  = deconvlucy(I_fixed, PSF, 10);
 I_moving = deconvlucy(I_moving, PSF, 10);
 
+figure(), subplot(121), imshow(I_fixed,[]), subplot(122), imshow(I_moving,[]), colormap(jet);
+
+%% Demons Registration
 disp_field = my_multires_demons(I_fixed,I_moving,opts);
 warped_mag = imwarp(abs(X_src),disp_field);
 warped_phase = imwarp(angle(X_src),disp_field);
+
+%% Signal Reconstruction using RTISI-LA
+iterations = 1000;
 recon_signal_fast = get_signal(warped_mag.*exp(1j*warped_phase),W,S,iterations,wshift);
 recon_signal_iter = get_signal_iteratively(warped_mag.*exp(1j*warped_phase),N,wshift,W,iterations);
 
