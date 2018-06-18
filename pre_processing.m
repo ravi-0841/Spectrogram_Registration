@@ -18,7 +18,7 @@ for i = 1:length(files)
     %% Deconvolution to get discrete objects
     PSF = fspecial('gaussian', [5 5], 5.0); % [5 5] works best
     I_trans = mat2gray(log(1+X_mag));
-    I_trans = imdiffusefilt(I_trans);
+    I_trans = imdiffusefilt(I_trans); % Not sure about this step although it seems to be working
     I_decon = deconvlucy(I_trans, PSF, 10);
     I_cell{i,1} = I_decon;
     
