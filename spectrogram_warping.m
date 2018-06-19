@@ -71,7 +71,7 @@ I_moving = log(1+X0_src);
 % figure(), subplot(121), imshow(I_fixed,[]), subplot(122), imshow(I_moving,[]), colormap(jet);
 
 %% Demons Registration
-[disp_field,I_cell] = my_multires_demons(I_fixed,I_moving,N,opts);
+disp_field = my_multires_demons(I_fixed,I_moving,N,opts);
 warped_mag = imwarp(abs(X_src),disp_field);
 warped_phase = imwarp(angle(X_src),disp_field);
 

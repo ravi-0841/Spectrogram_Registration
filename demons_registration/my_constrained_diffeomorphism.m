@@ -1,4 +1,4 @@
-function [disp_field,I_cell] = my_constrained_diffeomorphism(F, M, N, vx, vy, opts)
+function disp_field = my_constrained_diffeomorphism(F, M, N, vx, vy, opts)
     
     if nargin<3;                        opts                 = struct();     end
     if ~isfield(opts,'only_freq');      opts.only_freq       = 0;            end
@@ -104,7 +104,7 @@ function [disp_field,I_cell] = my_constrained_diffeomorphism(F, M, N, vx, vy, op
         disp_field_diff = sum(sum(sum(abs(old_disp_field - disp_field))));
         old_disp_field = disp_field;
         
-        I_cell{iterator,1} = imfuse(F,M_tilda);
+%         I_cell{iterator,1} = imfuse(F,M_tilda);
         
         if opts.plot
             subplot(121), imshowpair(F,M_tilda);
