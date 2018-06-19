@@ -1,4 +1,4 @@
-function [disp_field,I_cell] = my_multires_demons(F, M, N, opts)
+function disp_field = my_multires_demons(F, M, N, opts)
     
     if nargin<3;                         opts                 = struct();       end
     if ~isfield(opts,'only_freq');       opts.only_freq       = 0;              end
@@ -14,6 +14,8 @@ function [disp_field,I_cell] = my_multires_demons(F, M, N, opts)
     if ~isfield(opts,'diffeomorphism');  opts.diffeomorphism  = 0;              end
     if ~isfield(opts,'plot');            opts.plot            = 0;              end
     
+%     I_cell = cell(opts.pyramid_levels, opts.max_iter);
+    
     vx = zeros(size(M));
     vy = zeros(size(M));
     
@@ -25,7 +27,7 @@ function [disp_field,I_cell] = my_multires_demons(F, M, N, opts)
         subplot(121), title('Difference');
         subplot(122), title('SSD');
     end
-    I_cell = cell(opts.pyramid_levels, opts.max_iter);
+    
     for k = opts.pyramid_levels:-1:1
         scale_factor = 2^(-1*(k-1));
         
@@ -36,14 +38,14 @@ function [disp_field,I_cell] = my_multires_demons(F, M, N, opts)
         vy = imresize(vy*scale_factor,scale_factor);
         
         if opts.diffeomorphism
-            [disp_field, cell_img] = my_constrained_diffeomorphism(F_tilda, M_tilda, N, vx, vy, opts);
+            disp_field = my_constrained_diffeomorphism(F_tilda, M_tilda, N, vx, vy, opts);
         else
             disp_field = my_demons(F_tilda, M_tilda, vx, vy, opts);
         end
         
-        for image_num = 1:opts.max_iter
-            I_cell{k,image_num} = imresize(cell_img{image_num,1}, [200*(3-k),150*(3-k)]);
-        end
+%         for image_num = 1:opts.max_iter
+%             I_cell{k,image_num} = imresize(cell_img{image_num,1}, [200*(3-k),150*(3-k)]);
+%         end
         
         vx = squeeze(disp_field(:,:,1));
         vy = squeeze(disp_field(:,:,2));

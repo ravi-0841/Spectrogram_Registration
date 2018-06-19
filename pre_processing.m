@@ -1,7 +1,7 @@
 files = dir('./wav/*.wav');
 I_cell = cell(length(files),1);
 
-N = 1024;
+N = 512;
 wshift = 128;
 
 W = hann(N);
@@ -16,7 +16,7 @@ for i = 1:length(files)
     disp(files(i).name);
     
     %% Deconvolution to get discrete objects
-    PSF = fspecial('gaussian', [5 5], 5.0); % [5 5] works best
+    PSF = fspecial('gaussian', [3 3], 3.0); % [5 5] and 5.0 works best for N = 1024
     I_trans = mat2gray(log(1+X_mag));
     I_trans = imdiffusefilt(I_trans); % Not sure about this step although it seems to be working
     I_decon = deconvlucy(I_trans, PSF, 10);
