@@ -1,7 +1,7 @@
 % clear all
 clc
 
-N = 512;
+N = 1024;
 wshift = 128;
 Q=N/wshift;
 
@@ -51,8 +51,8 @@ X0_src = abs(X_src);
 opts = struct();
 opts.alpha = 0.4;
 opts.only_freq = 0;
-opts.sigma_fluid = 1.5; %1.5
-opts.sigma_diff = 2.5;  %2.5
+opts.sigma_fluid = 0.6; %1.5
+opts.sigma_diff = 1.5;  %2.5
 opts.step = 1.0;
 opts.max_iter = 500;
 opts.pyramid_levels  = 2;
@@ -61,13 +61,13 @@ opts.diffeomorphism = 1;
 opts.plot = 1;
 
 %% Deconvolution to get discrete objects
-PSF = fspecial('gaussian', [4 1], 5.0);
+PSF = fspecial('gaussian', [5 5], 5.0);
 I_fixed  = log(1+X0_tar);
 I_moving = log(1+X0_src);
 
 % I_fixed  = deconvlucy(I_fixed, PSF, 10);
 % I_moving = deconvlucy(I_moving, PSF, 10);
-% 
+
 % figure(), subplot(121), imshow(I_fixed,[]), subplot(122), imshow(I_moving,[]), colormap(jet);
 
 %% Demons Registration
@@ -76,25 +76,25 @@ warped_mag = imwarp(abs(X_src),disp_field);
 warped_phase = imwarp(angle(X_src),disp_field);
 
 %% Signal Reconstruction using RTISI-LA and plotting
-iterations = 1000;
-recon_signal_fast = get_signal(warped_mag.*exp(1j*warped_phase),W,S,iterations,wshift);
-recon_signal_iter = get_signal_iteratively(warped_mag.*exp(1j*warped_phase),N,wshift,W,iterations);
+% iterations = 1000;
+% recon_signal_fast = get_signal(warped_mag.*exp(1j*warped_phase),W,S,iterations,wshift);
+% recon_signal_iter = get_signal_iteratively(warped_mag.*exp(1j*warped_phase),N,wshift,W,iterations);
+% 
+% X_fast = stft(recon_signal_fast,N,wshift,W);
+% X_iter = stft(recon_signal_iter,N,wshift,W);
+% 
+% orig_phase = do_phase_unwrapping(angle(X_tar));
+% fast_phase = do_phase_unwrapping(angle(X_fast));
+% iter_phase = do_phase_unwrapping(angle(X_iter));
+% 
+% disp(['SSD orgVSfast: ' num2str(sum(sum((orig_phase - fast_phase).^2))) ...
+%     '    SSD orgVSiter: ' num2str(sum(sum((orig_phase - iter_phase).^2)))]);
 
-X_fast = stft(recon_signal_fast,N,wshift,W);
-X_iter = stft(recon_signal_iter,N,wshift,W);
-
-orig_phase = do_phase_unwrapping(angle(X_tar));
-fast_phase = do_phase_unwrapping(angle(X_fast));
-iter_phase = do_phase_unwrapping(angle(X_iter));
-
-disp(['SSD orgVSfast: ' num2str(sum(sum((orig_phase - fast_phase).^2))) ...
-    '    SSD orgVSiter: ' num2str(sum(sum((orig_phase - iter_phase).^2)))]);
-
-figure()
-lim = [1 1; size(warped_mag,1) size(warped_mag,2)];
-subplot(131), imshowpair(log(1+X0_tar), log(1+warped_mag)), subplot(132), ...
-    showgrid(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),4,lim),...
-    subplot(133), showvector(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),5);
+% figure()
+% lim = [1 1; size(warped_mag,1) size(warped_mag,2)];
+% subplot(131), imshowpair(log(1+X0_tar), log(1+warped_mag)), subplot(132), ...
+%     showgrid(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),4,lim),...
+%     subplot(133), showvector(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),5);
 
 
 
