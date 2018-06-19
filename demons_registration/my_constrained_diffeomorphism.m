@@ -1,4 +1,4 @@
-function disp_field = my_constrained_diffeomorphism(F, M, N, vx, vy, opts)
+function [disp_field,I_cell] = my_constrained_diffeomorphism(F, M, N, vx, vy, opts)
     
     if nargin<3;                        opts                 = struct();     end
     if ~isfield(opts,'only_freq');      opts.only_freq       = 0;            end
@@ -15,7 +15,8 @@ function disp_field = my_constrained_diffeomorphism(F, M, N, vx, vy, opts)
     z = 1 ./ sqrt(1 + (y./(2500*(N+2)/16000)).^20);
     cost_adjustment_mat = z' * ones(1,size(F,2));
     
-    
+    I_cell = cell(opts.max_iter,1);
+    I_cell{1,1} = imfuse(F,M);
 
     disp(['Initial SSD ' num2str(sum(sum((F - M).^2)))]);
     disp(['Initial MI ' num2str(mutual_info(F, M))]);
@@ -102,6 +103,8 @@ function disp_field = my_constrained_diffeomorphism(F, M, N, vx, vy, opts)
         
         disp_field_diff = sum(sum(sum(abs(old_disp_field - disp_field))));
         old_disp_field = disp_field;
+        
+        I_cell{iterator,1} = imfuse(F,M_tilda);
         
         if opts.plot
             subplot(121), imshowpair(F,M_tilda);

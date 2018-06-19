@@ -1,7 +1,7 @@
 % clear all
 clc
 
-N = 1024;
+N = 512;
 wshift = 128;
 Q=N/wshift;
 
@@ -15,10 +15,10 @@ s = 0.010;
 top = 3;
 
 %% Get the wav files in
-target = 'angry4.wav'; % please provide a test file  or Target
+target = 'angry1.wav'; % please provide a test file  or Target
 [x_tar,fs] = audioread(target);
 
-source = 'neutral4.wav'; % please provide a test file  or Source
+source = 'neutral1.wav'; % please provide a test file  or Source
 [x_src,fs] = audioread(source);
 
 [x_src, x_tar] = get_alignment(x_src,x_tar,fs,w,w-s,r,top);
@@ -54,7 +54,7 @@ opts.only_freq = 0;
 opts.sigma_fluid = 1.5; %1.5
 opts.sigma_diff = 2.5;  %2.5
 opts.step = 1.0;
-opts.max_iter = 600;
+opts.max_iter = 400;
 opts.pyramid_levels  = 2;
 opts.compositive = 0;
 opts.diffeomorphism = 1;
@@ -65,13 +65,13 @@ PSF = fspecial('gaussian', [4 1], 5.0);
 I_fixed  = log(1+X0_tar);
 I_moving = log(1+X0_src);
 
-I_fixed  = deconvlucy(I_fixed, PSF, 10);
-I_moving = deconvlucy(I_moving, PSF, 10);
-
-figure(), subplot(121), imshow(I_fixed,[]), subplot(122), imshow(I_moving,[]), colormap(jet);
+% I_fixed  = deconvlucy(I_fixed, PSF, 10);
+% I_moving = deconvlucy(I_moving, PSF, 10);
+% 
+% figure(), subplot(121), imshow(I_fixed,[]), subplot(122), imshow(I_moving,[]), colormap(jet);
 
 %% Demons Registration
-disp_field = my_multires_demons(I_fixed,I_moving,N,opts);
+[disp_field,I_cell] = my_multires_demons(I_fixed,I_moving,N,opts);
 warped_mag = imwarp(abs(X_src),disp_field);
 warped_phase = imwarp(angle(X_src),disp_field);
 
