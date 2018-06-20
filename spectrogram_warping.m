@@ -1,7 +1,7 @@
 % clear all
 clc
 
-N = 1024;
+N = 512;
 wshift = 128;
 Q=N/wshift;
 
