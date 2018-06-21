@@ -27,9 +27,8 @@ for i = 1:length(files)
     
     level = graythresh(I_decon);
     I_thresh = imbinarize(I_decon, level);
-    ero_strel = [1 1; 1 1];
-    I_eroded = imerode(I_thresh, ero_strel);
-%     I_eroded = imdilate(I_eroded, [1 1]);
+    ero_strel = [1;1]; % So far this structuring element has done OK
+    I_eroded = imopen(I_thresh, ero_strel);
 
     subplot(131), imshow(I_trans,[]), subplot(132), imshow(I_decon, []), colormap(jet), ...
         subplot(133), imshow(I_eroded,[]);

@@ -1,24 +1,24 @@
 function disp_field = window_demons(F, M, opts, vx, vy)
     if nargin<3
-        opts = struct();
+        opts               = struct();     end
+    if ~isfield(opts,'window_size');     opts.window_size   = 50;           end
+    if ~isfield(opts,'stride');          opts.stride        = 50;           end
+    if ~isfield(opts,'alpha');           opts.alpha         = 0.4;          end
+    if ~isfield(opts,'sigma_fluid');     opts.sigma_fluid   = 1.1;          end
+    if ~isfield(opts,'sigma_diff');      opts.sigma_diff    = 1.1;          end
+    if ~isfield(opts,'lambda');          opts.lambda        = 0.5;          end
+    if ~isfield(opts,'step');            opts.step          = 1.0;          end
+    if ~isfield(opts,'epsilon');         opts.epsilon       = 10;           end
+    if ~isfield(opts,'max_iter');        opts.max_iter      = 200;          end
+    if ~isfield(opts,'max_epochs');      opts.max_epochs    = 3;            end
+
+    if isempty(vx) || isempty(vy)
         vec_field_x = zeros(size(M));
         vec_field_y = zeros(size(M));
     else
         vec_field_x = vx;
         vec_field_y = vy;
     end
-    
-    if ~isfield(opts,'window_size');     opts.window_size   = 50;           end
-    if ~isfield(opts,'stride');          opts.stride        = 50;           end
-    if ~isfield(opts,'alpha');           opts.alpha         = 0.4;          end
-    if ~isfield(opts,'sigma_fluid');     opts.sigma_fluid   = 2.5;          end
-    if ~isfield(opts,'sigma_diff');      opts.sigma_diff    = 2.5;          end
-    if ~isfield(opts,'lambda');          opts.lambda        = 0.5;          end
-    if ~isfield(opts,'step');            opts.step          = 1.0;          end
-    if ~isfield(opts,'epsilon');         opts.epsilon       = 10;           end
-    if ~isfield(opts,'max_iter');        opts.max_iter      = 200;          end
-    if ~isfield(opts,'max_epochs');      opts.max_epochs    = 3;            end
-    
     M = imwarp(M, cat(3,vec_field_x,vec_field_y));
     
     num_cols    = size(F, 2);
@@ -129,6 +129,6 @@ function disp_field = window_demons(F, M, opts, vx, vy)
     stitch_dfx = imgaussfilt(stitch_dfx,opts.sigma_diff);
     stitch_dfy = imgaussfilt(stitch_dfy,opts.sigma_diff);
     disp_field = cat(3,stitch_dfx(:,1:num_cols),stitch_dfy(:,1:num_cols));
-    figure(), showvector(stitch_dfx,stitch_dfy,5);
-%     close all;
+%     figure(), showvector(stitch_dfx,stitch_dfy,5);
+    close all;
 end
