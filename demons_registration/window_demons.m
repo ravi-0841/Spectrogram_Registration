@@ -1,15 +1,15 @@
 function disp_field = window_demons(F, M, opts)
     if nargin<3;                         opts               = struct();     end
-    if ~isfield(opts,'window_size');     opts.window_size   = 50;           end
-    if ~isfield(opts,'stride');          opts.stride        = 50;           end
+    if ~isfield(opts,'window_size');     opts.window_size   = 35;           end
+    if ~isfield(opts,'stride');          opts.stride        = 35;           end
     if ~isfield(opts,'alpha');           opts.alpha         = 0.4;          end
     if ~isfield(opts,'sigma_fluid');     opts.sigma_fluid   = 0.7;          end
     if ~isfield(opts,'sigma_diff');      opts.sigma_diff    = 1.0;          end
     if ~isfield(opts,'lambda');          opts.lambda        = 1.0;          end
     if ~isfield(opts,'step');            opts.step          = 1.0;          end
     if ~isfield(opts,'epsilon');         opts.epsilon       = 10;           end
-    if ~isfield(opts,'max_iter');        opts.max_iter      = 500;          end
-    if ~isfield(opts,'max_epochs');      opts.max_epochs    = 3;            end
+    if ~isfield(opts,'max_iter');        opts.max_iter      = 100;          end
+    if ~isfield(opts,'max_epochs');      opts.max_epochs    = 5;            end
 
     num_cols    = size(F, 2);
     num_frames  = ceil((num_cols - opts.window_size)/opts.stride) + 1;
@@ -33,7 +33,7 @@ function disp_field = window_demons(F, M, opts)
 
     epochs = 1;
     figure();
-    while (epochs < opts.max_epochs)
+    while (epochs <= opts.max_epochs)
         cur_frame = 1;
         disp(['Current Iteration: ' num2str(epochs)]);
 
@@ -55,7 +55,7 @@ function disp_field = window_demons(F, M, opts)
             current_moved = imwarp(M_tilda, ...
                 cat(3,fdf{cur_frame,1},fdf{cur_frame,2}));
 
-            while (num_iter < opts.max_iter)
+            while (num_iter <= opts.max_iter)
 
                 [G_mov_x, G_mov_y] = imgradientxy(current_moved, 'central');
                 [G_mov_mag, ~] = imgradient(G_mov_x, G_mov_y);
@@ -109,7 +109,7 @@ function disp_field = window_demons(F, M, opts)
     stitch_dfx = zeros(size(F));
     stitch_dfy = zeros(size(F));
     counter = 1;
-    for start_index = 1:opts.stride:(extend_cols - opts.stride)
+    for start_index = 1:opts.stride:(extend_cols-opts.stride+1)
         stitch_dfx(:,start_index:start_index+opts.window_size-1) = ...
         fdf{counter,1}(:,start_index:start_index+opts.window_size-1);
         stitch_dfy(:,start_index:start_index+opts.window_size-1) = ...
