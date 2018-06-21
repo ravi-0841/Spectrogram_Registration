@@ -43,7 +43,7 @@ tmp_src = stft(istft(abs(X_src),wshift,S),N,wshift,W)-X_src; % difference betwee
 C = 10*log10(Xpow_src / sum(abs(tmp_src(:)).^2));
 fprintf(1,'Abs(X)          : %5.2f dB\n',C);
 
-clear Q r w s top tmp_src tmp_tar C Xpow_src Xpow_tar 
+cle
 
 %% Preprocessing the spectrogram
 

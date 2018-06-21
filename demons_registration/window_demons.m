@@ -1,54 +1,51 @@
 function disp_field = window_demons(F, M, opts)
     if nargin<3;                         opts               = struct();     end
-    if ~isfield(opts,'window_size');     opts.window        = 12;            end
-    if ~isfield(opts,'stride');          opts.stride        = 6;            end
+    if ~isfield(opts,'window_size');     opts.window_size   = 50;           end
+    if ~isfield(opts,'stride');          opts.stride        = 50;           end
     if ~isfield(opts,'alpha');           opts.alpha         = 0.4;          end
-    if ~isfield(opts,'sigma_fluid');     opts.sigma_fluid   = 1.0;          end
+    if ~isfield(opts,'sigma_fluid');     opts.sigma_fluid   = 0.7;          end
     if ~isfield(opts,'sigma_diff');      opts.sigma_diff    = 1.0;          end
-    if ~isfield(opts,'lambda');          opts.lambda        = 0.1;          end
+    if ~isfield(opts,'lambda');          opts.lambda        = 1.0;          end
     if ~isfield(opts,'step');            opts.step          = 1.0;          end
     if ~isfield(opts,'epsilon');         opts.epsilon       = 10;           end
-    if ~isfield(opts,'max_iter');        opts.max_iter      = 10;           end
+    if ~isfield(opts,'max_iter');        opts.max_iter      = 500;          end
     if ~isfield(opts,'max_epochs');      opts.max_epochs    = 3;            end
 
-    org_size = size(F,2);
-
     num_cols    = size(F, 2);
-    num_frames  = ceil((num_cols - opts.window)/opts.stride) + 1;
-    extend_cols = (num_frames - 1)*opts.stride + opts.window;
+    num_frames  = ceil((num_cols - opts.window_size)/opts.stride) + 1;
+    extend_cols = (num_frames - 1)*opts.stride + opts.window_size;
     padding     = extend_cols - num_cols;
 
     F = [F zeros(size(F,1),padding)];
     M = [M zeros(size(M,1),padding)];
 
     fdf = cell(num_frames,2);
-
     for frame = 1:num_frames
         fdf{frame,1} = zeros(size(F));
         fdf{frame,2} = zeros(size(F));
     end
 
     sdf = cell(num_frames,2);
-
     for frame = 1:num_frames
         sdf{frame,1} = zeros(size(F));
         sdf{frame,2} = zeros(size(F));
     end
 
     epochs = 1;
+    figure();
     while (epochs < opts.max_epochs)
         cur_frame = 1;
         disp(['Current Iteration: ' num2str(epochs)]);
 
-        for start_index = 1:opts.stride:(extend_cols - opts.stride)
+        for start_index = 1:opts.stride:(extend_cols-opts.stride+1)
             
             F_tilda = zeros(size(F));
-            F_tilda(:, start_index:start_index+opts.window-1) = ...
-                        F(:, start_index:start_index+opts.window-1);
+            F_tilda(:, start_index:start_index+opts.window_size-1) = ...
+                        F(:, start_index:start_index+opts.window_size-1);
             
             M_tilda = zeros(size(M));
-            M_tilda(:, start_index:start_index+opts.window-1) = ...
-                        M(:, start_index:start_index+opts.window-1);
+            M_tilda(:, start_index:start_index+opts.window_size-1) = ...
+                        M(:, start_index:start_index+opts.window_size-1);
             
             [G_fix_x, G_fix_y] = imgradientxy(F_tilda, 'central');
             [G_fix_mag, ~] = imgradient(G_fix_x, G_fix_y);
@@ -99,7 +96,9 @@ function disp_field = window_demons(F, M, opts)
 
                 current_moved = imwarp(M_tilda, ...
                                 cat(3,fdf{cur_frame,1},fdf{cur_frame,2}));
-
+                
+                imshowpair(F_tilda, current_moved);
+                pause(0.0001);
                 num_iter = num_iter + 1;
             end
             cur_frame = cur_frame + 1;
@@ -111,14 +110,14 @@ function disp_field = window_demons(F, M, opts)
     stitch_dfy = zeros(size(F));
     counter = 1;
     for start_index = 1:opts.stride:(extend_cols - opts.stride)
-        stitch_dfx(:,start_index:start_index+opts.window-1) = ...
-        fdf{counter,1}(:,start_index:start_index+opts.window-1);
-        stitch_dfy(:,start_index:start_index+opts.window-1) = ...
-        fdf{counter,2}(:,start_index:start_index+opts.window-1);
+        stitch_dfx(:,start_index:start_index+opts.window_size-1) = ...
+        fdf{counter,1}(:,start_index:start_index+opts.window_size-1);
+        stitch_dfy(:,start_index:start_index+opts.window_size-1) = ...
+        fdf{counter,2}(:,start_index:start_index+opts.window_size-1);
         counter = counter + 1;
     end
     stitch_dfx = imgaussfilt(stitch_dfx,opts.sigma_diff);
     stitch_dfy = imgaussfilt(stitch_dfy,opts.sigma_diff);
-    disp_field = cat(3,stitch_dfx(:,1:org_size),stitch_dfy(:,1:org_size));
-    figure(), showvector(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),5);
+    disp_field = cat(3,stitch_dfx(:,1:num_cols),stitch_dfy(:,1:num_cols));
+    figure(), showvector(stitch_dfx,stitch_dfy,5);
 end
