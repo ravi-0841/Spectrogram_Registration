@@ -1,7 +1,7 @@
 function disp_field = window_demons(F, M, opts)
     if nargin<3;                         opts               = struct();     end
-    if ~isfield(opts,'window_size');     opts.window        = 4;            end
-    if ~isfield(opts,'stride');          opts.stride        = 2;            end
+    if ~isfield(opts,'window_size');     opts.window        = 12;            end
+    if ~isfield(opts,'stride');          opts.stride        = 6;            end
     if ~isfield(opts,'alpha');           opts.alpha         = 0.4;          end
     if ~isfield(opts,'sigma_fluid');     opts.sigma_fluid   = 1.0;          end
     if ~isfield(opts,'sigma_diff');      opts.sigma_diff    = 1.0;          end
