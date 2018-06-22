@@ -47,7 +47,7 @@ for i = 1:length(files)
     
     ero_strel = [1;1]; % So far this structuring element has done OK
     I_eroded = imopen(I_thresh, ero_strel);
-    I_eroded = imdilate(I_eroded, [1 1]);
+%     I_eroded = imdilate(I_eroded, [1 1]);
     
     connected_objs = bwconncomp(I_eroded, 4);
 
