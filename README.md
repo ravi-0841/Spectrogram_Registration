@@ -8,4 +8,4 @@ Diffeomorphic Demons Registration :
 Diffeomorphic demons registration is also implemented in matlab. The fast exponentiation of vector field is used for mapping 
 from lie algebra to lie group. 
 
-![alt text](https://raw.githubusercontent.com/ravi-0841/Spectrogram_Registration/master/Presentations/Images/readme.png)
+![alt text](https://raw.githubusercontent.com/ravi-0841/Spectrogram_Registration/master/Presentations/Images/readme2.gif)
