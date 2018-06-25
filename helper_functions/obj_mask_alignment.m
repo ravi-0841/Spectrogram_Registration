@@ -2,8 +2,9 @@ function [I_eroded_F,I_eroded_M,moved_mask] = obj_mask_alignment(F,M,psf_size,ps
     
     opening_mask = [1;1];
     PSF = fspecial('gaussian', [psf_size psf_size], psf_sigma);
+    %% Fixed Image object extraction
     I_trans_F = mat2gray(F);
-    I_trans_F = imdiffusefilt(I_trans_F); % Not sure about this step
+    I_trans_F = imdiffusefilt(I_trans_F);
     I_decon_F = deconvlucy(I_trans_F, PSF, 10);
     
     level_F = otsuthresh(imhist(I_decon_F));
@@ -11,8 +12,9 @@ function [I_eroded_F,I_eroded_M,moved_mask] = obj_mask_alignment(F,M,psf_size,ps
     
     I_eroded_F = imopen(I_thresh_F, opening_mask);
     
+    %% Moving Image object extraction
     I_trans_M = mat2gray(M);
-    I_trans_M = imdiffusefilt(I_trans_M); % Not sure about this step
+    I_trans_M = imdiffusefilt(I_trans_M);
     I_decon_M = deconvlucy(I_trans_M, PSF, 10);
     
     level_M = otsuthresh(imhist(I_decon_M));
