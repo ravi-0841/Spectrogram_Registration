@@ -24,7 +24,6 @@ for i = 1:length(files)
     I_sharp = imsharpen(I_trans);
     I_trans = imdiffusefilt(I_trans); % Not sure about this step
     I_decon = deconvlucy(I_trans, PSF, 10);
-    I_cell{i,1} = I_decon;
     
 %     level = graythresh(I_decon);
 %     I_thresh = imbinarize(I_decon, level);
@@ -47,6 +46,7 @@ for i = 1:length(files)
     
     ero_strel = [1;1]; % So far this structuring element has done OK
     I_eroded = imopen(I_thresh, ero_strel);
+    I_cell{i,1} = I_eroded;
 %     I_eroded = imdilate(I_eroded, [1 1]);
     
     connected_objs = bwconncomp(I_eroded, 4);

@@ -15,10 +15,10 @@ s = 0.010;
 top = 3;
 
 %% Get the wav files in
-target = 'angry1.wav'; % please provide a test file  or Target
+target = 'angry2.wav'; % please provide a test file  or Target
 [x_tar,fs] = audioread(target);
 
-source = 'neutral1.wav'; % please provide a test file  or Source
+source = 'neutral2.wav'; % please provide a test file  or Source
 [x_src,fs] = audioread(source);
 
 [x_src, x_tar] = get_alignment(x_src,x_tar,fs,w,w-s,r,top);
@@ -43,7 +43,7 @@ tmp_src = stft(istft(abs(X_src),wshift,S),N,wshift,W)-X_src; % difference betwee
 C = 10*log10(Xpow_src / sum(abs(tmp_src(:)).^2));
 fprintf(1,'Abs(X)          : %5.2f dB\n',C);
 
-cle
+clear Q r w s top tmp_src tmp_tar C Xpow_src Xpow_tar 
 
 %% Preprocessing the spectrogram
 
@@ -66,6 +66,7 @@ opts.plot = 1;
 PSF = fspecial('gaussian', [5 5], 5.0);
 I_fixed  = log(1+X0_tar);
 I_moving = log(1+X0_src);
+moved_mask = obj
 
 % I_fixed  = deconvlucy(I_fixed, PSF, 10);
 % I_moving = deconvlucy(I_moving, PSF, 10);

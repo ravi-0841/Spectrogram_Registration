@@ -1,7 +1,7 @@
 % clear all
 clc
 
-N = 512;
+N = 1024;
 wshift = 128;
 Q=N/wshift;
 
@@ -15,10 +15,10 @@ s = 0.010;
 top = 3;
 
 %% Get the wav files in
-target = 'angry2.wav'; % please provide a test file  or Target
+target = 'angry1.wav'; % please provide a test file  or Target
 [x_tar,fs] = audioread(target);
 
-source = 'neutral2.wav'; % please provide a test file  or Source
+source = 'neutral1.wav'; % please provide a test file  or Source
 [x_src,fs] = audioread(source);
 
 [x_src, x_tar] = get_alignment(x_src,x_tar,fs,w,w-s,r,top);
@@ -66,7 +66,9 @@ opts.plot = 1;
 PSF = fspecial('gaussian', [5 5], 5.0);
 I_fixed  = log(1+X0_tar);
 I_moving = log(1+X0_src);
-
+[fixed_mask,moving_mask,moved_mask] = obj_mask_alignment(I_fixed,I_moving,5,5);
+figure();
+subplot(121), imshowpair(fixed_mask, moving_mask), subplot(122), imshowpair(fixed_mask, moved_mask)
 % I_fixed  = deconvlucy(I_fixed, PSF, 10);
 % I_moving = deconvlucy(I_moving, PSF, 10);
 
