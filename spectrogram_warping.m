@@ -68,7 +68,7 @@ I_fixed  = log(1+X0_tar);
 I_moving = log(1+X0_src);
 [fixed_mask,moving_mask,moved_mask] = obj_mask_alignment(I_fixed,I_moving,5,5);
 figure();
-subplot(121), imshowpair(fixed_mask, moving_mask), subplot(122), imshowpair(fixed_mask, moved_mask)
+subplot(121), imshowpair(fixed_mask, moving_mask), subplot(122), imshowpair(fixed_mask, moved_mask);
 % I_fixed  = deconvlucy(I_fixed, PSF, 10);
 % I_moving = deconvlucy(I_moving, PSF, 10);
 

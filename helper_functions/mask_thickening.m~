@@ -1,0 +1,8 @@
+function out = mask_thickening(im,se)
+    out = im;
+    [r,c] = find(im(2:200,2:end-1)==0);
+    for idx = 1:length(r)
+        if im(r(idx)-1,c(idx))==1 || im(r(idx),c(idx)-1)==1 || ...
+                im(r(idx),c(idx)+1)==1
+        
+end
