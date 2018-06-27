@@ -1,7 +1,10 @@
 function disp_field = my_multires_demons(F, M, N, opts)
     
-    if nargin<3
+    if nargin<4
         opts = struct();
+    end
+    
+    if nargin<3
         N = 512;
     end
     
@@ -46,9 +49,9 @@ function disp_field = my_multires_demons(F, M, N, opts)
         vy = imresize(vy*scale_factor,scale_factor);
         
         if opts.diffeomorphism
-            disp_field = my_constrained_diffeomorphism(F_tilda, M_tilda, N, vx, vy, opts);
+            disp_field = my_diffeomorphism(F_tilda, M_tilda, N, vx, vy, opts);
         else
-            disp_field = my_demons(F_tilda, M_tilda, vx, vy, opts); % change to my_demons for original demons
+            disp_field = window_demons(F_tilda, M_tilda, vx, vy, opts); % change to my_demons for original demons
         end
         
 %         for image_num = 1:opts.max_iter

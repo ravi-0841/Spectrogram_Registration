@@ -1,7 +1,7 @@
 % clear all
 clc
 
-N = 512;
+N = 1024;
 wshift = 128;
 Q=N/wshift;
 
@@ -15,10 +15,10 @@ s = 0.010;
 top = 3;
 
 %% Get the wav files in
-target = 'angry2.wav'; % please provide a test file  or Target
+target = 'angry6.wav'; % please provide a test file  or Target
 [x_tar,fs] = audioread(target);
 
-source = 'neutral2.wav'; % please provide a test file  or Source
+source = 'neutral6.wav'; % please provide a test file  or Source
 [x_src,fs] = audioread(source);
 
 [x_src, x_tar] = get_alignment(x_src,x_tar,fs,w,w-s,r,top);
@@ -53,30 +53,35 @@ X0_src = abs(X_src);
 opts = struct();
 opts.alpha = 0.4;
 opts.only_freq = 0;
-opts.sigma_fluid = 0.6; %1.5
-opts.sigma_diff = 1.5;  %2.5
+opts.sigma_fluid = 1.5; %1.5
+opts.sigma_diff = 2.5;  %2.5
+opts.window_size = 30;
+opts.stride = 30;
+opts.max_epochs = 3;
+opts.lambda = 0.5;
 opts.step = 1.0;
-opts.max_iter = 500;
-opts.pyramid_levels  = 2;
+opts.max_iter = 600;
+opts.pyramid_levels  = 1;
 opts.compositive = 0;
 opts.diffeomorphism = 1;
 opts.plot = 1;
 
-%% Deconvolution to get discrete objects
-PSF = fspecial('gaussian', [5 5], 5.0);
+%% Getting object masks
 I_fixed  = log(1+X0_tar);
 I_moving = log(1+X0_src);
-moved_mask = obj
-
-% I_fixed  = deconvlucy(I_fixed, PSF, 10);
-% I_moving = deconvlucy(I_moving, PSF, 10);
-
-% figure(), subplot(121), imshow(I_fixed,[]), subplot(122), imshow(I_moving,[]), colormap(jet);
+[fixed_mask,moving_mask,moved_mask] = obj_mask_alignment(I_fixed,I_moving,5,5);
+% figure();
+subplot(131), imshow(fixed_mask, []), subplot(132), imshow(moving_mask, []), subplot(133), imshow(fixed_mask, movi);
 
 %% Demons Registration
-disp_field = my_multires_demons(I_fixed,I_moving,N,opts);
-warped_mag = imwarp(abs(X_src),disp_field);
-warped_phase = imwarp(angle(X_src),disp_field);
+% disp_field = my_multires_demons(I_fixed,I_moving,N,opts);
+% warped_mag = imwarp(abs(X_src),disp_field);
+% warped_phase = imwarp(angle(X_src),disp_field);
+
+
+
+
+
 
 %% Signal Reconstruction using RTISI-LA and plotting
 % iterations = 1000;
@@ -92,7 +97,7 @@ warped_phase = imwarp(angle(X_src),disp_field);
 % 
 % disp(['SSD orgVSfast: ' num2str(sum(sum((orig_phase - fast_phase).^2))) ...
 %     '    SSD orgVSiter: ' num2str(sum(sum((orig_phase - iter_phase).^2)))]);
-
+% 
 % figure()
 % lim = [1 1; size(warped_mag,1) size(warped_mag,2)];
 % subplot(131), imshowpair(log(1+X0_tar), log(1+warped_mag)), subplot(132), ...

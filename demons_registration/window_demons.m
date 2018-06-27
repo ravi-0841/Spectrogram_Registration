@@ -1,6 +1,8 @@
-function disp_field = window_demons(F, M, opts, vx, vy)
-    if nargin<3
+function disp_field = window_demons(F, M, vx, vy, opts)
+    if nargin<5
         opts = struct();
+    end
+    if nargin<4
         vec_field_x = zeros(size(M));
         vec_field_y = zeros(size(M));
     else
@@ -18,9 +20,9 @@ function disp_field = window_demons(F, M, opts, vx, vy)
     if ~isfield(opts,'epsilon');         opts.epsilon       = 10;           end
     if ~isfield(opts,'max_iter');        opts.max_iter      = 200;          end
     if ~isfield(opts,'max_epochs');      opts.max_epochs    = 3;            end
-    
+
     M = imwarp(M, cat(3,vec_field_x,vec_field_y));
-    
+
     num_cols    = size(F, 2);
     num_frames  = ceil((num_cols - opts.window_size)/opts.stride) + 1;
     extend_cols = (num_frames - 1)*opts.stride + opts.window_size;
@@ -126,8 +128,8 @@ function disp_field = window_demons(F, M, opts, vx, vy)
         fdf{counter,2}(:,start_index:start_index+opts.window_size-1);
         counter = counter + 1;
     end
-    stitch_dfx = imgaussfilt(stitch_dfx,opts.sigma_diff);
-    stitch_dfy = imgaussfilt(stitch_dfy,opts.sigma_diff);
+    stitch_dfx = imgaussfilt(stitch_dfx,1.0);
+    stitch_dfy = imgaussfilt(stitch_dfy,1.0);
     disp_field = cat(3,stitch_dfx(:,1:num_cols),stitch_dfy(:,1:num_cols));
     figure(), showvector(stitch_dfx,stitch_dfy,5);
 %     close all;

@@ -8,8 +8,9 @@ function out = mask_thickening(im)
     c = c + 1;
     for idx = 1:length(r)
         temp = im;
-        if (im(r(idx)-1,c(idx))==1) || (im(r(idx),c(idx)-1)==1) || ...
-                (im(r(idx),c(idx)+1)==1) || (im(r(idx)+1,c(idx))==1)
+%         if (im(r(idx)-1,c(idx))==1) || (im(r(idx),c(idx)-1)==1) || ...
+%                 (im(r(idx),c(idx)+1)==1) || (im(r(idx)+1,c(idx))==1)
+        if (im(r(idx)-1,c(idx))==1) || (im(r(idx),c(idx)-1)==1)
             temp(r(idx),c(idx)) = 1;
             temp_conn = bwconncomp(temp,4);
             if temp_conn.NumObjects < ref_num
