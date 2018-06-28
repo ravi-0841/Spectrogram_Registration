@@ -128,8 +128,8 @@ function disp_field = window_demons(F, M, vx, vy, opts)
         fdf{counter,2}(:,start_index:start_index+opts.window_size-1);
         counter = counter + 1;
     end
-    stitch_dfx = imgaussfilt(stitch_dfx,1.0);
-    stitch_dfy = imgaussfilt(stitch_dfy,1.0);
+    stitch_dfx = imgaussfilt(stitch_dfx,opts.sigma_diff);
+    stitch_dfy = imgaussfilt(stitch_dfy,opts.sigma_diff);
     disp_field = cat(3,stitch_dfx(:,1:num_cols),stitch_dfy(:,1:num_cols));
     figure(), showvector(stitch_dfx,stitch_dfy,5);
 %     close all;

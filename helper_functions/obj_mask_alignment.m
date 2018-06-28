@@ -28,9 +28,9 @@ function [I_eroded_F,I_eroded_M,moved_mask] = obj_mask_alignment(F,M,psf_size,ps
     
     level = graythresh(moved_mask);
     moved_mask = imbinarize(moved_mask, level);
-    moved_mask = mask_thickening(moved_mask);
-    I_eroded_F = mask_thickening(I_eroded_F);
-    I_eroded_M = mask_thickening(I_eroded_M);
+%     moved_mask = mask_thickening(moved_mask);
+%     I_eroded_F = mask_thickening(I_eroded_F);
+%     I_eroded_M = mask_thickening(I_eroded_M);
 %     moved_mask(moved_mask>0) = 1;
 %     moved_mask = logical(moved_mask);
                             

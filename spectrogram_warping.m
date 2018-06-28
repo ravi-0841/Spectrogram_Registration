@@ -15,10 +15,10 @@ s = 0.010;
 top = 3;
 
 %% Get the wav files in
-target = 'angry6.wav'; % please provide a test file  or Target
+target = 'angry4.wav'; % please provide a test file  or Target
 [x_tar,fs] = audioread(target);
 
-source = 'neutral6.wav'; % please provide a test file  or Source
+source = 'neutral4.wav'; % please provide a test file  or Source
 [x_src,fs] = audioread(source);
 
 [x_src, x_tar] = get_alignment(x_src,x_tar,fs,w,w-s,r,top);
@@ -53,17 +53,17 @@ X0_src = abs(X_src);
 opts = struct();
 opts.alpha = 0.4;
 opts.only_freq = 0;
-opts.sigma_fluid = 1.5; %1.5
-opts.sigma_diff = 2.5;  %2.5
-opts.window_size = 30;
-opts.stride = 30;
-opts.max_epochs = 3;
-opts.lambda = 0.5;
+opts.sigma_fluid = 1.0; %1.5
+opts.sigma_diff = 1.0;  %2.5
+opts.window_size = 50;
+opts.stride = 50;
+opts.max_epochs = 1;
+opts.lambda = 0.07;
 opts.step = 1.0;
-opts.max_iter = 600;
+opts.max_iter = 500;
 opts.pyramid_levels  = 1;
 opts.compositive = 0;
-opts.diffeomorphism = 1;
+opts.diffeomorphism = 0;
 opts.plot = 1;
 
 %% Getting object masks
@@ -71,13 +71,13 @@ I_fixed  = log(1+X0_tar);
 I_moving = log(1+X0_src);
 [fixed_mask,moving_mask,moved_mask] = obj_mask_alignment(I_fixed,I_moving,5,5);
 % figure();
-subplot(131), imshow(fixed_mask, []), subplot(132), imshow(moving_mask, []), ...
-    subplot(133), imshowpair(fixed_mask, moving_mask);
+% subplot(131), imshow(fixed_mask, []), subplot(132), imshow(moving_mask, []), ...
+%     subplot(133), imshowpair(fixed_mask, moving_mask);
 
 %% Demons Registration
-% disp_field = my_multires_demons(I_fixed,I_moving,N,opts);
-% warped_mag = imwarp(abs(X_src),disp_field);
-% warped_phase = imwarp(angle(X_src),disp_field);
+disp_field = my_multires_demons(I_fixed,I_moving,N,opts);
+warped_mag = imwarp(abs(X_src),disp_field);
+warped_phase = imwarp(angle(X_src),disp_field);
 
 
 
@@ -85,25 +85,25 @@ subplot(131), imshow(fixed_mask, []), subplot(132), imshow(moving_mask, []), ...
 
 
 %% Signal Reconstruction using RTISI-LA and plotting
-% iterations = 1000;
-% recon_signal_fast = get_signal(warped_mag.*exp(1j*warped_phase),W,S,iterations,wshift);
+iterations = 1000;
+recon_signal_fast = get_signal(warped_mag.*exp(1j*warped_phase),W,S,iterations,wshift);
 % recon_signal_iter = get_signal_iteratively(warped_mag.*exp(1j*warped_phase),N,wshift,W,iterations);
-% 
-% X_fast = stft(recon_signal_fast,N,wshift,W);
+
+X_fast = stft(recon_signal_fast,N,wshift,W);
 % X_iter = stft(recon_signal_iter,N,wshift,W);
-% 
+
 % orig_phase = do_phase_unwrapping(angle(X_tar));
 % fast_phase = do_phase_unwrapping(angle(X_fast));
 % iter_phase = do_phase_unwrapping(angle(X_iter));
-% 
+
 % disp(['SSD orgVSfast: ' num2str(sum(sum((orig_phase - fast_phase).^2))) ...
 %     '    SSD orgVSiter: ' num2str(sum(sum((orig_phase - iter_phase).^2)))]);
-% 
-% figure()
-% lim = [1 1; size(warped_mag,1) size(warped_mag,2)];
-% subplot(131), imshowpair(log(1+X0_tar), log(1+warped_mag)), subplot(132), ...
-%     showgrid(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),4,lim),...
-%     subplot(133), showvector(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),5);
+
+figure()
+lim = [1 1; size(warped_mag,1) size(warped_mag,2)];
+subplot(131), imshowpair(log(1+X0_tar), log(1+warped_mag)), subplot(132), ...
+    showgrid(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),4,lim),...
+    subplot(133), showvector(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),5);
 
 
 
