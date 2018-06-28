@@ -85,11 +85,11 @@ warped_phase = imwarp(angle(X_src),disp_field);
 
 
 %% Signal Reconstruction using RTISI-LA and plotting
-iterations = 1000;
-recon_signal_fast = get_signal(warped_mag.*exp(1j*warped_phase),W,S,iterations,wshift);
+% iterations = 1000;
+% recon_signal_fast = get_signal(warped_mag.*exp(1j*warped_phase),W,S,iterations,wshift);
 % recon_signal_iter = get_signal_iteratively(warped_mag.*exp(1j*warped_phase),N,wshift,W,iterations);
 
-X_fast = stft(recon_signal_fast,N,wshift,W);
+% X_fast = stft(recon_signal_fast,N,wshift,W);
 % X_iter = stft(recon_signal_iter,N,wshift,W);
 
 % orig_phase = do_phase_unwrapping(angle(X_tar));
