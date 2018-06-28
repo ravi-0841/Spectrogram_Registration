@@ -17,7 +17,7 @@ function [I_eroded_F,I_eroded_M,moved_mask] = obj_mask_alignment(F,M,psf_size,ps
     I_trans_M = imdiffusefilt(I_trans_M);
     I_decon_M = deconvlucy(I_trans_M, PSF, 10);
     
-    level_M = otsuthresh(imhist(I_decon_M));
+    level_M = graythresh(imhist(I_decon_M));
     I_thresh_M = imbinarize(I_decon_M, level_M);
     
     I_eroded_M = imopen(I_thresh_M, opening_mask);
