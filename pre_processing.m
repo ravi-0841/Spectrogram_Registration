@@ -18,7 +18,7 @@ for i = 1:length(files)
     
     disp(files(i).name);
     
-    %% Deconvolution to get discrete objects
+    % Deconvolution to get discrete objects
     PSF = fspecial('gaussian', resize_scale*[5 5], resize_scale*5.0); % [5 5] and 5.0 works best for N = 1024
     I_trans = imresize(mat2gray(log(1+X_mag)), resize_scale);
     I_sharp = imsharpen(I_trans);
@@ -47,7 +47,8 @@ for i = 1:length(files)
     ero_strel = [1;1]; % So far this structuring element has done OK
     I_eroded = imopen(I_thresh, ero_strel);
     I_cell{i,1} = I_eroded;
-%     I_eroded = imdilate(I_eroded, [1 1]);
+    I_eroded = mask_thickening(I_eroded);
+    I_eroded = bwareaopen(I_eroded,35);
     
     connected_objs = bwconncomp(I_eroded, 4);
 
@@ -78,34 +79,37 @@ end
 %     Xn_mag = abs(Xn);
 %     Xn_ang = angle(Xn);
 %     
-%     %% Deconvolution to get discrete objects
+%     % Deconvolution to get discrete objects
 %     Ia_trans = imresize(mat2gray(log(1+Xa_mag)), resize_scale);
-%     Ia_trans = imdiffusefilt(Ia_trans); % Not sure about this step
+%     Ia_trans = imdiffusefilt(Ia_trans);
 %     Ia_decon = deconvlucy(Ia_trans, PSF, 10);
 %     level = graythresh(Ia_decon);
 %     Ia_thresh = imbinarize(Ia_decon, level-epsilon);
 %     Ia_eroded = imopen(Ia_thresh, ero_strel);
-% %     Ia_eroded = imdilate(Ia_eroded, [1 1 1]);
+%     Ia_eroded = mask_thickening(Ia_eroded);
+%     Ia_eroded = bwareaopen(Ia_eroded, 50);
 %     rgpa = regionprops(bwconncomp(Ia_eroded, 4), 'centroid');
 %     centroid_a = cat(1, rgpa.Centroid);
 %     
 %     Ih_trans = imresize(mat2gray(log(1+Xh_mag)), resize_scale);
-%     Ih_trans = imdiffusefilt(Ih_trans); % Not sure about this step
+%     Ih_trans = imdiffusefilt(Ih_trans);
 %     Ih_decon = deconvlucy(Ih_trans, PSF, 10);
 %     level = graythresh(Ih_decon);
 %     Ih_thresh = imbinarize(Ih_decon, level-epsilon);
 %     Ih_eroded = imopen(Ih_thresh, ero_strel);
-% %     Ih_eroded = imdilate(Ih_eroded, [1 1 1]);
+%     Ih_eroded = mask_thickening(Ih_eroded);
+%     Ih_eroded = bwareaopen(Ih_eroded, 50);
 %     rgph = regionprops(bwconncomp(Ih_eroded, 4), 'centroid');
 %     centroid_h = cat(1, rgph.Centroid);
 %     
 %     In_trans = imresize(mat2gray(log(1+Xn_mag)), resize_scale);
-%     In_trans = imdiffusefilt(In_trans); % Not sure about this step
+%     In_trans = imdiffusefilt(In_trans);
 %     In_decon = deconvlucy(In_trans, PSF, 10);
 %     level = graythresh(In_decon);
 %     In_thresh = imbinarize(In_decon, level-epsilon);
 %     In_eroded = imopen(In_thresh, ero_strel);
-% %     In_eroded = imdilate(In_eroded, [1 1 1]);
+%     In_eroded = mask_thickening(In_eroded);
+%     In_eroded = bwareaopen(In_eroded, 50);
 %     rgpn = regionprops(bwconncomp(In_eroded, 4),'centroid');
 %     centroid_n = cat(1, rgpn.Centroid);
 %     

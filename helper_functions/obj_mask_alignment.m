@@ -41,12 +41,16 @@ function [I_eroded_F,I_eroded_M,moved_mask] = obj_mask_alignment(F,M,psf_size,ps
     map_indx = zeros(moved_cc.NumObjects,1);
     
     for i = 1:moved_cc.NumObjects
-        if length(moved_cc.PixelIdxList{1,i})<10
+        if length(moved_cc.PixelIdxList{1,i})<7
             map_indx(i) = nan;
             continue;
         else
             overlap = zeros(length(fixed_cc.NumObjects),1);
             for j = 1:fixed_cc.NumObjects
+                if length(fixed_cc.PixelIdxList{1,j})<7
+                    overlap(j) = 0;
+                    continue;
+                end
                 temp_img_fixed = zeros(size(I_eroded_F));
                 temp_img_moved = zeros(size(moved_mask));
 
