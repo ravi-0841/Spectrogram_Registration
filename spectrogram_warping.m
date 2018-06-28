@@ -79,11 +79,6 @@ disp_field = my_multires_demons(I_fixed,I_moving,N,opts);
 warped_mag = imwarp(abs(X_src),disp_field);
 warped_phase = imwarp(angle(X_src),disp_field);
 
-
-
-
-
-
 %% Signal Reconstruction using RTISI-LA and plotting
 % iterations = 1000;
 % recon_signal_fast = get_signal(warped_mag.*exp(1j*warped_phase),W,S,iterations,wshift);
