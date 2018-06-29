@@ -20,7 +20,7 @@ function disp_field = window_demons(F, M, vx, vy, opts)
     if ~isfield(opts,'epsilon');         opts.epsilon       = 10;           end
     if ~isfield(opts,'max_iter');        opts.max_iter      = 200;          end
     if ~isfield(opts,'max_epochs');      opts.max_epochs    = 3;            end
-    if ~isfield(opts,'plot');            opts.plot          = 0;            end
+    if ~isfield(opts,'')
 
     M = imwarp(M, cat(3,vec_field_x,vec_field_y));
 
@@ -45,8 +45,7 @@ function disp_field = window_demons(F, M, vx, vy, opts)
     end
 
     epochs = 1;
-    if opts.plot; figure(); end
-
+%     figure();
     while (epochs <= opts.max_epochs)
         cur_frame = 1;
         disp(['Current Epoch: ' num2str(epochs)]);
@@ -111,11 +110,8 @@ function disp_field = window_demons(F, M, vx, vy, opts)
                 current_moved = imwarp(M_tilda, ...
                                 cat(3,fdf{cur_frame,1},fdf{cur_frame,2}));
                 
-                if opts.plot
-                    imshowpair(F_tilda, current_moved);
-                    pause(0.0001);
-                end
-                
+%                 imshowpair(F_tilda, current_moved);
+%                 pause(0.0001);
                 num_iter = num_iter + 1;
             end
             cur_frame = cur_frame + 1;
