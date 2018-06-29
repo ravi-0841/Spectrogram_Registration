@@ -79,6 +79,13 @@ for i = 1:6
     Xn_mag = abs(Xn);
     Xn_ang = angle(Xn);
     
+    fc = 1000;
+    y = 0:N/2;
+    z = 1 ./ sqrt(1 + (y./(fc*(N+2)/fs)).^10);
+    Xa_mag = Xa_mag.*(z' * ones(1,size(Xa_mag,2)));
+    Xh_mag = Xh_mag.*(z' * ones(1,size(Xh_mag,2)));
+    Xn_mag = Xn_mag.*(z' * ones(1,size(Xn_mag,2)));
+    
     % Deconvolution to get discrete objects
     Ia_trans = imresize(mat2gray(log(1+Xa_mag)), resize_scale);
     Ia_trans = imdiffusefilt(Ia_trans);

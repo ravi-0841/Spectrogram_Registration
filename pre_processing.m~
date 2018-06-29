@@ -79,6 +79,17 @@ for i = 1:6
     Xn_mag = abs(Xn);
     Xn_ang = angle(Xn);
     
+    y = 0:size(N/2 + 1, 1)-1;
+    z = 1 ./ sqrt(1 + (y./(fc*(N+2)/fs)).^10);
+    cost_adjustment_mat = z' * ones(1,size(F,2));
+    
+    fc = 2500;
+    Nc = ceil(fc * (N/2 + 1)/(fs/2));
+    
+    Xa_mag = Xa_mag.*(z' * ones(1,size(Xa_mag,2)));
+    Xh_mag = Xh_mag.*(z' * ones(1,size(Xh_mag,2)));
+    Xn_mag = Xn_mag.*(z' * ones(1,size(Xn_mag,2)));
+    
     % Deconvolution to get discrete objects
     Ia_trans = imresize(mat2gray(log(1+Xa_mag)), resize_scale);
     Ia_trans = imdiffusefilt(Ia_trans);
@@ -115,6 +126,6 @@ for i = 1:6
     
     subplot(131), imshow(Ia_eroded.*Ia_trans,[]), hold on, plot(centroid_a(:,1), centroid_a(:,2), 'g.'), hold off, ...
         title('Angry'), subplot(132), imshow(Ih_eroded.*Ih_trans, []), hold on, plot(centroid_h(:,1), centroid_h(:,2), 'g.'), hold off, ...
-        title('Happy'), subplot(133), imshow(In_eroded,[]), hold on, plot(centroid_n(:,1), centroid_n(:,2), 'g.'), hold off, title('Neutral');
+        title('Happy'), subplot(133), imshow(In_eroded.*In_trans,[]), hold on, plot(centroid_n(:,1), centroid_n(:,2), 'g.'), hold off, title('Neutral');
     pause;
 end
