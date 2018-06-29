@@ -15,7 +15,7 @@ s = 0.010;
 top = 3;
 
 %% Get the wav files in
-target = 'happy1.wav'; % please provide a test file  or Target
+target = 'angry1.wav'; % please provide a test file  or Target
 [x_tar,fs] = audioread(target);
 
 source = 'neutral1.wav'; % please provide a test file  or Source
@@ -53,12 +53,12 @@ X0_src = abs(X_src);
 opts = struct();
 opts.alpha = 0.4;
 opts.only_freq = 0;
-opts.sigma_fluid = 3.0; %1.5
-opts.sigma_diff = 3.0;  %2.5
+opts.sigma_fluid = 1.5; %1.5
+opts.sigma_diff = 1.5;  %2.5
 opts.window_size = 50;
 opts.stride = 50;
 opts.max_epochs = 1;
-opts.lambda = 0.0;
+opts.lambda = 0.05;
 opts.step = 1.0;
 opts.max_iter = 500;
 opts.pyramid_levels  = 1;
@@ -69,13 +69,20 @@ opts.plot = 1;
 %% Getting object masks
 I_fixed  = log(1+X0_tar);
 I_moving = log(1+X0_src);
+
+fc = 3000;
+y = 0:N/2;
+z = 1 ./ sqrt(1 + (y./(fc*(N+2)/16000)).^20);
+I_fixed = I_fixed.*(z' * ones(1,size(I_fixed,2)));
+I_moving = I_moving.*(z' * ones(1,size(I_moving,2)));
+
 [fixed_mask,moving_mask,moved_mask] = obj_mask_alignment(I_fixed,I_moving,5,5);
-% figure();
-% subplot(131), imshow(fixed_mask, []), subplot(132), imshow(moving_mask, []), ...
-%     subplot(133), imshowpair(fixed_mask, moving_mask);
+figure();
+subplot(131), imshow(fixed_mask, []), subplot(132), imshow(moving_mask, []), ...
+    subplot(133), imshowpair(fixed_mask, moved_mask);
 
 %% Demons Registration
-disp_field = my_multires_demons(I_fixed,I_moving,N,opts);
+disp_field = my_multires_demons(I_fixed.*fixed_mask,I_moving.*moving_mask,N,opts);
 warped_mag = imwarp(abs(X_src),disp_field);
 warped_phase = imwarp(angle(X_src),disp_field);
 
@@ -94,11 +101,11 @@ warped_phase = imwarp(angle(X_src),disp_field);
 % disp(['SSD orgVSfast: ' num2str(sum(sum((orig_phase - fast_phase).^2))) ...
 %     '    SSD orgVSiter: ' num2str(sum(sum((orig_phase - iter_phase).^2)))]);
 
-figure()
-lim = [1 1; size(warped_mag,1) size(warped_mag,2)];
-subplot(131), imshowpair(log(1+X0_tar), log(1+warped_mag)), subplot(132), ...
-    showgrid(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),4,lim),...
-    subplot(133), showvector(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),5);
+% figure()
+% lim = [1 1; size(warped_mag,1) size(warped_mag,2)];
+% subplot(131), imshowpair(log(1+X0_tar), log(1+warped_mag)), subplot(132), ...
+%     showgrid(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),4,lim),...
+%     subplot(133), showvector(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),5);
 
 
 

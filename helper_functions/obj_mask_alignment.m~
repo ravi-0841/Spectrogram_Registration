@@ -4,10 +4,10 @@ function [I_eroded_F,I_eroded_M,moved_mask] = obj_mask_alignment(F,M,psf_size,ps
     PSF = fspecial('gaussian', [psf_size psf_size], psf_sigma);
     %% Fixed Image object extraction
     I_trans_F = mat2gray(F);
-    I_trans_F = imdiffusefilt(I_trans_F);
+    I_trans_F = imdiffusefilt(I_trans_F));
     I_decon_F = deconvlucy(I_trans_F, PSF, 10);
     
-    level_F = graythresh(I_decon_F);
+    level_F = graythresh(histeq(I_decon_F));
     I_thresh_F = imbinarize(I_decon_F, level_F);
     
     I_eroded_F = imopen(I_thresh_F, opening_mask);
