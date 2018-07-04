@@ -82,9 +82,9 @@ subplot(131), imshow(fixed_mask, []), subplot(132), imshow(moving_mask, []), ...
     subplot(133), imshowpair(fixed_mask, moved_mask);
 
 %% Demons Registration
-disp_field = my_multires_demons(I_fixed.*fixed_mask,I_moving.*moving_mask,N,opts);
-warped_mag = imwarp(abs(X_src),disp_field);
-warped_phase = imwarp(angle(X_src),disp_field);
+% disp_field = my_multires_demons(I_fixed.*fixed_mask,I_moving.*moving_mask,N,opts);
+% warped_mag = imwarp(abs(X_src),disp_field);
+% warped_phase = imwarp(angle(X_src),disp_field);
 
 %% Signal Reconstruction using RTISI-LA and plotting
 % iterations = 1000;
@@ -106,6 +106,20 @@ warped_phase = imwarp(angle(X_src),disp_field);
 % subplot(131), imshowpair(log(1+X0_tar), log(1+warped_mag)), subplot(132), ...
 %     showgrid(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),4,lim),...
 %     subplot(133), showvector(squeeze(disp_field(:,:,1)),squeeze(disp_field(:,:,2)),5);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

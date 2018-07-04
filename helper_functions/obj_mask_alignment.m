@@ -21,10 +21,16 @@ function [I_eroded_F,I_eroded_M,moved_mask] = obj_mask_alignment(F,M,psf_size,ps
     I_thresh_M = imbinarize(I_decon_M, level_M);
     
     I_eroded_M = imopen(I_thresh_M, opening_mask);
-    
+
+%     optimizer = registration.optimizer.OnePlusOneEvolutionary;
+%     metric = registration.metric.MattesMutualInformation;
     [optimizer,metric] = imregconfig('monomodal');
     moved_mask = imregister(mat2gray(I_eroded_M),mat2gray(I_eroded_F),...
                                 'affine',optimizer,metric);
+%     [~,moved_mask] = imregdemons(mat2gray(I_eroded_M),mat2gray(I_eroded_F),[500 400 100],...
+%     'AccumulatedFieldSmoothing',0.6);
+%     dsp = my_multires_demons(I_eroded_F, I_eroded_M, 513);
+%     moved_mask = imwarp(I_eroded_M, dsp);
     
     level = graythresh(moved_mask);
     moved_mask = imbinarize(moved_mask, level);
