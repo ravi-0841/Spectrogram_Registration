@@ -166,9 +166,13 @@ for i = 1:6
         im_h_seg(im_h_seg~=0) = 1;
         im_n_seg(im_n_seg~=0) = 1;
         
-        new_im_a(bwa.PixelIdxList{obj}) = im_a_seg(bwa.PixelIdxList{obj});
-        new_im_h(bwh.PixelIdxList{obj}) = im_h_seg(bwh.PixelIdxList{obj});
-        new_im_n(bwn.PixelIdxList{obj}) = im_n_seg(bwn.PixelIdxList{obj});
+        im_a_seg = im_a_seg(1:513,:);
+        im_h_seg = im_h_seg(1:513,:);
+        im_n_seg = im_n_seg(1:513,:);
+        
+        new_im_a(tempa==1) = im_a_seg(tempa==1);
+        new_im_h(temph==1) = im_h_seg(temph==1);
+        new_im_n(tempn==1) = im_n_seg(tempn==1);
         
     end
     
