@@ -134,10 +134,47 @@ for i = 1:6
     
     assert((bwa.NumObjects==bwh.NumObjects) && (bwa.NumObjects==bwn.NumObjects),...
                                             'The utterances may not be same');
+    
+    new_im_a = zeros(size(Ia_eroded));
+    new_im_h = zeros(size(Ih_eroded));
+    new_im_n = zeros(size(In_eroded));
+    
     for obj = 1:bwa.NumObjects
+        tempa = zeros(bwa.ImageSize);
+        temph = zeros(bwh.ImageSize);
+        tempn = zeros(bwn.ImageSize);
+        
+        tempa(bwa.PixelIdxList{obj}) = 1;
+        temph(bwh.PixelIdxList{obj}) = 1;
+        tempn(bwn.PixelIdxList{obj}) = 1;
+        
+        im_a_seg = Ia_eroded.*tempa;
+        im_h_seg = Ih_eroded.*temph;
+        im_n_seg = In_eroded.*tempn;
+        
+        [ra,~] = find(im_a_seg==1);
+        [rh,~] = find(im_h_seg==1);
+        [rn,~] = find(im_n_seg==1);
+        
+        ref = max([max(ra), max(rh), max(rn)]);
+        
+        im_a_seg = imresize(im_a_seg, [513*ref/max(ra), size(im_a_seg,2)]);
+        im_h_seg = imresize(im_h_seg, [513*ref/max(rh), size(im_h_seg,2)]);
+        im_n_seg = imresize(im_n_seg, [513*ref/max(rn), size(im_n_seg,2)]);
+        
+        im_a_seg(im_a_seg~=0) = 1;
+        im_h_seg(im_h_seg~=0) = 1;
+        im_n_seg(im_n_seg~=0) = 1;
+        
+        new_im_a(bwa.PixelIdxList{obj}) = im_a_seg(bwa.PixelIdxList{obj});
+        new_im_h(bwh.PixelIdxList{obj}) = im_h_seg(bwh.PixelIdxList{obj});
+        new_im_n(bwn.PixelIdxList{obj}) = im_n_seg(bwn.PixelIdxList{obj});
+        
+    end
     
     figure(1);
-    subplot(131), imshow(va, []), subplot(132), imshow(vh, []), subplot(133), imshow(vn, []);
+    subplot(131), imshow(new_im_a, []), subplot(132), imshow(new_im_h, []),...
+        subplot(133), imshow(new_im_n, []);
     figure(2);
     subplot(131), imshow(Ia_eroded.*Ia_trans,[]), hold on, plot(centroid_a(:,1), centroid_a(:,2), 'g.'), hold off, ...
         title('Angry'), subplot(132), imshow(Ih_eroded.*Ih_trans, []), hold on, ...
