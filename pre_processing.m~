@@ -132,9 +132,7 @@ for i = 1:6
     bwh = bwconncomp(vh);
     bwn = bwconncomp(vn);
     
-    assert((bwa.NumObjects==bwh.NumObjects) && (bwa.NumObjects==bwn.NumObjects),...
-                                            'The utterances may not be same');
-    for obj = 1:bwa.NumObjects
+    
     
     figure(1);
     subplot(131), imshow(va, []), subplot(132), imshow(vh, []), subplot(133), imshow(vn, []);
