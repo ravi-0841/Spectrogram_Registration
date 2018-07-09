@@ -10,6 +10,11 @@ S = hann(N);
 
 resize_scale = 1;
 
+r = 512;
+w = 0.025;
+s = 0.010;
+top = 3;
+
 % for i = 1:length(files)
 %     [x,fs] = audioread(files(i).name);
 %     X = stft(x,N,wshift,W);
@@ -68,6 +73,10 @@ for i = 1:6
     [xa,fs] = audioread(['angry' num2str(i) '.wav']);
     [xh,fs] = audioread(['happy' num2str(i) '.wav']);
     [xn,fs] = audioread(['neutral' num2str(i) '.wav']);
+    
+    [xn, xa] = get_alignment(xn,xa,fs,w,w-s,r,top);
+    [xa, xh] = get_alignment(xa,xh,fs,w,w-s,r,top);
+    
     Xa = stft(xa,N,wshift,W);
     Xh = stft(xh,N,wshift,W);
     Xn = stft(xn,N,wshift,W);
@@ -80,6 +89,9 @@ for i = 1:6
     
     Xn_mag = abs(Xn);
     Xn_ang = angle(Xn);
+    
+    Xa_mag = imresize(Xa_mag, size(Xn_mag));
+    Xh_mag = imresize(Xh_mag, size(Xn_mag));
     
     fc = 3000;
     y = 0:N/2;
@@ -158,13 +170,13 @@ for i = 1:6
         
         ref = max([max(ra), max(rh), max(rn)]);
         
-        im_a_seg = imresize(im_a_seg, [513*ref/max(ra), size(im_a_seg,2)]);
-        im_h_seg = imresize(im_h_seg, [513*ref/max(rh), size(im_h_seg,2)]);
-        im_n_seg = imresize(im_n_seg, [513*ref/max(rn), size(im_n_seg,2)]);
+        im_a_seg = imresize(log(1+Xa_mag).*Ia_eroded, [513*ref/max(ra), size(im_a_seg,2)]);
+        im_h_seg = imresize(log(1+Xh_mag).*Ih_eroded, [513*ref/max(rh), size(im_h_seg,2)]);
+        im_n_seg = imresize(log(1+Xn_mag).*In_eroded, [513*ref/max(rn), size(im_n_seg,2)]);
         
-        im_a_seg(im_a_seg~=0) = 1;
-        im_h_seg(im_h_seg~=0) = 1;
-        im_n_seg(im_n_seg~=0) = 1;
+%         im_a_seg(im_a_seg~=0) = 1;
+%         im_h_seg(im_h_seg~=0) = 1;
+%         im_n_seg(im_n_seg~=0) = 1;
         
         im_a_seg = im_a_seg(1:513,:);
         im_h_seg = im_h_seg(1:513,:);
