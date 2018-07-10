@@ -74,8 +74,8 @@ for i = 1:6
     [xh,fs] = audioread(['happy' num2str(i) '.wav']);
     [xn,fs] = audioread(['neutral' num2str(i) '.wav']);
     
-    [xn, xa] = get_alignment(xn,xa,fs,w,w-s,r,top);
-    [xa, xh] = get_alignment(xa,xh,fs,w,w-s,r,top);
+%     [xn, xa] = get_alignment(xn,xa,fs,w,w-s,r,top);
+%     [xa, xh] = get_alignment(xa,xh,fs,w,w-s,r,top);
     
     Xa = stft(xa,N,wshift,W);
     Xh = stft(xh,N,wshift,W);
@@ -106,7 +106,6 @@ for i = 1:6
     Ia_decon = deconvlucy(Ia_trans, PSF, 10);
     level = graythresh(Ia_decon);
     Ia_thresh = imbinarize(Ia_decon, level-epsilon);
-    Ia_thresh_temp = lazysnapping(Ia_decon, superpixels(Ia_decon, 100), Ia_thresh, 1-Ia_thresh);
     Ia_eroded = imopen(Ia_thresh, ero_strel);
     Ia_eroded = mask_thickening(Ia_eroded);
     Ia_eroded = bwareaopen(Ia_eroded, min_size, 4);

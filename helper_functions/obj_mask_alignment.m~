@@ -1,0 +1,132 @@
+function [I_eroded_F,I_eroded_M,moved_mask] = obj_mask_alignment(F,M,psf_size,psf_sigma)
+    
+    opening_mask = [1;1];
+    PSF = fspecial('gaussian', [psf_size psf_size], psf_sigma);
+    %% Fixed Image object extraction
+    I_trans_F = mat2gray(F);
+    I_trans_F = imdiffusefilt(I_trans_F);
+    I_decon_F = deconvlucy(I_trans_F, PSF, 10);
+    
+    level_F = graythresh(I_decon_F);
+    I_thresh_F = imbinarize(I_decon_F, level_F);
+    
+    I_eroded_F = imopen(I_thresh_F, opening_mask);
+    
+    %% Moving Image object extraction
+    I_trans_M = mat2gray(M);
+    I_trans_M = imdiffusefilt(I_trans_M);
+    I_decon_M = deconvlucy(I_trans_M, PSF, 10);
+    
+    level_M = graythresh(I_decon_M);
+    I_thresh_M = imbinarize(I_decon_M, level_M);
+    
+    I_eroded_M = imopen(I_thresh_M, opening_mask);
+
+%     optimizer = registration.optimizer.OnePlusOneEvolutionary;
+%     metric = registration.metric.MattesMutualInformation;
+    [optimizer,metric] = imregconfig('monomodal');
+    moved_mask = imregister(mat2gray(I_eroded_M),mat2gray(I_eroded_F),...
+                                'affine',optimizer,metric);
+%     [~,moved_mask] = imregdemons(mat2gray(I_eroded_M),mat2gray(I_eroded_F),[500 400 100],...
+%     'AccumulatedFieldSmoothing',0.6);
+%     dsp = my_multires_demons(I_eroded_F, I_eroded_M, 513);
+%     moved_mask = imwarp(I_eroded_M, dsp);
+    
+    level = graythresh(moved_mask);
+    moved_mask = imbinarize(moved_mask, level);
+    moved_mask = mask_thickening(moved_mask);
+    I_eroded_F = mask_thickening(I_eroded_F);
+    I_eroded_M = mask_thickening(I_eroded_M);
+    
+    min_size = 30;
+    moved_mask = bwareaopen(moved_mask, min_size, 4);
+    I_eroded_F = bwareaopen(I_eroded_F, min_size, 4);
+    I_eroded_M = bwareaopen(I_eroded_M, min_size, 4);
+    
+%     moved_mask(moved_mask>0) = 1;
+%     moved_mask = logical(moved_mask);
+
+%%  Scaling Component-wise
+    v_moved  = vertical_segmentation(moved_mask);
+    v_fixed  = vertical_segmentation(I_eroded_F);
+    v_moving = vertical_segmentation(I_eroded_M);
+    
+    bw_moved = bwconncomp(va);
+    bw_fixed = bwconncomp(vh);
+    bw_movin = bwconncomp(vn);
+    
+    assert((bwa.NumObjects==bwh.NumObjects) && (bwa.NumObjects==bwn.NumObjects),...
+                                            'The utterances may not be same');
+    
+    new_im_a = zeros(size(Ia_eroded));
+    new_im_h = zeros(size(Ih_eroded));
+    new_im_n = zeros(size(In_eroded));
+    
+    for obj = 1:bwa.NumObjects
+        tempa = zeros(bwa.ImageSize);
+        temph = zeros(bwh.ImageSize);
+        tempn = zeros(bwn.ImageSize);
+        
+        tempa(bwa.PixelIdxList{obj}) = 1;
+        temph(bwh.PixelIdxList{obj}) = 1;
+        tempn(bwn.PixelIdxList{obj}) = 1;
+        
+        im_a_seg = Ia_eroded.*tempa;
+        im_h_seg = Ih_eroded.*temph;
+        im_n_seg = In_eroded.*tempn;
+        
+        [ra,~] = find(im_a_seg==1);
+        [rh,~] = find(im_h_seg==1);
+        [rn,~] = find(im_n_seg==1);
+        
+        ref = max([max(ra), max(rh), max(rn)]);
+        
+        im_a_seg = imresize(log(1+Xa_mag).*Ia_eroded, [513*ref/max(ra), size(im_a_seg,2)]);
+        im_h_seg = imresize(log(1+Xh_mag).*Ih_eroded, [513*ref/max(rh), size(im_h_seg,2)]);
+        im_n_seg = imresize(log(1+Xn_mag).*In_eroded, [513*ref/max(rn), size(im_n_seg,2)]);
+        
+%         im_a_seg(im_a_seg~=0) = 1;
+%         im_h_seg(im_h_seg~=0) = 1;
+%         im_n_seg(im_n_seg~=0) = 1;
+        
+        im_a_seg = im_a_seg(1:513,:);
+        im_h_seg = im_h_seg(1:513,:);
+        im_n_seg = im_n_seg(1:513,:);
+        
+        new_im_a(tempa==1) = im_a_seg(tempa==1);
+        new_im_h(temph==1) = im_h_seg(temph==1);
+        new_im_n(tempn==1) = im_n_seg(tempn==1);
+        
+    end
+
+
+                            
+    %% Object Mapping
+    moved_cc = bwconncomp(moved_mask,4);
+    fixed_cc = bwconncomp(I_eroded_F,4);
+    movng_cc = bwconncomp(I_eroded_M,4);
+    map_indx = zeros(moved_cc.NumObjects,1);
+    
+    for i = 1:moved_cc.NumObjects
+        if length(moved_cc.PixelIdxList{1,i})<7
+            map_indx(i) = nan;
+            continue;
+        else
+            overlap = zeros(length(fixed_cc.NumObjects),1);
+            for j = 1:fixed_cc.NumObjects
+                if length(fixed_cc.PixelIdxList{1,j})<7
+                    overlap(j) = 0;
+                    continue;
+                end
+                temp_img_fixed = zeros(size(I_eroded_F));
+                temp_img_moved = zeros(size(moved_mask));
+
+                temp_img_moved(moved_cc.PixelIdxList{1,i}) = 1;
+                temp_img_fixed(fixed_cc.PixelIdxList{1,j}) = 1;
+                overlap(j) = sum(sum(temp_img_fixed.*temp_img_moved));
+            end
+            if (sum(overlap)==0); map_indx(i) = 0; else; [~, map_indx(i)] ...
+                                                        = max(overlap); end
+        end
+    end
+end
