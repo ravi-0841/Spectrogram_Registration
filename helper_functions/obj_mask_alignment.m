@@ -77,10 +77,6 @@ function [new_im_fixed,new_im_movin,moved_mask] = obj_mask_alignment(F,M,psf_siz
         im_fixed_seg = imresize(F.*I_eroded_F, [513*ref/max(r_fixed), size(im_fixed_seg,2)]);
         im_movin_seg = imresize(M.*I_eroded_M, [513*ref/max(r_movin), size(im_movin_seg,2)]);
         
-%         im_a_seg(im_a_seg~=0) = 1;
-%         im_h_seg(im_h_seg~=0) = 1;
-%         im_n_seg(im_n_seg~=0) = 1;
-        
         im_fixed_seg = im_fixed_seg(1:513,:);
         im_movin_seg = im_movin_seg(1:513,:);
         
