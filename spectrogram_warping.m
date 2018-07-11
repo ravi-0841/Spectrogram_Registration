@@ -21,7 +21,7 @@ target = 'angry2.wav'; % please provide a test file  or Target
 source = 'happy2.wav'; % please provide a test file  or Source
 [x_src,fs] = audioread(source);
 
-[x_src, x_tar] = get_alignment(x_src,x_tar,fs,w,w-s,r,top);
+% [x_src, x_tar] = get_alignment(x_src,x_tar,fs,w,w-s,r,top);
 
 if size(x_src,2)>1, fprintf('This code only handles single channel files\n'); return; end
 if size(x_tar,2)>1, fprintf('This code only handles single channel files\n'); return; end
@@ -50,27 +50,29 @@ clear Q r w s top tmp_src tmp_tar C Xpow_src Xpow_tar
 X0_tar = abs(X_tar);
 X0_src = abs(X_src);
 
+X0_tar = imresize(X0_tar, size(X0_src));
+
 opts = struct();
 opts.alpha = 0.4;
 opts.only_freq = 0;
-opts.sigma_fluid = 1.25; %1.5
-opts.sigma_diff = 1.25;  %2.5
+opts.sigma_fluid = 0.75; %1.5
+opts.sigma_diff = 0.75;  %2.5
 opts.window_size = 50;
 opts.stride = 50;
 opts.max_epochs = 1;
 opts.lambda = 0.05; %0.05
 opts.step = 1.0;
-opts.max_iter = 700;
-opts.pyramid_levels  = 2;
+opts.max_iter = 3000;
+opts.pyramid_levels  = 1;
 opts.compositive = 0;
-opts.diffeomorphism = 1;
+opts.diffeomorphism = 0;
 opts.plot = 1;
 
 %% Getting object masks
 I_fixed  = log(1+X0_tar);
 I_moving = log(1+X0_src);
 
-fc = 3000;
+fc = 4000;
 y = 0:N/2;
 z = 1 ./ sqrt(1 + (y./(fc*(N+2)/16000)).^20);
 I_fixed = I_fixed.*(z' * ones(1,size(I_fixed,2)));
