@@ -28,6 +28,18 @@ for i = 1:floor(length(files)/3)
         continue;
     end
     
+    try
+        
+    catch
+        continue;
+    end
+    
+    try
+        
+    catch
+        continue;
+    end
+    
     Xa = stft(xa,N,wshift,W);
     Xh = stft(xh,N,wshift,W);
     Xn = stft(xn,N,wshift,W);
