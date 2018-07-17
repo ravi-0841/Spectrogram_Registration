@@ -1,0 +1,6 @@
+function desc = get_fourier_descriptors(img, num_coeffs)
+    bwcc = bwconncomp(img);
+    for obj = 1:bwcc.NumObjects
+        z = zeros(bwcc.ImageSize);
+        z(bwcc.PixelIdxL)
+end

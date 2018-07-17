@@ -1,4 +1,4 @@
-function [a,b,c,d,T] = ellipticFourierDescriptor(filename, N, p, rotation)
+function [a,b,c,d,T] = ellipticFourierDescriptor(bin_image, N, p, rotation)
 % Returns the coefficients for the elliptic fourier descriptor
 % The image referenced by filename is read and the fist contour is 
 % extracted using MATLAB's internal contourc-algorithm. 
@@ -36,7 +36,7 @@ function [a,b,c,d,T] = ellipticFourierDescriptor(filename, N, p, rotation)
 % www.geekstack.net
     
     % Get the contour
-    [conX, conY] = getContour(filename);
+    [conX, conY] = getContour(bin_image);
     
     % Get the total number of points
     points = size(conX, 1) - 1;
