@@ -1,9 +1,0 @@
-function out = vertical_segmentation(bin_image)
-    out = zeros(size(bin_image));
-    [~,c] = find(bin_image==1);
-    non_zero_cols = sum(bin_image(:,c));
-    for i = 1:length(non_zero_cols)
-        if non_zeros_cols(i)>=3
-%     idx = find(non_zero_cols>1);
-    out(:,c(non_zero_cols>4)) = 1;
-end

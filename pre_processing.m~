@@ -93,7 +93,7 @@ for i = 1:6
 %     Xa_mag = imresize(Xa_mag, size(Xn_mag));
 %     Xh_mag = imresize(Xh_mag, size(Xn_mag));
     
-    fc = 1000;
+    fc = 2000;
     y = 0:N/2;
     z = 1 ./ sqrt(1 + (y./(fc*(N+2)/fs)).^10);
     Xa_mag = Xa_mag.*(z' * ones(1,size(Xa_mag,2)));
@@ -109,10 +109,7 @@ for i = 1:6
     Ia_eroded = imopen(Ia_thresh, ero_strel);
     Ia_eroded = mask_thickening(Ia_eroded);
     [~,angl]  = imgradient(Ia_eroded);
-    ver_a     = (angl >= 170 | angl <= -170);
-    ver_a     = circshift(ver_a, -1, 2);
-    ver_a     = bwareaopen(ver_a, 3);
-    Ia_eroded = Ia_eroded - ver_a;
+    out_a     = (angl >= 170 | angl <= -170);
     Ia_eroded = bwareaopen(Ia_eroded, min_size, 4);
     rgpa = regionprops(bwconncomp(Ia_eroded, 4), 'centroid');
     centroid_a = cat(1, rgpa.Centroid);
@@ -125,10 +122,7 @@ for i = 1:6
     Ih_eroded = imopen(Ih_thresh, ero_strel);
     Ih_eroded = mask_thickening(Ih_eroded);
     [~,angl]  = imgradient(Ih_eroded);
-    ver_h     = (angl >= 170 | angl <= -170);
-    ver_h     = bwareaopen(ver_h, 3);
-    ver_h     = circshift(ver_h, -1, 2);
-    Ih_eroded = Ih_eroded - ver_h;
+    out_h     = (angl >= 170 | angl <= -170);
     Ih_eroded = bwareaopen(Ih_eroded, min_size, 4);
     rgph = regionprops(bwconncomp(Ih_eroded, 4), 'centroid');
     centroid_h = cat(1, rgph.Centroid);
@@ -141,10 +135,7 @@ for i = 1:6
     In_eroded = imopen(In_thresh, ero_strel);
     In_eroded = mask_thickening(In_eroded);
     [~,angl]  = imgradient(In_eroded);
-    ver_n     = (angl >= 170 | angl <= -170);
-    ver_n     = bwareaopen(ver_n, 3);
-    ver_n     = circshift(ver_n, -1, 2);
-    In_eroded = In_eroded - ver_n;
+    out_a     = (angl >= 170 | angl <= -170);
     In_eroded = bwareaopen(In_eroded, min_size, 4);
     rgpn = regionprops(bwconncomp(In_eroded, 4),'centroid');
     centroid_n = cat(1, rgpn.Centroid);
@@ -204,7 +195,7 @@ for i = 1:6
 
     figure(1);
     subplot(131), imshow(Ia_eroded,[]), hold on, plot(centroid_a(:,1), centroid_a(:,2), 'g.'), hold off, ...
-        title('Angry'), subplot(132), imshow(Ih_eroded,[]), hold on, ...
+        title('Angry'), subplot(132), imshow(Ih_eroded, []), hold on, ...
         plot(centroid_h(:,1), centroid_h(:,2), 'g.'), hold off, ...
         title('Happy'), subplot(133), imshow(In_eroded,[]), hold on, ...
         plot(centroid_n(:,1), centroid_n(:,2), 'g.'), hold off, title('Neutral');
