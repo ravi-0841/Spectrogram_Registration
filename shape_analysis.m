@@ -20,13 +20,13 @@ y               = 0:N/2;
 z               = 1 ./ sqrt(1 + (y./(fc*(N+2)/16000)).^10);
 
 for i = 1:floor(length(files)/3)
-    try
-        [xa,~] = audioread(['angry' num2str(i) '.wav']);
-        [xh,~] = audioread(['happy' num2str(i) '.wav']);
-        [xn,~] = audioread(['neutral' num2str(i) '.wav']);
-    catch
-        continue;
-    end
+%     try
+        [xa,~] = audioread(['/home/ravi/Downloads/JHU_Emotional/segmented/data_shape/angry' num2str(i) '.wav']);
+        [xh,~] = audioread(['/home/ravi/Downloads/JHU_Emotional/segmented/data_shape/happy' num2str(i) '.wav']);
+        [xn,~] = audioread(['/home/ravi/Downloads/JHU_Emotional/segmented/data_shape/neutral' num2str(i) '.wav']);
+%     catch
+%         disp(['Missed i = ' num2str(i)]);
+%     end
     
     Xa = stft(xa,N,wshift,W);
     Xh = stft(xh,N,wshift,W);
@@ -89,4 +89,4 @@ end
 
 clear files N wshift W S ero_strel PSF min_size num_coeffs fc y z Ia_trans Ih_trans In_trans ...
     xa xh xn Xa Xn Xh Xa_mag Xh_mag Xn_mag Ia_decon Ih_decon In_decon Ia_thresh Ih_thresh In_thresh ...
-    ver_a ver_h ver_n level Ia_eroded Ih_eroded In_eroded angl
+    ver_a ver_h ver_n level Ia_eroded Ih_eroded In_eroded angl i
