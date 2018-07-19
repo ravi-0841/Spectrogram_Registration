@@ -8,8 +8,8 @@ end
 N               = 1024;
 wshift          = 128;
 
-W = hann(N);
-S = hann(N);
+W               = hann(N);
+S               = hann(N);
 
 %% 
 ero_strel       = [1;1];
@@ -110,7 +110,7 @@ load('./data/dict_angry.mat');
 load('./data/dict_happy.mat');
 load('./data/dict_neutral.mat');
 
-for i = 1:50
+for i = 1:100
     z1 = dict_ang(:,i); 
     z2 = dict_hap(:,i); 
     z3 = dict_nut(:,i);
@@ -133,7 +133,7 @@ end
 [hap_coeff, hap_score, hap_latent] = pca(shapes_happy');
 [neu_coeff, neu_score, neu_latent] = pca(shapes_nutrl');
 
-for i = 1:50
+for i = 1:100
     z1 = ang_coeff(:,i); 
     z2 = hap_coeff(:,i); 
     z3 = neu_coeff(:,i);

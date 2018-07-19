@@ -104,7 +104,7 @@ load('./data/dict_angry.mat');
 load('./data/dict_happy.mat');
 load('./data/dict_neutral.mat');
 
-for i = 1:256
+for i = 1:50
     z1 = dict_ang(:,i); 
     z2 = dict_hap(:,i); 
     z3 = dict_nut(:,i);
@@ -123,7 +123,7 @@ load('/home/ravi/Downloads/256_fourier_shape_data.mat');
 [hap_coeff, hap_score, hap_latent] = pca(shapes_happy');
 [neu_coeff, neu_score, neu_latent] = pca(shapes_nutrl');
 
-for i = 1:50
+for i = 1:50 
     z1 = ang_coeff(:,i); 
     z2 = hap_coeff(:,i); 
     z3 = neu_coeff(:,i);
@@ -141,11 +141,24 @@ complete_data = [shapes_angry shapes_happy shapes_nutrl];
 
 figure(2);
 scatter3(full_score(1:length(shapes_angry),1),...
-    full_score(1:length(shapes_angry),2),)
+    full_score(1:length(shapes_angry),2),full_score(1:length(shapes_angry),3), 'r');
+hold on, scatter3(full_score(length(shapes_angry)+1:length(shapes_angry)+length(shapes_happy),1),...
+    full_score(length(shapes_angry)+1:length(shapes_angry)+length(shapes_happy),2),...
+    full_score(length(shapes_angry)+1:length(shapes_angry)+length(shapes_happy),3), 'g');
+hold on, scatter3(full_score(length(shapes_angry)+length(shapes_happy)+1:end,1),...
+    full_score(length(shapes_angry)+length(shapes_happy)+1:end,2),...
+    full_score(length(shapes_angry)+length(shapes_happy)+1:end,3), 'b');
 
+figure(3);
+plot(full_score(1:length(shapes_angry),1),...
+    full_score(1:length(shapes_angry),2), 'ro');
+hold on, plot(full_score(length(shapes_angry)+1:length(shapes_angry)+length(shapes_happy),1),...
+    full_score(length(shapes_angry)+1:length(shapes_angry)+length(shapes_happy),2), 'go');
+hold on, plot(full_score(length(shapes_angry)+length(shapes_happy)+1:end,1),...
+    full_score(length(shapes_angry)+length(shapes_happy)+1:end,2), 'bo');
 
-q = randperm(min([length(shapes_angry),length(shapes_happy),length(shapes_nutrl)]));
-figure(3)
-scatter3(ang_score(q(1:100),1),ang_score(q(1:100),2),ang_score(q(1:100),3), 'r');
-hold on, scatter3(hap_score(q(1:100),1),hap_score(q(1:100),2),hap_score(q(1:100),3), 'g');
-hold on, scatter3(neu_score(q(1:100),1),neu_score(q(1:100),2),neu_score(q(1:100),3), 'b');
+% q = randperm(min([length(shapes_angry),length(shapes_happy),length(shapes_nutrl)]));
+% figure(4)
+% scatter3(ang_score(q(1:100),1),ang_score(q(1:100),2),ang_score(q(1:100),3), 'r');
+% hold on, scatter3(hap_score(q(1:100),1),hap_score(q(1:100),2),hap_score(q(1:100),3), 'g');
+% hold on, scatter3(neu_score(q(1:100),1),neu_score(q(1:100),2),neu_score(q(1:100),3), 'b');
