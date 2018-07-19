@@ -65,14 +65,17 @@ top = 3;
 
 %% 
 ero_strel = [1;1]; % So far this structuring element has done well
-% ero_strel = [1;1];
 PSF = fspecial('gaussian', resize_scale*[5 5], resize_scale*5.0); % [5 5] and 5.0 works best for N = 1024
 min_size = 30;
 
-for i = 1:6
-    [xa,fs] = audioread(['angry' num2str(i) '.wav']);
-    [xh,fs] = audioread(['happy' num2str(i) '.wav']);
-    [xn,fs] = audioread(['neutral' num2str(i) '.wav']);
+for i = 1:floor(length(files)/3)
+    try
+        [xa,fs] = audioread(['angry' num2str(i) '.wav']);
+        [xh,fs] = audioread(['data_shape/happy' num2str(i) '.wav']);
+        [xn,fs] = audioread(['neutral' num2str(i) '.wav']);
+    catch
+        continue;
+    end
     
 %     [xn, xa] = get_alignment(xn,xa,fs,w,w-s,r,top);
 %     [xa, xh] = get_alignment(xa,xh,fs,w,w-s,r,top);
