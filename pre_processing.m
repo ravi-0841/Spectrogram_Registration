@@ -15,57 +15,8 @@ w = 0.025;
 s = 0.010;
 top = 3;
 
-% for i = 1:length(files)
-%     [x,fs] = audioread(files(i).name);
-%     X = stft(x,N,wshift,W);
-%     X_mag = abs(X);
-%     X_ang = angle(X);
-%     
-%     disp(files(i).name);
-%     
-%     % Deconvolution to get discrete objects
-%     PSF = fspecial('gaussian', resize_scale*[5 5], resize_scale*5.0); % [5 5] and 5.0 works best for N = 1024
-%     I_trans = imresize(mat2gray(log(1+X_mag)), resize_scale);
-%     I_sharp = imsharpen(I_trans);
-%     I_trans = imdiffusefilt(I_trans); % Not sure about this step
-%     I_decon = deconvlucy(I_trans, PSF, 10);
-%     
-%     level = graythresh(I_decon);
-%     I_thresh = imbinarize(I_decon, level);
-%     
-% %     level = adaptthresh(I_decon);
-% %     I_thresh = imbinarize(I_decon, level);
-% 
-% %     idx = kmeans(I_decon(:), 2);
-% %     I_thresh = zeros(size(I_decon));
-% %     intensity1 = mean(mean(I_decon(idx==1)));
-% %     intensity2 = mean(mean(I_decon(idx==2)));
-% %     if intensity1 > intensity2
-% %         I_thresh(idx==1) = 1;
-% %     else
-% %         I_thresh(idx==2) = 1;
-% %     end
-%     
-% %     level = otsuthresh(imhist(I_decon));
-% %     I_thresh = imbinarize(I_decon, level);
-%     
-%     ero_strel = [1;1]; % So far this structuring element has done OK
-%     I_eroded = imopen(I_thresh, ero_strel);
-%     I_cell{i,1} = I_eroded;
-%     I_eroded = mask_thickening(I_eroded);
-%     I_eroded = bwareaopen(I_eroded,30);
-%     
-%     connected_objs = bwconncomp(I_eroded, 4);
-% 
-%     subplot(131), imshow(I_trans,[]), subplot(132), imshow(I_decon, []), colormap(jet), ...
-%         subplot(133), imshow(I_eroded,[]);
-%     pause;
-%     
-% end
-
-%% 
-ero_strel = [1;1]; % So far this structuring element has done well
-PSF = fspecial('gaussian', resize_scale*[5 5], resize_scale*5.0); % [5 5] and 5.0 works best for N = 1024
+ero_strel = [1;1];
+PSF = fspecial('gaussian', resize_scale*[5 5], resize_scale*5.0);
 min_size = 30;
 
 for i = 1:floor(length(files)/3)
@@ -95,7 +46,7 @@ for i = 1:floor(length(files)/3)
 %     Xa_mag = imresize(Xa_mag, size(Xn_mag));
 %     Xh_mag = imresize(Xh_mag, size(Xn_mag));
     
-    fc = 1000;
+    fc = 2000;
     y = 0:N/2;
     z = 1 ./ sqrt(1 + (y./(fc*(N+2)/fs)).^10);
     Xa_mag = Xa_mag.*(z' * ones(1,size(Xa_mag,2)));
@@ -210,8 +161,62 @@ for i = 1:floor(length(files)/3)
         plot(centroid_h(:,1), centroid_h(:,2), 'g.'), hold off, ...
         title('Happy'), subplot(133), imshow(In_eroded,[]), hold on, ...
         plot(centroid_n(:,1), centroid_n(:,2), 'g.'), hold off, title('Neutral');
-%   figure(2);
-%   subplot(131), imshow(new_im_a, []), subplot(132), imshow(new_im_h, []),...
-%       subplot(133), imshow(new_im_n, []);
+  figure(2);
+  subplot(131), imshow(Ia_decon, []), subplot(132), imshow(Ih_decon, []),...
+      subplot(133), imshow(In_decon, []), colormap(jet);
     pause;
 end
+
+
+
+
+
+
+%%
+% for i = 1:length(files)
+%     [x,fs] = audioread(files(i).name);
+%     X = stft(x,N,wshift,W);
+%     X_mag = abs(X);
+%     X_ang = angle(X);
+%     
+%     disp(files(i).name);
+%     
+%     % Deconvolution to get discrete objects
+%     PSF = fspecial('gaussian', resize_scale*[5 5], resize_scale*5.0); % [5 5] and 5.0 works best for N = 1024
+%     I_trans = imresize(mat2gray(log(1+X_mag)), resize_scale);
+%     I_sharp = imsharpen(I_trans);
+%     I_trans = imdiffusefilt(I_trans); % Not sure about this step
+%     I_decon = deconvlucy(I_trans, PSF, 10);
+%     
+%     level = graythresh(I_decon);
+%     I_thresh = imbinarize(I_decon, level);
+%     
+% %     level = adaptthresh(I_decon);
+% %     I_thresh = imbinarize(I_decon, level);
+% 
+% %     idx = kmeans(I_decon(:), 2);
+% %     I_thresh = zeros(size(I_decon));
+% %     intensity1 = mean(mean(I_decon(idx==1)));
+% %     intensity2 = mean(mean(I_decon(idx==2)));
+% %     if intensity1 > intensity2
+% %         I_thresh(idx==1) = 1;
+% %     else
+% %         I_thresh(idx==2) = 1;
+% %     end
+%     
+% %     level = otsuthresh(imhist(I_decon));
+% %     I_thresh = imbinarize(I_decon, level);
+%     
+%     ero_strel = [1;1]; % So far this structuring element has done OK
+%     I_eroded = imopen(I_thresh, ero_strel);
+%     I_cell{i,1} = I_eroded;
+%     I_eroded = mask_thickening(I_eroded);
+%     I_eroded = bwareaopen(I_eroded,30);
+%     
+%     connected_objs = bwconncomp(I_eroded, 4);
+% 
+%     subplot(131), imshow(I_trans,[]), subplot(132), imshow(I_decon, []), colormap(jet), ...
+%         subplot(133), imshow(I_eroded,[]);
+%     pause;
+%     
+% end
