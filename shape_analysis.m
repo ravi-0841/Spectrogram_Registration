@@ -99,13 +99,15 @@ clear files N wshift W S ero_strel PSF min_size num_coeffs fc y z Ia_trans Ih_tr
     xa xh xn Xa Xn Xh Xa_mag Xh_mag Xn_mag Ia_decon Ih_decon In_decon Ia_thresh Ih_thresh In_thresh ...
     ver_a ver_h ver_n level Ia_eroded Ih_eroded In_eroded angl i iter rand_idx
 
-%%
+%% KSVD shapes
 load('./data/dict_angry.mat');
 load('./data/dict_happy.mat');
 load('./data/dict_neutral.mat');
 
-for i = 1:256
-    z1 = dict_ang(:,i); z2 = dict_hap(:,i); z3 = dict_nut(:,i);
+for i = 1:50
+    z1 = dict_ang(:,i); 
+    z2 = dict_hap(:,i); 
+    z3 = dict_nut(:,i);
     figure(1),...
         subplot(131),plotEllipticFourierDescriptor(z1(1:256),z1(257:512),z1(513:768),z1(769:1024),100,1),...
         title('Angry'),subplot(132),...
@@ -114,3 +116,49 @@ for i = 1:256
         plotEllipticFourierDescriptor(z3(1:256),z3(257:512),z3(513:768),z3(769:1024),100,1),title('Neutral');
     pause;
 end
+
+%% PCA
+load('/home/ravi/Downloads/256_fourier_shape_data.mat');
+[ang_coeff, ang_score, ang_latent] = pca(shapes_angry');
+[hap_coeff, hap_score, hap_latent] = pca(shapes_happy');
+[neu_coeff, neu_score, neu_latent] = pca(shapes_nutrl');
+
+for i = 1:50
+    z1 = ang_coeff(:,i); 
+    z2 = hap_coeff(:,i); 
+    z3 = neu_coeff(:,i);
+    figure(1),...
+        subplot(131),plotEllipticFourierDescriptor(z1(1:256),z1(257:512),z1(513:768),z1(769:1024),100,1),...
+        title('Angry'),subplot(132),...
+        plotEllipticFourierDescriptor(z2(1:256),z2(257:512),z2(513:768),z2(769:1024),100,1),...
+        title('Happy'),subplot(133),...
+        plotEllipticFourierDescriptor(z3(1:256),z3(257:512),z3(513:768),z3(769:1024),100,1),title('Neutral');
+    pause;
+end
+
+complete_data = [shapes_angry shapes_happy shapes_nutrl];
+[full_coeff, full_score, full_latent] = pca(complete_data');
+
+figure(2);
+scatter3(full_score(1:length(shapes_angry),1),...
+    full_score(1:length(shapes_angry),2),full_score(1:length(shapes_angry),3), 'r');
+hold on, scatter3(full_score(length(shapes_angry)+1:length(shapes_angry)+length(shapes_happy),1),...
+    full_score(length(shapes_angry)+1:length(shapes_angry)+length(shapes_happy),2),...
+    full_score(length(shapes_angry)+1:length(shapes_angry)+length(shapes_happy),3), 'g');
+hold on, scatter3(full_score(length(shapes_angry)+length(shapes_happy)+1:end,1),...
+    full_score(length(shapes_angry)+length(shapes_happy)+1:end,2),...
+    full_score(length(shapes_angry)+length(shapes_happy)+1:end,3), 'b');
+
+figure(3);
+plot(full_score(1:length(shapes_angry),1),...
+    full_score(1:length(shapes_angry),2), 'ro');
+hold on, plot(full_score(length(shapes_angry)+1:length(shapes_angry)+length(shapes_happy),1),...
+    full_score(length(shapes_angry)+1:length(shapes_angry)+length(shapes_happy),2), 'go');
+hold on, plot(full_score(length(shapes_angry)+length(shapes_happy)+1:end,1),...
+    full_score(length(shapes_angry)+length(shapes_happy)+1:end,2), 'bo');
+
+% q = randperm(min([length(shapes_angry),length(shapes_happy),length(shapes_nutrl)]));
+% figure(4)
+% scatter3(ang_score(q(1:100),1),ang_score(q(1:100),2),ang_score(q(1:100),3), 'r');
+% hold on, scatter3(hap_score(q(1:100),1),hap_score(q(1:100),2),hap_score(q(1:100),3), 'g');
+% hold on, scatter3(neu_score(q(1:100),1),neu_score(q(1:100),2),neu_score(q(1:100),3), 'b');

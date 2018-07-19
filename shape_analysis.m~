@@ -9,7 +9,7 @@ S = hann(N);
 ero_strel       = [1;1];
 PSF             = fspecial('gaussian', [5 5], 5.0);
 min_size        = 30;
-num_coeffs      = 64;
+num_coeffs      = 256;
 
 shapes_angry    = [];
 shapes_happy    = [];
@@ -19,10 +19,10 @@ fc              = 1000;
 y               = 0:N/2;
 z               = 1 ./ sqrt(1 + (y./(fc*(N+2)/16000)).^10);
 
-indices         = 1:floor(length(files)/3);
-rand_idx
+rand_idx        = randperm(floor(length(files)/3));
 
-for i = 1:floor(length(files)/3)
+for iter       = 1:length(rand_idx)
+    i          = rand_idx(iter);
     try
         [xa,~] = audioread(['/home/ravi/Downloads/data_shape/angry' num2str(i) '.wav']);
         [xh,~] = audioread(['/home/ravi/Downloads/data_shape/happy' num2str(i) '.wav']);
@@ -89,12 +89,63 @@ for i = 1:floor(length(files)/3)
     In_eroded       = bwareaopen(In_eroded, min_size, 4);
     shapes_nutrl    = [shapes_nutrl get_fourier_descriptors(In_eroded,num_coeffs)];
     
-    figure(1), imshow(Ia_eroded,[]), title('Angry');
-    figure(2), imshow(Ih_eroded,[]), title('Happy');
-    figure(3), imshow(In_eroded,[]), title('Neutral');
-    pause;
+%     figure(1), imshow(Ia_eroded,[]), title('Angry');
+%     figure(2), imshow(Ih_eroded,[]), title('Happy');
+%     figure(3), imshow(In_eroded,[]), title('Neutral');
+%     pause;
 end
 
 clear files N wshift W S ero_strel PSF min_size num_coeffs fc y z Ia_trans Ih_trans In_trans ...
     xa xh xn Xa Xn Xh Xa_mag Xh_mag Xn_mag Ia_decon Ih_decon In_decon Ia_thresh Ih_thresh In_thresh ...
-    ver_a ver_h ver_n level Ia_eroded Ih_eroded In_eroded angl i
+    ver_a ver_h ver_n level Ia_eroded Ih_eroded In_eroded angl i iter rand_idx
+
+%% KSVD shapes
+load('./data/dict_angry.mat');
+load('./data/dict_happy.mat');
+load('./data/dict_neutral.mat');
+
+for i = 1:256
+    z1 = dict_ang(:,i); 
+    z2 = dict_hap(:,i); 
+    z3 = dict_nut(:,i);
+    figure(1),...
+        subplot(131),plotEllipticFourierDescriptor(z1(1:256),z1(257:512),z1(513:768),z1(769:1024),100,1),...
+        title('Angry'),subplot(132),...
+        plotEllipticFourierDescriptor(z2(1:256),z2(257:512),z2(513:768),z2(769:1024),100,1),...
+        title('Happy'),subplot(133),...
+        plotEllipticFourierDescriptor(z3(1:256),z3(257:512),z3(513:768),z3(769:1024),100,1),title('Neutral');
+    pause;
+end
+
+%% PCA
+load('/home/ravi/Downloads/256_fourier_shape_data.mat');
+[ang_coeff, ang_score, ang_latent] = pca(shapes_angry');
+[hap_coeff, hap_score, hap_latent] = pca(shapes_happy');
+[neu_coeff, neu_score, neu_latent] = pca(shapes_nutrl');
+
+for i = 1:50
+    z1 = ang_coeff(:,i); 
+    z2 = hap_coeff(:,i); 
+    z3 = neu_coeff(:,i);
+    figure(1),...
+        subplot(131),plotEllipticFourierDescriptor(z1(1:256),z1(257:512),z1(513:768),z1(769:1024),100,1),...
+        title('Angry'),subplot(132),...
+        plotEllipticFourierDescriptor(z2(1:256),z2(257:512),z2(513:768),z2(769:1024),100,1),...
+        title('Happy'),subplot(133),...
+        plotEllipticFourierDescriptor(z3(1:256),z3(257:512),z3(513:768),z3(769:1024),100,1),title('Neutral');
+    pause;
+end
+
+complete_data = [shapes_angry shapes_happy shapes_nutrl];
+[full_coeff, full_score, full_latent] = pca(complete_data');
+
+figure(2);
+scatter3(full_score(1:length(shapes_angry),1),...
+    full_score(1:length(shapes_angry),2),)
+
+
+q = randperm(min([length(shapes_angry),length(shapes_happy),length(shapes_nutrl)]));
+figure(3)
+scatter3(ang_score(q(1:100),1),ang_score(q(1:100),2),ang_score(q(1:100),3), 'r');
+hold on, scatter3(hap_score(q(1:100),1),hap_score(q(1:100),2),hap_score(q(1:100),3), 'g');
+hold on, scatter3(neu_score(q(1:100),1),neu_score(q(1:100),2),neu_score(q(1:100),3), 'b');
