@@ -1,4 +1,10 @@
-files           = dir('/home/ravi/Downloads/data_shape/*.wav');
+if ~ispc
+    files       = dir('/home/ravi/Downloads/data_shape/*.wav');
+    data_loc    = '/home/ravi/Downloads/data_shape/';
+else
+    files       = dir('C:\Users\Ravi Shankar\Downloads\data_shape\');
+    data_loc    = 'C:\Users\Ravi Shankar\Downloads\data_shape\';
+end
 N               = 1024;
 wshift          = 128;
 
@@ -24,9 +30,9 @@ rand_idx        = randperm(floor(length(files)/3));
 for iter       = 1:length(rand_idx)
     i          = rand_idx(iter);
     try
-        [xa,~] = audioread(['/home/ravi/Downloads/data_shape/angry' num2str(i) '.wav']);
-        [xh,~] = audioread(['/home/ravi/Downloads/data_shape/happy' num2str(i) '.wav']);
-        [xn,~] = audioread(['/home/ravi/Downloads/data_shape/neutral' num2str(i) '.wav']);
+        [xa,~] = audioread([data_loc 'angry' num2str(i) '.wav']);
+        [xh,~] = audioread([data_loc 'happy' num2str(i) '.wav']);
+        [xn,~] = audioread([data_loc 'neutral' num2str(i) '.wav']);
     catch
         disp(['Missed i = ' num2str(i)]);
     end
@@ -118,7 +124,11 @@ for i = 1:50
 end
 
 %% PCA
-load('/home/ravi/Downloads/256_fourier_shape_data.mat');
+if ~ispc
+    load('/home/ravi/Downloads/256_fourier_shape_data.mat');
+else
+    load('C:\Users\Ravi Shankar\Downloads\256_fourier_shape_data.mat');
+end
 [ang_coeff, ang_score, ang_latent] = pca(shapes_angry');
 [hap_coeff, hap_score, hap_latent] = pca(shapes_happy');
 [neu_coeff, neu_score, neu_latent] = pca(shapes_nutrl');
