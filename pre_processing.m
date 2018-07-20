@@ -61,14 +61,12 @@ for i = 1:floor(length(files)/3)
     Ia_thresh = imbinarize(Ia_decon, level-epsilon);
     Ia_eroded = imopen(Ia_thresh, ero_strel);
     Ia_eroded = mask_thickening(Ia_eroded);
-    for line_removal = 1:5
+    for line_removal = 1:3
         [~,angl]  = imgradient(Ia_eroded);
         ver_a     = (angl >= 170 | angl <= -170);
         ver_a     = circshift(ver_a, -1, 2);
-        ver_a     = bwareaopen(ver_a, 7);
+        ver_a     = bwareaopen(ver_a,3);
         Ia_eroded = Ia_eroded - ver_a;
-%         subplot(121),imshow(Ia_eroded),subplot(122),imshow(ver_a);
-%         pause;
     end
     Ia_eroded = bwareaopen(Ia_eroded, min_size, 4);
     rgpa = regionprops(bwconncomp(Ia_eroded, 4), 'centroid');
@@ -81,10 +79,10 @@ for i = 1:floor(length(files)/3)
     Ih_thresh = imbinarize(Ih_decon, level-epsilon);
     Ih_eroded = imopen(Ih_thresh, ero_strel);
     Ih_eroded = mask_thickening(Ih_eroded);
-    for line_removal = 1:5
+    for line_removal = 1:3
         [~,angl]  = imgradient(Ih_eroded);
         ver_h     = (angl >= 170 | angl <= -170);
-        ver_h     = bwareaopen(ver_h, 7);
+        ver_h     = bwareaopen(ver_h, 3);
         ver_h     = circshift(ver_h, -1, 2);
         Ih_eroded = Ih_eroded - ver_h;
     end
@@ -99,10 +97,10 @@ for i = 1:floor(length(files)/3)
     In_thresh = imbinarize(In_decon, level-epsilon);
     In_eroded = imopen(In_thresh, ero_strel);
     In_eroded = mask_thickening(In_eroded);
-    for line_removal = 1:5
+    for line_removal = 1:3
         [~,angl]    = imgradient(In_eroded);
         ver_n       = (angl >= 170 | angl <= -170);
-        ver_n       = bwareaopen(ver_n, 7);
+        ver_n       = bwareaopen(ver_n, 3);
         ver_n       = circshift(ver_n, -1, 2);
         In_eroded   = In_eroded - ver_n;
     end
@@ -118,7 +116,8 @@ for i = 1:floor(length(files)/3)
     [~,angl] = imgradient(Ia_skeleton);
     hoz_a = (angl <= 100 | angl >= 80);
 %     hoz_a = bwareaopen(hoz_a, 3);
-%     subplot(121), imshow(Ia_skeleton), subplot(122), imshow(hoz_a);
+    figure(1)
+    subplot(131), imshow(Ia_skeleton), subplot(132), imshow(Ih_skeleton), subplot(133), imshow(In_skeleton);
 %     imshowpair(Ia_skeleton,hoz_a);
 %     disp('random')
     
@@ -175,17 +174,15 @@ for i = 1:floor(length(files)/3)
 %         
 %     end
 
-    figure(1);
-    subplot(131), imshow(Ia_eroded.*Xa_mag, []), subplot(132), imshow(Ih_eroded.*Xh_mag, []), ...
-        subplot(133), imshow(In_eroded.*Xn_mag, []), colormap(jet)
+%     figure(2);
 %     subplot(131), imshow(Ia_eroded,[]), hold on, plot(centroid_a(:,1), centroid_a(:,2), 'g.'), hold off, ...
 %         title('Angry'), subplot(132), imshow(Ih_eroded,[]), hold on, ...
 %         plot(centroid_h(:,1), centroid_h(:,2), 'g.'), hold off, ...
 %         title('Happy'), subplot(133), imshow(In_eroded,[]), hold on, ...
 %         plot(centroid_n(:,1), centroid_n(:,2), 'g.'), hold off, title('Neutral');
-  figure(2);
-  subplot(131), imshow(Ia_decon, []), subplot(132), imshow(Ih_decon, []),...
-      subplot(133), imshow(In_decon, []), colormap(jet);
+%     figure(3);
+%     subplot(131), imshow(Ia_decon, []), subplot(132), imshow(Ih_decon, []),...
+%       subplot(133), imshow(In_decon, []), colormap(jet);
     pause;
 end
 
