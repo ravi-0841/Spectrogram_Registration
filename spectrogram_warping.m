@@ -15,13 +15,13 @@ s = 0.010;
 top = 3;
 
 %% Get the wav files in
-target = 'angry2.wav'; % please provide a test file  or Target
+target = 'angry3.wav'; % please provide a test file  or Target
 [x_tar,fs] = audioread(target);
 
-source = 'happy2.wav'; % please provide a test file  or Source
+source = 'happy3.wav'; % please provide a test file  or Source
 [x_src,fs] = audioread(source);
 
-% [x_src, x_tar] = get_alignment(x_src,x_tar,fs,w,w-s,r,top);
+[x_src, x_tar] = get_alignment(x_src,x_tar,fs,w,w-s,r,top);
 
 if size(x_src,2)>1, fprintf('This code only handles single channel files\n'); return; end
 if size(x_tar,2)>1, fprintf('This code only handles single channel files\n'); return; end
@@ -50,22 +50,22 @@ clear Q r w s top tmp_src tmp_tar C Xpow_src Xpow_tar
 X0_tar = abs(X_tar);
 X0_src = abs(X_src);
 
-X0_tar = imresize(X0_tar, size(X0_src));
+% X0_tar = imresize(X0_tar, size(X0_src));
 
 opts = struct();
 opts.alpha = 0.4;
 opts.only_freq = 0;
-opts.sigma_fluid = 1.0; %1.5
-opts.sigma_diff = 1.0;  %2.5
+opts.sigma_fluid = 1.5; %1.5
+opts.sigma_diff = 2.5;  %2.5
 opts.window_size = 50;
 opts.stride = 50;
 opts.max_epochs = 1;
 opts.lambda = 0.05; %0.05
 opts.step = 1.0;
 opts.max_iter = 1000;
-opts.pyramid_levels  = 1;
+opts.pyramid_levels  = 2;
 opts.compositive = 0;
-opts.diffeomorphism = 0;
+opts.diffeomorphism = 1;
 opts.plot = 1;
 
 %% Getting object masks
@@ -78,19 +78,19 @@ z = 1 ./ sqrt(1 + (y./(fc*(N+2)/16000)).^20);
 I_fixed = I_fixed.*(z' * ones(1,size(I_fixed,2)));
 I_moving = I_moving.*(z' * ones(1,size(I_moving,2)));
 
-[fixed_mask,moving_mask,moved_mask] = obj_mask_alignment(I_fixed,I_moving,5,5);
-figure();
-subplot(131), imshow(fixed_mask, []), title('Fixed'), subplot(132), imshow(moving_mask, []), ...
-    title('Moving'), subplot(133), imshowpair(fixed_mask, moved_mask), title('Translation');
+% [fixed_mask,moving_mask,moved_mask] = obj_mask_alignment(I_fixed,I_moving,5,5);
+% figure();
+% subplot(131), imshow(fixed_mask, []), title('Fixed'), subplot(132), imshow(moving_mask, []), ...
+%     title('Moving'), subplot(133), imshowpair(fixed_mask, moved_mask), title('Translation');
 
 %% Demons Registration
-% disp_field = my_multires_demons(I_fixed,I_moving,N,opts);
-% warped_mag = imwarp(abs(X_src),disp_field);
-% warped_phase = imwarp(angle(X_src),disp_field);
+disp_field = my_multires_demons(I_fixed,I_moving,N,opts);
+warped_mag = imwarp(abs(X_src),disp_field);
+warped_phase = imwarp(angle(X_src),disp_field);
 
 %% Signal Reconstruction using RTISI-LA and plotting
-% iterations = 1000;
-% recon_signal_fast = get_signal(warped_mag.*exp(1j*warped_phase),W,S,iterations,wshift);
+iterations = 1000;
+recon_signal_fast = get_signal(warped_mag.*exp(1j*warped_phase),W,S,iterations,wshift);
 % recon_signal_iter = get_signal_iteratively(warped_mag.*exp(1j*warped_phase),N,wshift,W,iterations);
 
 % X_fast = stft(recon_signal_fast,N,wshift,W);
