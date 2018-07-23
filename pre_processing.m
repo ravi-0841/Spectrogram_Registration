@@ -21,7 +21,7 @@ min_size = 30;
 
 for i = 1:floor(length(files)/3)
     try
-        [xa,fs] = audioread(['angry' num2str(i) '.wav']);
+        [xa,fs] = audioread(['sad' num2str(i) '.wav']);
         [xh,fs] = audioread(['happy' num2str(i) '.wav']);
         [xn,fs] = audioread(['neutral' num2str(i) '.wav']);
     catch
