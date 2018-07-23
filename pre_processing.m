@@ -108,13 +108,32 @@ for i = 1:floor(length(files)/4)
     rgpn = regionprops(bwconncomp(In_eroded, 4),'centroid');
     centroid_n = cat(1, rgpn.Centroid);
     
+    %% Manual Fixing of the binary images     
+    bwpaint1(Ia_eroded,Ia_decon);
+    pause;
+    manual_paint = load('manual_paint.mat');
+    Ia_eroded = manual_paint.manual_paint;
+    close all
+    
+    bwpaint1(Ih_eroded,Ih_decon);
+    pause;
+    manual_paint = load('manual_paint.mat');
+    Ih_eroded = manual_paint.manual_paint;
+    close all
+    
+    bwpaint1(In_eroded,In_decon);
+    pause;
+    manual_paint = load('manual_paint.mat');
+    In_eroded = manual_paint.manual_paint;
+    close all
+    
     %% Skeletonization
     Ia_skeleton = bwskel(Ia_eroded);
     Ih_skeleton = bwskel(Ih_eroded);
     In_skeleton = bwskel(In_eroded);
     
-    [~,angl] = imgradient(Ia_skeleton);
-    hoz_a = (angl <= 100 | angl >= 80);
+%     [~,angl] = imgradient(Ia_skeleton);
+%     hoz_a = (angl <= 100 | angl >= 80);
 %     hoz_a = bwareaopen(hoz_a, 3);
     figure(1)
     subplot(131), imshow(Ia_skeleton), subplot(132), imshow(Ih_skeleton), subplot(133), imshow(In_skeleton);
