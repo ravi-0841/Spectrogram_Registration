@@ -1,13 +1,16 @@
 
-function bwpaint1(A)
- 
-imagesc(A(:,:,1:3));
+function bwpaint1(A,original)
+
+figure(1), imshow(original, []), colormap(jet);
+figure();
+
+imagesc(A);
 
 colormap('default'); 
 % colormap(gray);
 % 
-nz=round(size(A,3)/3);
-
+% nz=round(size(A,3)/3);
+nz = 1;
 if nz>1
 h0 = uicontrol('Style', 'text', ...
      'Position', [100 0 200 50], ...
@@ -33,7 +36,7 @@ else
 end
 h1 = uicontrol('Style', 'pushbutton', ...
      'Position', [100 100 200 50], ...
-     'String','Export RGB image matrix to A.mat...',...
+     'String','Export image to A.mat...',...
      'Callback', @export);
 %  h2 = uicontrol('Style', 'togglebutton', ...
 %      'Position', [100 150 200 50], ...
@@ -48,7 +51,7 @@ h1 = uicontrol('Style', 'pushbutton', ...
 %      'Callback', @pbErase_Callback);
  h4 = uicontrol('Style', 'text', ...
      'Position', [100 250 200 50], ...
-     'String','Brush Size (slide to change bruch size, left click on image to paint, right click to erase...',...
+     'String','Brush Size (slide changes brush size, left click on image to paint, right click to erase...',...
      'Tag','txtErase');
  
  h5 = uicontrol('Style', 'slider', ...
@@ -120,7 +123,8 @@ a=findobj(gcf,'Style','Slider','-and','Tag','sliderZ');
 % 
 % cz=round(get(a,'Value')*3)
 
-imagesc(A(:,:,round(get(a,'Value'))*3+1:round(get(a,'Value'))*3+3));
+% imagesc(A(:,:,round(get(a,'Value'))*3+1:round(get(a,'Value'))*3+3));
+imagesc(A);
 colormap('default');
 axis image;
 
@@ -133,7 +137,8 @@ A=temp{2};
 hr=findobj(gcf,'Style','Slider','-and','Tag','sizeErase');
 r=get(hr,'Value');
 a=findobj(gcf,'Style','Slider','-and','Tag','sliderZ');
-im2=A(:,:,round(get(a,'Value'))*3+2);
+% im2=A(:,:,round(get(a,'Value'))*3+2);
+im2 = A;
 
 pos = get(gca,'CurrentPoint');
 flag_btn=get(src,'SelectionType');
@@ -152,9 +157,11 @@ elseif strcmp(flag_btn,'alt')
 im2(max(cm-r,1):min(cm+r,m),max(cn-r,1):min(cn+r,n))=0; 
 end
 
-A(:,:,round(get(a,'Value'))*3+2)=im2;
+% A(:,:,round(get(a,'Value'))*3+2)=im2;
+A = im2;
  
-imagesc(A(:,:,round(get(a,'Value'))*3+1:round(get(a,'Value'))*3+3));
+% imagesc(A(:,:,round(get(a,'Value'))*3+1:round(get(a,'Value'))*3+3));
+imagesc(A);
 colormap('default');
 axis image;
 
@@ -194,7 +201,8 @@ img=ud{2};
 hr=findobj(gcf,'Style','Slider','-and','Tag','sizeErase');
 r=get(hr,'Value');
 a=findobj(gcf,'Style','Slider','-and','Tag','sliderZ');
-im2=img(:,:,round(get(a,'Value'))*3+2);
+% im2=img(:,:,round(get(a,'Value'))*3+2);
+im2 = img;
 [m,n]=size(im2);
 
 cm=round(pos(1,2));
@@ -206,9 +214,11 @@ elseif strcmp(flag_btn,'alt')
 im2(max(cm-r,1):min(cm+r,m),max(cn-r,1):min(cn+r,n))=0; 
 end
 
-img(:,:,round(get(a,'Value'))*3+2)=im2;
+% img(:,:,round(get(a,'Value'))*3+2)=im2;
+img = im2;
  
-imagesc(img(:,:,round(get(a,'Value'))*3+1:round(get(a,'Value'))*3+3));
+% imagesc(img(:,:,round(get(a,'Value'))*3+1:round(get(a,'Value'))*3+3));
+imagesc(img);
 colormap('default');
 axis image;
 

@@ -25,7 +25,7 @@ fc              = 1000;
 y               = 0:N/2;
 z               = 1 ./ sqrt(1 + (y./(fc*(N+2)/16000)).^10);
 
-rand_idx        = randperm(floor(length(files)/3));
+rand_idx        = randperm(floor(length(files)/4));
 
 for iter       = 1:length(rand_idx)
     i          = rand_idx(iter);
