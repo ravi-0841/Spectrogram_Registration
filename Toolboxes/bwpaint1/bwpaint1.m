@@ -1,10 +1,9 @@
 
 function bwpaint1(A,original)
 
-    figure(1), imshow(original, []), colormap(jet);
-    figure();
+    figure(1), subplot(121), imshow(original, []), colormap(jet);
 
-    imagesc(A);
+    subplot(122), imagesc(A);
 
     colormap('default'); 
     nz = 1;

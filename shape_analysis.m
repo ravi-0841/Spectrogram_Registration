@@ -17,7 +17,7 @@ PSF             = fspecial('gaussian', [5 5], 5.0);
 min_size        = 30;
 num_coeffs      = 256;
 
-shapes_sad    = [];
+shapes_sad      = [];
 shapes_happy    = [];
 shapes_nutrl    = [];
 
@@ -26,6 +26,7 @@ y               = 0:N/2;
 z               = 1 ./ sqrt(1 + (y./(fc*(N+2)/16000)).^10);
 
 rand_idx        = randperm(floor(length(files)/4));
+bin_cell        = cell(length(rand_idx),3);
 
 for iter       = 1:length(rand_idx)
     i          = rand_idx(iter);
@@ -64,6 +65,12 @@ for iter       = 1:length(rand_idx)
     ver_s           = bwareaopen(ver_s, 3);
     Is_eroded       = Is_eroded - ver_s;
     Is_eroded       = bwareaopen(Is_eroded, min_size, 4);
+    bwpaint1(Is_eroded,Is_decon);
+    pause;
+    manual_paint    = load('manual_paint.mat');
+    Is_eroded       = manual_paint.manual_paint;
+    close all
+    bin_cell{iter,1}= Is_eroded;
     shapes_sad      = [shapes_sad get_fourier_descriptors(Is_eroded,num_coeffs)];
     
     Ih_trans        = mat2gray(log(1+Xh_mag));
@@ -79,6 +86,12 @@ for iter       = 1:length(rand_idx)
     ver_h           = circshift(ver_h, -1, 2);
     Ih_eroded       = Ih_eroded - ver_h;
     Ih_eroded       = bwareaopen(Ih_eroded, min_size, 4);
+    bwpaint1(Ih_eroded,Ih_decon);
+    pause;
+    manual_paint    = load('manual_paint.mat');
+    Ih_eroded       = manual_paint.manual_paint;
+    close all
+    bin_cell{iter,2}= Ih_eroded;
     shapes_happy    = [shapes_happy get_fourier_descriptors(Ih_eroded,num_coeffs)];
     
     In_trans        = mat2gray(log(1+Xn_mag));
@@ -94,9 +107,15 @@ for iter       = 1:length(rand_idx)
     ver_n           = circshift(ver_n, -1, 2);
     In_eroded       = In_eroded - ver_n;
     In_eroded       = bwareaopen(In_eroded, min_size, 4);
+    bwpaint1(In_eroded,In_decon);
+    pause;
+    manual_paint    = load('manual_paint.mat');
+    In_eroded       = manual_paint.manual_paint;
+    close all
+    bin_cell{iter,2}= In_eroded;
     shapes_nutrl    = [shapes_nutrl get_fourier_descriptors(In_eroded,num_coeffs)];
     
-%     figure(1), imshow(Ia_eroded,[]), title('Angry');
+%     figure(1), imshow(Ia_eroded,[]), title('Sad');
 %     figure(2), imshow(Ih_eroded,[]), title('Happy');
 %     figure(3), imshow(In_eroded,[]), title('Neutral');
 %     pause;
