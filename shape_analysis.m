@@ -112,7 +112,7 @@ for iter       = 1:length(rand_idx)
     manual_paint    = load('manual_paint.mat');
     In_eroded       = manual_paint.manual_paint;
     close all
-    bin_cell{iter,2}= In_eroded;
+    bin_cell{iter,3}= In_eroded;
     shapes_nutrl    = [shapes_nutrl get_fourier_descriptors(In_eroded,num_coeffs)];
     
 %     figure(1), imshow(Ia_eroded,[]), title('Sad');
