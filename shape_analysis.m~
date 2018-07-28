@@ -28,7 +28,7 @@ z               = 1 ./ sqrt(1 + (y./(fc*(N+2)/16000)).^10);
 % rand_idx        = randperm(floor(length(files)/4));
 % bin_cell        = cell(length(rand_idx),3);
 
-for iter       = 3:length(rand_idx)
+for iter       = 2:length(rand_idx)
     i          = rand_idx(iter);
     try
         [xs,~] = audioread([data_loc 'sad' num2str(i) '.wav']);
@@ -69,7 +69,6 @@ for iter       = 3:length(rand_idx)
 %     pause;
 %     manual_paint    = load('manual_paint.mat');
 %     Is_eroded       = manual_paint.manual_paint;
-%     imwrite(In_eroded, ['/home/ravi/Desktop/temp/sad_' num2str(i) '.png']);
 %     close all
 %     bin_cell{iter,1}= Is_eroded;
 %     shapes_sad      = [shapes_sad get_fourier_descriptors(Is_eroded,num_coeffs)];
@@ -91,7 +90,7 @@ for iter       = 3:length(rand_idx)
     pause;
     manual_paint    = load('manual_paint.mat');
     Ih_eroded       = manual_paint.manual_paint;
-    imwrite(Ih_eroded, ['/home/ravi/Desktop/temp/happy_' num2str(i) '.png']);
+    imwrite(Ih_eroded, ['/home/ravi/Desktop/temp/sad_' num2str(i) '.png']);
     close all
     bin_cell{iter,2}= Ih_eroded;
     shapes_happy    = [shapes_happy get_fourier_descriptors(Ih_eroded,num_coeffs)];
@@ -113,7 +112,7 @@ for iter       = 3:length(rand_idx)
 %     pause;
 %     manual_paint    = load('manual_paint.mat');
 %     In_eroded       = manual_paint.manual_paint;
-%     imwrite(In_eroded, ['/home/ravi/Desktop/temp/neutral_' num2str(i) '.png']);
+imwrite(Ih_eroded, ['/home/ravi/Desktop/temp/sad_' num2str(i) '.png']);
 %     close all
 %     bin_cell{iter,3}= In_eroded;
 %     shapes_nutrl    = [shapes_nutrl get_fourier_descriptors(In_eroded,num_coeffs)];
