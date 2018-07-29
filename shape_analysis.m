@@ -28,7 +28,7 @@ z               = 1 ./ sqrt(1 + (y./(fc*(N+2)/16000)).^10);
 % rand_idx        = randperm(floor(length(files)/4));
 % bin_cell        = cell(length(rand_idx),3);
 
-for iter       = 3:length(rand_idx)
+for iter       = 66:length(rand_idx)
     i          = rand_idx(iter);
     try
         [xs,~] = audioread([data_loc 'sad' num2str(i) '.wav']);
@@ -52,27 +52,27 @@ for iter       = 3:length(rand_idx)
     Xn_mag = Xn_mag.*(z' * ones(1,size(Xn_mag,2)));
     
     % Pre-processing to get discrete objects
-%     Is_trans        = mat2gray(log(1+Xs_mag));
-%     Is_trans        = imdiffusefilt(Is_trans);
-%     Is_decon        = deconvlucy(Is_trans, PSF, 10);
-%     level           = graythresh(Is_decon);
-%     Is_thresh       = imbinarize(Is_decon, level);
-%     Is_eroded       = imopen(Is_thresh, ero_strel);
-%     Is_eroded       = mask_thickening(Is_eroded);
-%     [~,angl]        = imgradient(Is_eroded);
-%     ver_s           = (angl >= 170 | angl <= -170);
-%     ver_s           = circshift(ver_s, -1, 2);
-%     ver_s           = bwareaopen(ver_s, 3);
-%     Is_eroded       = Is_eroded - ver_s;
-%     Is_eroded       = bwareaopen(Is_eroded, min_size, 4);
-%     bwpaint1(Is_eroded,Is_decon);
-%     pause;
-%     manual_paint    = load('manual_paint.mat');
-%     Is_eroded       = manual_paint.manual_paint;
-%     imwrite(In_eroded, ['/home/ravi/Desktop/temp/sad_' num2str(i) '.png']);
-%     close all
-%     bin_cell{iter,1}= Is_eroded;
-%     shapes_sad      = [shapes_sad get_fourier_descriptors(Is_eroded,num_coeffs)];
+    Is_trans        = mat2gray(log(1+Xs_mag));
+    Is_trans        = imdiffusefilt(Is_trans);
+    Is_decon        = deconvlucy(Is_trans, PSF, 10);
+    level           = graythresh(Is_decon);
+    Is_thresh       = imbinarize(Is_decon, level);
+    Is_eroded       = imopen(Is_thresh, ero_strel);
+    Is_eroded       = mask_thickening(Is_eroded);
+    [~,angl]        = imgradient(Is_eroded);
+    ver_s           = (angl >= 170 | angl <= -170);
+    ver_s           = circshift(ver_s, -1, 2);
+    ver_s           = bwareaopen(ver_s, 3);
+    Is_eroded       = Is_eroded - ver_s;
+    Is_eroded       = bwareaopen(Is_eroded, min_size, 4);
+    bwpaint1(Is_eroded,Is_decon);
+    pause;
+    manual_paint    = load('manual_paint.mat');
+    Is_eroded       = manual_paint.manual_paint;
+    imwrite(Is_eroded, ['/home/ravi/Desktop/temp/sad_' num2str(i) '.png']);
+    close all
+    bin_cell{iter,1}= Is_eroded;
+    shapes_sad      = [shapes_sad get_fourier_descriptors(Is_eroded,num_coeffs)];
     
     Ih_trans        = mat2gray(log(1+Xh_mag));
     Ih_trans        = imdiffusefilt(Ih_trans);
@@ -96,27 +96,27 @@ for iter       = 3:length(rand_idx)
     bin_cell{iter,2}= Ih_eroded;
     shapes_happy    = [shapes_happy get_fourier_descriptors(Ih_eroded,num_coeffs)];
     
-%     In_trans        = mat2gray(log(1+Xn_mag));
-%     In_trans        = imdiffusefilt(In_trans);
-%     In_decon        = deconvlucy(In_trans, PSF, 10);
-%     level           = graythresh(In_decon);
-%     In_thresh       = imbinarize(In_decon, level);
-%     In_eroded       = imopen(In_thresh, ero_strel);
-%     In_eroded       = mask_thickening(In_eroded);
-%     [~,angl]        = imgradient(In_eroded);
-%     ver_n           = (angl >= 170 | angl <= -170);
-%     ver_n           = bwareaopen(ver_n, 3);
-%     ver_n           = circshift(ver_n, -1, 2);
-%     In_eroded       = In_eroded - ver_n;
-%     In_eroded       = bwareaopen(In_eroded, min_size, 4);
-%     bwpaint1(In_eroded,In_decon);
-%     pause;
-%     manual_paint    = load('manual_paint.mat');
-%     In_eroded       = manual_paint.manual_paint;
-%     imwrite(In_eroded, ['/home/ravi/Desktop/temp/neutral_' num2str(i) '.png']);
-%     close all
-%     bin_cell{iter,3}= In_eroded;
-%     shapes_nutrl    = [shapes_nutrl get_fourier_descriptors(In_eroded,num_coeffs)];
+    In_trans        = mat2gray(log(1+Xn_mag));
+    In_trans        = imdiffusefilt(In_trans);
+    In_decon        = deconvlucy(In_trans, PSF, 10);
+    level           = graythresh(In_decon);
+    In_thresh       = imbinarize(In_decon, level);
+    In_eroded       = imopen(In_thresh, ero_strel);
+    In_eroded       = mask_thickening(In_eroded);
+    [~,angl]        = imgradient(In_eroded);
+    ver_n           = (angl >= 170 | angl <= -170);
+    ver_n           = bwareaopen(ver_n, 3);
+    ver_n           = circshift(ver_n, -1, 2);
+    In_eroded       = In_eroded - ver_n;
+    In_eroded       = bwareaopen(In_eroded, min_size, 4);
+    bwpaint1(In_eroded,In_decon);
+    pause;
+    manual_paint    = load('manual_paint.mat');
+    In_eroded       = manual_paint.manual_paint;
+    imwrite(In_eroded, ['/home/ravi/Desktop/temp/neutral_' num2str(i) '.png']);
+    close all
+    bin_cell{iter,3}= In_eroded;
+    shapes_nutrl    = [shapes_nutrl get_fourier_descriptors(In_eroded,num_coeffs)];
     
 %     figure(1), imshow(Ia_eroded,[]), title('Sad');
 %     figure(2), imshow(Ih_eroded,[]), title('Happy');
