@@ -28,7 +28,7 @@ z               = 1 ./ sqrt(1 + (y./(fc*(N+2)/16000)).^10);
 % rand_idx        = randperm(floor(length(files)/4));
 % bin_cell        = cell(length(rand_idx),3);
 
-for iter       = 66:length(rand_idx)
+for iter       = 77:length(rand_idx)
     i          = rand_idx(iter);
     try
         [xs,~] = audioread([data_loc 'sad' num2str(i) '.wav']);
