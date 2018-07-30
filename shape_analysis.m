@@ -128,6 +128,29 @@ clear files N wshift W S ero_strel PSF min_size num_coeffs fc y z Ia_trans Ih_tr
     xa xh xn Xa Xn Xh Xa_mag Xh_mag Xn_mag Ia_decon Ih_decon In_decon Ia_thresh Ih_thresh In_thresh ...
     ver_a ver_h ver_n level Ia_eroded Ih_eroded In_eroded angl i iter rand_idx
 
+%% Manually fixing the binary maps
+load '/home/ravi/Desktop/Spectrogram_Registration/segmentation_data.mat';
+
+shapes_sad      = [];
+shapes_happy    = [];
+shapes_nutrl    = [];
+
+num_coeffs      = 512;
+
+for i = 1:100
+    sad_img         = bin_cell{i,1};
+    hap_img         = bin_cell{i,2};
+    ntr_img         = bin_cell{i,3};
+    
+    sad_img         = bwareaopen(sad_img, 30, 4);
+    hap_img         = bwareaopen(hap_img, 30, 4);
+    ntr_img         = bwareaopen(ntr_img, 30, 4);
+    
+    shapes_sad      = [shapes_sad get_fourier_descriptors(sad_img,num_coeffs)];
+    shapes_happy    = [shapes_happy get_fourier_descriptors(hap_img,num_coeffs)];
+    shapes_nutrl    = [shapes_nutrl get_fourier_descriptors(ntr_img,num_coeffs)];
+end
+
 
 %% KSVD shapes
 % load('./data/dict_angry.mat');
