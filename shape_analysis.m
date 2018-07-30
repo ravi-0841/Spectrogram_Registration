@@ -135,7 +135,7 @@ shapes_sad      = [];
 shapes_happy    = [];
 shapes_nutrl    = [];
 
-num_coeffs      = 512;
+num_coeffs      = 256;
 
 for i = 1:100
     sad_img         = bin_cell{i,1};
@@ -171,27 +171,27 @@ end
 % end
 
 %% PCA
-% if ~ispc
-%     load('/home/ravi/Downloads/256_fourier_shape_data.mat');
-% else
-%     load('C:\Users\Ravi Shankar\Downloads\256_fourier_shape_data.mat');
-% end
-% [ang_coeff, ang_score, ang_latent] = pca(shapes_sad');
-% [hap_coeff, hap_score, hap_latent] = pca(shapes_happy');
-% [neu_coeff, neu_score, neu_latent] = pca(shapes_nutrl');
-% 
-% for i = 1:100
-%     z1 = ang_coeff(:,i); 
-%     z2 = hap_coeff(:,i); 
-%     z3 = neu_coeff(:,i);
-%     figure(1),...
-%         subplot(131),plotEllipticFourierDescriptor(z1(1:256),z1(257:512),z1(513:768),z1(769:1024),100,1),...
-%         title('Angry'),subplot(132),...
-%         plotEllipticFourierDescriptor(z2(1:256),z2(257:512),z2(513:768),z2(769:1024),100,1),...
-%         title('Happy'),subplot(133),...
-%         plotEllipticFourierDescriptor(z3(1:256),z3(257:512),z3(513:768),z3(769:1024),100,1),title('Neutral');
-%     pause;
-% end
+if ~ispc
+    load('/home/ravi/Downloads/256_fourier_shape_data_100_samples.mat');
+else
+    load('C:\Users\Ravi Shankar\Downloads\256_fourier_shape_data.mat');
+end
+[ang_coeff, ang_score, ang_latent] = pca(shapes_sad');
+[hap_coeff, hap_score, hap_latent] = pca(shapes_happy');
+[neu_coeff, neu_score, neu_latent] = pca(shapes_nutrl');
+
+for i = 1:100
+    z1 = ang_coeff(:,i); 
+    z2 = hap_coeff(:,i); 
+    z3 = neu_coeff(:,i);
+    figure(1),...
+        subplot(131),plotEllipticFourierDescriptor(z1(1:256),z1(257:512),z1(513:768),z1(769:1024),100,1),...
+        title('Angry'),subplot(132),...
+        plotEllipticFourierDescriptor(z2(1:256),z2(257:512),z2(513:768),z2(769:1024),100,1),...
+        title('Happy'),subplot(133),...
+        plotEllipticFourierDescriptor(z3(1:256),z3(257:512),z3(513:768),z3(769:1024),100,1),title('Neutral');
+    pause;
+end
 
 complete_data = [shapes_sad shapes_happy shapes_nutrl];
 [full_coeff, full_score, full_latent] = pca(complete_data');
