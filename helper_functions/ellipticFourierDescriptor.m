@@ -84,10 +84,10 @@ function [a,b,c,d,T] = ellipticFourierDescriptor(bin_image, N, p, rotation)
     end
     
     % 3. Scale invariance
-    a = a./E;
-    b = b./E;
-    c = c./E;
-    d = d./E;
+    % a = a./E;
+    % b = b./E;
+    % c = c./E;
+    % d = d./E;
 end
 
 function [x,y] = getContour(img)

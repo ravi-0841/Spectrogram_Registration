@@ -151,24 +151,23 @@ for i = 1:100
     shapes_nutrl    = [shapes_nutrl get_fourier_descriptors(ntr_img,num_coeffs)];
 end
 
-
 %% KSVD shapes
-% load('./data/dict_angry.mat');
-% load('./data/dict_happy.mat');
-% load('./data/dict_neutral.mat');
-% 
-% for i = 1:100
-%     z1 = dict_ang(:,i); 
-%     z2 = dict_hap(:,i); 
-%     z3 = dict_nut(:,i);
-%     figure(1),...
-%         subplot(131),plotEllipticFourierDescriptor(z1(1:256),z1(257:512),z1(513:768),z1(769:1024),100,1),...
-%         title('Angry'),subplot(132),...
-%         plotEllipticFourierDescriptor(z2(1:256),z2(257:512),z2(513:768),z2(769:1024),100,1),...
-%         title('Happy'),subplot(133),...
-%         plotEllipticFourierDescriptor(z3(1:256),z3(257:512),z3(513:768),z3(769:1024),100,1),title('Neutral');
-%     pause;
-% end
+load('dict_sad.mat');
+load('dict_happy.mat');
+load('dict_neutral.mat');
+
+for i = 1:64
+    z1 = dict_sad(:,i); 
+    z2 = dict_happy(:,i); 
+    z3 = dict_nutrl(:,i);
+    figure(1),...
+        subplot(131),plotEllipticFourierDescriptor(z1(1:256),z1(257:512),z1(513:768),z1(769:1024),100,1),...
+        title('Sad'),subplot(132),...
+        plotEllipticFourierDescriptor(z2(1:256),z2(257:512),z2(513:768),z2(769:1024),100,1),...
+        title('Happy'),subplot(133),...
+        plotEllipticFourierDescriptor(z3(1:256),z3(257:512),z3(513:768),z3(769:1024),100,1),title('Neutral');
+    pause;
+end
 
 %% PCA
 if ~ispc
@@ -176,17 +175,17 @@ if ~ispc
 else
     load('C:\Users\Ravi Shankar\Downloads\256_fourier_shape_data.mat');
 end
-[ang_coeff, ang_score, ang_latent] = pca(shapes_sad');
+[sad_coeff, sad_score, sad_latent] = pca(shapes_sad');
 [hap_coeff, hap_score, hap_latent] = pca(shapes_happy');
 [neu_coeff, neu_score, neu_latent] = pca(shapes_nutrl');
 
-for i = 1:100
-    z1 = ang_coeff(:,i); 
+for i = 1:50
+    z1 = sad_coeff(:,i); 
     z2 = hap_coeff(:,i); 
     z3 = neu_coeff(:,i);
     figure(1),...
         subplot(131),plotEllipticFourierDescriptor(z1(1:256),z1(257:512),z1(513:768),z1(769:1024),100,1),...
-        title('Angry'),subplot(132),...
+        title('Sad'),subplot(132),...
         plotEllipticFourierDescriptor(z2(1:256),z2(257:512),z2(513:768),z2(769:1024),100,1),...
         title('Happy'),subplot(133),...
         plotEllipticFourierDescriptor(z3(1:256),z3(257:512),z3(513:768),z3(769:1024),100,1),title('Neutral');
