@@ -23,7 +23,7 @@ function disp_field = my_multires_demons(F, M, N, opts)
     if ~isfield(opts,'stop_criterion');  opts.stop_criterion  = 0.01;           end
     if ~isfield(opts,'pyramid_levels');  opts.pyramid_levels  = 1;              end
     if ~isfield(opts,'diffeomorphism');  opts.diffeomorphism  = 1;              end
-    if ~isfield(opts,'plot');            opts.plot            = 0;              end
+    if ~isfield(opts,'plot');            opts.plot            = 1;              end
     
 %     I_cell = cell(opts.pyramid_levels, opts.max_iter);
     
