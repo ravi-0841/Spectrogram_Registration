@@ -129,7 +129,7 @@ clear files N wshift W S ero_strel PSF min_size num_coeffs fc y z Ia_trans Ih_tr
     ver_a ver_h ver_n level Ia_eroded Ih_eroded In_eroded angl i iter rand_idx
 
 %% Manually fixing the binary maps
-load '/home/ravi/Desktop/Spectrogram_Registration/segmentation_data.mat';
+load 'segmentation_data.mat';
 
 shapes_sad      = [];
 shapes_happy    = [];
@@ -173,7 +173,7 @@ end
 if ~ispc
     load('/home/ravi/Downloads/256_fourier_shape_data_100_samples.mat');
 else
-    load('C:\Users\Ravi Shankar\Downloads\256_fourier_shape_data.mat');
+    load('C:\Users\Ravi Shankar\Downloads\256_fourier_shape_data_100_samples.mat');
 end
 [sad_coeff, sad_score, sad_latent] = pca(shapes_sad');
 [hap_coeff, hap_score, hap_latent] = pca(shapes_happy');
