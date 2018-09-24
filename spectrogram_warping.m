@@ -15,10 +15,10 @@ s = 0.010;
 top = 3;
 
 %% Get the wav files in
-target = 'angry2.wav'; % please provide a test file  or Target
+target = 'angry1.wav'; % please provide a test file  or Target
 [x_tar,fs] = audioread(target);
 
-source = 'neutral2.wav'; % please provide a test file  or Source
+source = 'neutral1.wav'; % please provide a test file  or Source
 [x_src,fs] = audioread(source);
 
 [x_src, x_tar] = get_alignment(x_src,x_tar,fs,w,w-s,r,top);
@@ -72,11 +72,11 @@ opts.plot = 1;
 I_fixed  = log(1+X0_tar);
 I_moving = log(1+X0_src);
 
-fc = 4000;
-y = 0:N/2;
-z = 1 ./ sqrt(1 + (y./(fc*(N+2)/16000)).^20);
-I_fixed = I_fixed.*(z' * ones(1,size(I_fixed,2)));
-I_moving = I_moving.*(z' * ones(1,size(I_moving,2)));
+% fc = 4000;
+% y = 0:N/2;
+% z = 1 ./ sqrt(1 + (y./(fc*(N+2)/16000)).^20);
+% I_fixed = I_fixed.*(z' * ones(1,size(I_fixed,2)));
+% I_moving = I_moving.*(z' * ones(1,size(I_moving,2)));
 
 % [fixed_mask,moving_mask,moved_mask] = obj_mask_alignment(I_fixed,I_moving,5,5);
 % figure();

@@ -1,0 +1,16 @@
+load('dict_sad.mat');
+load('dict_happy.mat');
+load('dict_neutral.mat');
+
+for i = 1:64
+    z1 = dict_sad(:,i); 
+    z2 = dict_happy(:,i); 
+    z3 = dict_nutrl(:,i);
+    figure(1),...
+        subplot(131),plotEllipticFourierDescriptor(z1(1:256),z1(257:512),z1(513:768),z1(769:1024),100,1),...
+        title('Sad'),subplot(132),...
+        plotEllipticFourierDescriptor(z2(1:256),z2(257:512),z2(513:768),z2(769:1024),100,1),...
+        title('Happy'),subplot(133),...
+        plotEllipticFourierDescriptor(z3(1:256),z3(257:512),z3(513:768),z3(769:1024),100,1),title('Neutral');
+    pause;
+end
