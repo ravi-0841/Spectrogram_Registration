@@ -1,4 +1,4 @@
-function [a,b,c,d,T] = ellipticFourierDescriptor(bin_image, N, p, rotation)
+function [a,b,c,d,T] = ellipticFourierDescriptor(bin_image, N, p, rotation, scale)
 % Returns the coefficients for the elliptic fourier descriptor
 % The image referenced by filename is read and the fist contour is 
 % extracted using MATLAB's internal contourc-algorithm. 
@@ -11,6 +11,7 @@ function [a,b,c,d,T] = ellipticFourierDescriptor(bin_image, N, p, rotation)
 % this is, the better the approximation will be. 
 % rotation - boolean value: If false, the rotation invariance will not be
 % performed
+% scale - boolean value: If false, scale invariance will not be performed
 % p - A percentage value in (0,1] which indicates how many of the contour
 % points shall be used
 % Return values:
@@ -84,10 +85,12 @@ function [a,b,c,d,T] = ellipticFourierDescriptor(bin_image, N, p, rotation)
     end
     
     % 3. Scale invariance
-    % a = a./E;
-    % b = b./E;
-    % c = c./E;
-    % d = d./E;
+    if scale
+        a = a./E;
+        b = b./E;
+        c = c./E;
+        d = d./E;
+    end
 end
 
 function [x,y] = getContour(img)
