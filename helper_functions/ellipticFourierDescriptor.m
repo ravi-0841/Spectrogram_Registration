@@ -37,7 +37,7 @@ function [a,b,c,d,T] = ellipticFourierDescriptor(bin_image, N, p, rotation, scal
 % www.geekstack.net
     
     % Get the contour
-    [conX, conY] = getContour(bin_image);
+    [conX, conY] = getContour(bin_image, N);
     
     % Get the total number of points
     points = size(conX, 1) - 1;
@@ -93,7 +93,7 @@ function [a,b,c,d,T] = ellipticFourierDescriptor(bin_image, N, p, rotation, scal
     end
 end
 
-function [x,y] = getContour(img)
+function [x,y] = getContour(img, N)
 % Returns two vectors x,y which contain the outer contour of the object
     
     % Read the image and extract the contour using MATLAB's algorithms
@@ -105,6 +105,14 @@ function [x,y] = getContour(img)
     
     x = con(1, 2:l+1)';
     y = con(2, 2:l+1)';
+    
+    knots = [x'; y'];
+    numPts = length(x);
+    originalSpacing = 1:numPts;
+    finerSpacing = linspace(1,numPts,N);
+    splineXY = spline(originalSpacing, knots, finerSpacing);
+    x = splineXY(1,:)';
+    y = splineXY(2,:)';
 end
 
 function [a,b,c,d] = normalizePhase(a,b,c,d,N)

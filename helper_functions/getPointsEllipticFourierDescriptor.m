@@ -1,4 +1,4 @@
-function plotEllipticFourierDescriptor(a,b,c,d,T,s)
+function pts = getPointsEllipticFourierDescriptor(a,b,c,d,T,s)
 % Plots the elliptic fourier descriptor
 % Bibliography:
 % F.P. Kuhl and C.R. Giadina, Elliptic Fourier features of a closed
@@ -21,10 +21,7 @@ function plotEllipticFourierDescriptor(a,b,c,d,T,s)
         
     k = 1;
     for it = 0:s:T
-        pl(k) = xt(it) + 1i*yt(it);
+        pts(k) = xt(it) + 1i*yt(it);
         k = k + 1;
     end
-    
-    plot(pl);
-    axis equal;
 end

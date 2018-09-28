@@ -135,7 +135,7 @@ shapes_sad      = [];
 shapes_happy    = [];
 shapes_nutrl    = [];
 
-num_coeffs      = 256;
+num_coeffs      = 64;
 
 for i = 1:100
     sad_img         = bin_cell{i,1};
@@ -152,11 +152,11 @@ for i = 1:100
 end
 
 %% KSVD shapes
-% load('dict_sad.mat');
-% load('dict_happy.mat');
-% load('dict_neutral.mat');
+load('dict_sad.mat');
+load('dict_happy.mat');
+load('dict_neutral.mat');
 
-num_coeffs = 256;
+num_coeffs = 64;
 
 for i = 1:32
     z1 = dict_sad(:,i); 
