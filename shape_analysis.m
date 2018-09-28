@@ -135,6 +135,10 @@ shapes_sad      = [];
 shapes_happy    = [];
 shapes_nutrl    = [];
 
+skel_sad      = [];
+skel_happy    = [];
+skel_nutrl    = [];
+
 num_coeffs      = 64;
 
 for i = 1:100
@@ -149,6 +153,10 @@ for i = 1:100
     shapes_sad      = [shapes_sad get_fourier_descriptors(sad_img,num_coeffs)];
     shapes_happy    = [shapes_happy get_fourier_descriptors(hap_img,num_coeffs)];
     shapes_nutrl    = [shapes_nutrl get_fourier_descriptors(ntr_img,num_coeffs)];
+    
+    skel_sad        = [skel_sad get_skeletons(sad_img)];
+    skel_happy      = [skel_happy get_skeletons(hap_img)];
+    skel_nutrl      = [skel_nutrl get_skeletons(ntr_img)];
 end
 
 %% KSVD shapes
