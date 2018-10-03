@@ -8,6 +8,10 @@ function shapes = get_skeletons(bw_img)
         [r,c] = find(skeleton==1);
         knots = [c'-mean(c);r'-mean(r)];
         num_pts = length(r);
+        if num_pts<=1
+            disp(num_pts);
+            continue;
+        end
         original_scale = 1:num_pts;
         finer_scale = linspace(1,num_pts,50);
         splineXY = spline(original_scale, knots, finer_scale);

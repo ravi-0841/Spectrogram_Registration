@@ -139,7 +139,7 @@ skel_sad      = [];
 skel_happy    = [];
 skel_nutrl    = [];
 
-num_coeffs      = 64;
+num_coeffs      = 128;
 
 for i = 1:100
     sad_img         = bin_cell{i,1};
@@ -192,7 +192,7 @@ end
 [hap_coeff, hap_score, hap_latent] = pca(shapes_happy');
 [neu_coeff, neu_score, neu_latent] = pca(shapes_nutrl');
 
-for i = 1:50
+for i = 1:10
     z1 = sad_coeff(:,i); 
     z2 = hap_coeff(:,i); 
     z3 = neu_coeff(:,i);
