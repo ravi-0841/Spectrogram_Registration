@@ -31,12 +31,20 @@ GPR constrained in the range (100, 500)
 		rfc.score(test_cf, -1*np.ones((len(test_cf),1)))
 		Out[6]: 0.7699092419787805
 
+		('mermel    :100', 8489, 1605)
+		('villing   :25', 8393, 1352)
+		('peak det  :(2400, 1700)', 7680, 1555)
+
 	(100, 2) configuration of the neural network
 		mlp.score(scaled_test_vf, np.ones((len(scaled_test_vf),1)))
 		Out[10]: 0.8749902640392554
 
 		mlp.score(scaled_test_cf, -1*np.ones((len(scaled_test_cf),1)))
 		Out[11]: 0.7410200690272274
+
+		('mermel    :100', 8489, 1605)
+		('villing   :25', 8393, 1352)
+		('peak det  :(2400, 1700)', 7709, 1607)
 
 GPR constrained in range (150, 350)
 	RFC is trained using filterbank energy and VUV features
