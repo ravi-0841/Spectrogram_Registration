@@ -73,6 +73,13 @@ GPR constrained in range (150, 350)
 		('peak det  :(2400, 1700)', 7854, 1664)
 
 	TER : Mel-0.33, Vil-0.32, Peak-0.40
+	
+	Syllable nuclei 
+		prt_hits/float(tot_piks)
+		Out[6]: 0.5748549323017408
+
+		prt_farm/float(tot_piks)
+		Out[7]: 0.18239845261121856
 
 
 
@@ -149,6 +156,17 @@ GPR constrained in range (150, 350)
 		('peak det  :(2400, 1700)', 3983, 648)
 	
 	TER : Mel-0.363, Vil-0.361, Peak-0.342
+	
+	Syllable nuclei 
+		prt_hits/float(tot_piks)
+		Out[6]: 0.52465483234714
+
+		prt_farm/float(tot_piks)
+		Out[7]: 0.1136094674556213
+	
+	
+	
+	
 
 
 
@@ -475,3 +493,38 @@ Hyper-parameter optimization LibriSpeech
 		(90, 70, 0.7329632199861208, 0.1825863335782513)
 		(90, 80, 0.7337959750173491, 0.18736223365172666)
 		(90, 90, 0.7383761276891048, 0.182385946162581)
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+LibriSpeech
+0.25 threshold on the peak consideration in loudness
+('mermel    :100', 8489, 1605)
+('villing   :25', 8393, 1352)
+('sylmat   :', 7729, 1925)
+
+0.3 threshold on the peak consideration in loudness
+('mermel    :100', 8489, 1605)
+('villing   :25', 8393, 1352)
+('sylmat   :', 7364, 1751)
+
+
+TIMIT
+0.3 threshold on the peak consideration in loudness
+('mermel    :100', 4037, 808)
+('villing   :25', 3926, 704)
+('sylmat   :', 3633, 1232)
+('prtscr   :', 2893, 743)
+
