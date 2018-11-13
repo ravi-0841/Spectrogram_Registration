@@ -14,7 +14,7 @@ w = 0.025;
 s = 0.010;
 top = 3;
 
-%% Get the wav files in
+%% Get the wav files
 target = 'angry1.wav'; % please provide a test file  or Target
 [x_tar,fs] = audioread(target);
 
